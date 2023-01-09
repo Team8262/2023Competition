@@ -42,7 +42,6 @@ public class DefaultDriveCommand extends CommandBase {
                                       m_rotationSupplier.getAsDouble())
           );  
       }else{
-        System.out.println(m_translationXSupplier.getAsDouble());
           m_drivetrainSubsystem.drive(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                           m_translationXSupplier.getAsDouble(),

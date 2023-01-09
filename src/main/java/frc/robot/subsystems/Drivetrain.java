@@ -88,7 +88,6 @@ public class Drivetrain extends SubsystemBase {
   // FIXME Uncomment if you are using a NavX
   private final AHRS m_navx;
 
-  // These are our modules. We initialize them in the constructor.
   private final SwerveModule m_frontLeftModule;
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
@@ -97,7 +96,6 @@ public class Drivetrain extends SubsystemBase {
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
   public boolean auto = false;
-  /** Creates a new Drivetrain. */
   public Drivetrain() {
     m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
 
@@ -106,15 +104,10 @@ public class Drivetrain extends SubsystemBase {
   //     tab.getLayout("Front Left Module", BuiltInLayouts.kList)
   //             .withSize(2, 4)
   //             .withPosition(0, 0),
-      // This can either be STANDARD or FAST depending on your gear configuration
       Mk4SwerveModuleHelper.GearRatio.L2,
-      // This is the ID of the drive motor
       FRONT_LEFT_MODULE_DRIVE_MOTOR,
-      // This is the ID of the steer motor
       FRONT_LEFT_MODULE_STEER_MOTOR,
-      // This is the ID of the steer encoder
       FRONT_LEFT_MODULE_STEER_ENCODER,
-      // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
       FRONT_LEFT_MODULE_STEER_OFFSET
     );
 
