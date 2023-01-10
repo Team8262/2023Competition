@@ -146,6 +146,11 @@ public class Drivetrain extends SubsystemBase {
           "Pose Est Rot", () -> poseEstimator.getEstimatedPosition().getRotation().getDegrees());
       tab.addNumber("CoG X", () -> this.centerGravity.getX());
       tab.addNumber("CoG Y", () -> this.centerGravity.getY());
+      tab.addNumber("FL Angle", () -> flModule.getState().angle.getDegrees());
+      tab.addNumber("FR Angle", () -> frModule.getState().angle.getDegrees());
+      tab.addNumber("BL Angle", () -> blModule.getState().angle.getDegrees());
+      tab.addNumber("BR Angle", () -> brModule.getState().angle.getDegrees());
+
     }
 
     if (TESTING) {
