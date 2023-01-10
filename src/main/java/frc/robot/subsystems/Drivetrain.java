@@ -65,8 +65,6 @@ public class Drivetrain extends SubsystemBase {
 
   private final SwerveModule[] swerveModules = new SwerveModule[4]; // FL, FR, BL, BR
 
-  // some of this code is from the SDS example code
-
   private Translation2d centerGravity;
 
   private final SwerveModulePosition[] swerveModulePositions =
@@ -320,7 +318,7 @@ public class Drivetrain extends SubsystemBase {
     // update and log gyro inputs
     gyroIO.updateInputs(gyroInputs);
 
-    // update and log the swerve moudles inputs
+    // update and log the swerve module inputs
     for (SwerveModule swerveModule : swerveModules) {
       swerveModule.updateAndProcessInputs();
     }
