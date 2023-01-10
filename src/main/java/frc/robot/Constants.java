@@ -13,7 +13,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 /** Add your docs here. */
 public class Constants {
 
-    public static final boolean TUNING_MODE = false;
+    //Obviously tune it if you need to tune it...
+    public static final boolean TUNING_MODE = true;
 
     // FIXME: an empty string uses the default CAN bus; specify the name of the CANivore as appropriate
     public static final String CAN_BUS_NAME = "";
