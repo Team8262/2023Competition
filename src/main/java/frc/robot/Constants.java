@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import org.jumprobotics.swervedrive.SecondSwerveKinematics;
 import org.jumprobotics.swervedrive.SwerveModuleConstants;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -71,7 +72,15 @@ public class Constants {
           // Back right
           new Translation2d(-DRIVETRAIN_WHEELBASE_METERS / 2.0, -DRIVETRAIN_TRACKWIDTH_METERS / 2.0));
 
-
+    public static final SecondSwerveKinematics YES = new SecondSwerveKinematics(
+        // Front left
+        new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2.0, DRIVETRAIN_TRACKWIDTH_METERS / 2.0),
+        // Front right
+        new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2.0, -DRIVETRAIN_TRACKWIDTH_METERS / 2.0),
+        // Back left
+        new Translation2d(-DRIVETRAIN_WHEELBASE_METERS / 2.0, DRIVETRAIN_TRACKWIDTH_METERS / 2.0),
+        // Back right
+        new Translation2d(-DRIVETRAIN_WHEELBASE_METERS / 2.0, -DRIVETRAIN_TRACKWIDTH_METERS / 2.0));
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2; // FIXME Set front left module drive motor ID
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 4; // FIXME Set front left module steer motor ID

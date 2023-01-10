@@ -11,7 +11,9 @@ import static frc.robot.Constants.*;
 
 import org.jumprobotics.gyro.GyroIO;
 import org.jumprobotics.gyro.GyroIO.GyroIOInputs;
+import org.jumprobotics.swervedrive.SecondSwerveKinematics;
 import org.jumprobotics.swervedrive.SwerveModule;
+import org.jumprobotics.swervedrive.YepSwerveModuleState;
 import org.jumprobotics.util.TunableNumber;
 
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
@@ -25,7 +27,6 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -276,9 +277,9 @@ public class Drivetrain extends SubsystemBase {
           chassisSpeeds = new ChassisSpeeds(xVelocity, yVelocity, rotationalVelocity);
         }
 
-        SwerveModuleState[] swerveModuleStates =
-            KINEMATICS.toSwerveModuleStates(chassisSpeeds, centerGravity);
-        SwerveDriveKinematics.desaturateWheelSpeeds(
+        YepSwerveModuleState[] swerveModuleStates =
+            YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
+        SecondSwerveKinematics.desaturateWheelSpeeds(
             swerveModuleStates, MAX_VELOCITY_METERS_PER_SECOND);
 
         for (SwerveModule swerveModule : swerveModules) {
@@ -307,7 +308,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public void stop() {
     chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
-    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, centerGravity);
+    YepSwerveModuleState[] states = YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
     setSwerveModuleStates(states);
   }
 
@@ -329,7 +330,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     // update estimated poses
-    SwerveModuleState[] states = new SwerveModuleState[4];
+    YepSwerveModuleState[] states = new YepSwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
       states[i] = swerveModules[i].getState();
       swerveModulePositions[i] = swerveModules[i].getPosition();
@@ -410,7 +411,7 @@ public class Drivetrain extends SubsystemBase {
    *
    * @param states the specified swerve module state for each swerve module
    */
-  public void setSwerveModuleStates(SwerveModuleState[] states) {
+  public void setSwerveModuleStates(YepSwerveModuleState[] states) {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
     for (SwerveModule swerveModule : swerveModules) {
@@ -450,7 +451,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public void setXStance() {
     chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
-    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, centerGravity);
+    YepSwerveModuleState[] states = YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
     states[0].angle = new Rotation2d(Math.PI / 2 - Math.atan(DRIVETRAIN_TRACKWIDTH_METERS / DRIVETRAIN_WHEELBASE_METERS));
     states[1].angle = new Rotation2d(Math.PI / 2 + Math.atan(DRIVETRAIN_TRACKWIDTH_METERS / DRIVETRAIN_WHEELBASE_METERS));
     states[2].angle = new Rotation2d(Math.PI / 2 + Math.atan(DRIVETRAIN_TRACKWIDTH_METERS / DRIVETRAIN_WHEELBASE_METERS));

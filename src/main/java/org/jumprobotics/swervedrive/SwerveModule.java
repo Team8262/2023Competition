@@ -60,10 +60,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
     *     false, the module will not rotate if the velocity is less than 1% of the max velocity.
     */
    public void setDesiredState(
-       SwerveModuleState desiredState, boolean isOpenLoop, boolean forceAngle) {
+       YepSwerveModuleState desiredState, boolean isOpenLoop, boolean forceAngle) {
  
-
-     desiredState = CTREModuleState.optimize(desiredState, getState().angle);
+    //Figure out state optimization later
+     //desiredState = CTREModuleState.optimize(desiredState, getState().angle);
  
      if (isOpenLoop) {
        double percentOutput = desiredState.speedMetersPerSecond / maxVelocity;
@@ -105,10 +105,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
     *
     * @return the current state of this swerve module
     */
-   public SwerveModuleState getState() {
+   public YepSwerveModuleState getState() {
      double velocity = inputs.driveVelocityMetersPerSec;
      Rotation2d angle = Rotation2d.fromDegrees(inputs.anglePositionDeg);
-     return new SwerveModuleState(velocity, angle);
+     double omega = 2 * Math.PI * inputs.angleVelocityRevPerMin / 60; //This feels right
+     return new YepSwerveModuleState(velocity, angle, omega);
    }
  
    /**
