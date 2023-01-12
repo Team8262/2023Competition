@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -15,6 +16,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
 
   private Drivetrain m_drivetrain = new Drivetrain();
+  private CameraContainer cams;
   public static Joystick primaryJoystick = new Joystick(0);
 
   public RobotContainer() {
@@ -32,6 +34,12 @@ public class RobotContainer {
                 strafesupp,
                 rotatesupp
         ));
+
+        try {
+          cams = new CameraContainer();
+        } catch(IOException e) {
+          
+        }
 
 
 
