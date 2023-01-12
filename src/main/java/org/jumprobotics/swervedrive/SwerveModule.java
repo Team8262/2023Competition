@@ -21,7 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
    private double maxVelocity;
  
    private static final String SUBSYSTEM_NAME = "Swerve";
-   private static final boolean DEBUGGING = false;
+   private static final boolean DEBUGGING = true;
  
    /**
     * Create a new swerve module.

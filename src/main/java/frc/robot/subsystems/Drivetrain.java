@@ -92,7 +92,7 @@ public class Drivetrain extends SubsystemBase {
 
   private static final String SUBSYSTEM_NAME = "Drivetrain";
   private static final boolean TESTING = false;
-  private static final boolean DEBUGGING = false;
+  private static final boolean DEBUGGING = true;
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private Timer timer;
@@ -147,10 +147,10 @@ public class Drivetrain extends SubsystemBase {
           "Pose Est Rot", () -> poseEstimator.getEstimatedPosition().getRotation().getDegrees());
       tab.addNumber("CoG X", () -> this.centerGravity.getX());
       tab.addNumber("CoG Y", () -> this.centerGravity.getY());
-      tab.addNumber("FL Angle", () -> flModule.getState().angle.getDegrees());
-      tab.addNumber("FR Angle", () -> frModule.getState().angle.getDegrees());
-      tab.addNumber("BL Angle", () -> blModule.getState().angle.getDegrees());
-      tab.addNumber("BR Angle", () -> brModule.getState().angle.getDegrees());
+      tab.addNumber("FL Angle", () -> flModule.getPosition().angle.getDegrees());
+      tab.addNumber("FR Angle", () -> frModule.getPosition().angle.getDegrees());
+      tab.addNumber("BL Angle", () -> blModule.getPosition().angle.getDegrees());
+      tab.addNumber("BR Angle", () -> brModule.getPosition().angle.getDegrees());
 
     }
 
@@ -268,7 +268,7 @@ public class Drivetrain extends SubsystemBase {
 
     switch (driveMode) {
       case NORMAL:
-        if (isFieldRelative) {
+        if (true) {
           chassisSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   xVelocity, yVelocity, rotationalVelocity, getRotation());

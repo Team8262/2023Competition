@@ -4,15 +4,21 @@
 
 package frc.robot.subsystems;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
 
   private SwerveDrivePoseEstimator poseEstimator;
+  private PhotonCamera cam;
 
   /** Creates a new Vision. */
-  public Vision() {}
+  public Vision() {
+    cam = new PhotonCamera("camerea");
+
+  }
 
   @Override
   public void periodic() {

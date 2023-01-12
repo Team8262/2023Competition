@@ -46,11 +46,11 @@ public class RobotContainer {
         buildRobot();
 
         // double forward = 0.0;
-        DoubleSupplier forwardsupp = () -> -1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+        DoubleSupplier forwardsupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
      
-        DoubleSupplier strafesupp = () -> -1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+        DoubleSupplier strafesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
     
-         DoubleSupplier rotatesupp = () -> -1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
+         DoubleSupplier rotatesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
     
         m_drivetrain.setDefaultCommand(new DefaultDriveCommand(
                 m_drivetrain, 
