@@ -268,7 +268,7 @@ public class Drivetrain extends SubsystemBase {
 
     switch (driveMode) {
       case NORMAL:
-        if (true) {
+        if (isFieldRelative) {
           chassisSpeeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   xVelocity, yVelocity, rotationalVelocity, getRotation());
