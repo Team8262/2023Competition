@@ -4,7 +4,11 @@
 
 package frc.robot.subsystems;
 
+import org.jumprobotics.arm.TwoJointArm;
+import static frc.robot.Constants.*;
+
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -13,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
   CANSparkMax base1, base2, arm;
+  SparkMaxPIDController baseController, armController;
+  private TwoJointArm armModel;
   /** Creates a new Arm. */
   public Arm() {
     //Arm at natural resting: 19in forward, 9in up
@@ -23,15 +29,54 @@ public class Arm extends SubsystemBase {
     base2 = new CANSparkMax(23, MotorType.kBrushless);
     arm = new CANSparkMax(21, MotorType.kBrushless);
 
+    base2.follow(base1, false);
+
+    baseController = base1.getPIDController();
+    armController = arm.getPIDController();
+
+    baseController.setP(BASE_LINK_VELOCITY_P_CONTROLLER);
+    baseController.setI(BASE_LINK_VELOCITY_I_CONTROLLER);
+    baseController.setD(BASE_LINK_VELOCITY_D_CONTROLLER);
+    baseController.setFF(BASE_LINK_VELOCITY_F_CONTROLLER);
+    baseController.setSmartMotionMaxVelocity(BASE_LINK_MAX_VELOCITY, 0);
+    baseController.setSmartMotionMaxAccel(BASE_LINK_MAX_ACCELERATION, 0);
+
+    armController.setP(UPPER_LINK_VELOCITY_P_CONTROLLER);
+    armController.setI(UPPER_LINK_VELOCITY_I_CONTROLLER);
+    armController.setD(UPPER_LINK_VELOCITY_D_CONTROLLER);
+    armController.setFF(UPPER_LINK_VELOCITY_F_CONTROLLER);
+    armController.setSmartMotionMaxVelocity(UPPER_LINK_MAX_VELOCITY, 0);
+    armController.setSmartMotionMaxAccel(UPPER_LINK_MAX_ACCELERATION, 0);
+
+    armModel = new TwoJointArm(BASE_LINK_LENGTH, UPPER_LINK_LENGTH);
+
+  }
+
+  public double[] getCurrentAngles(){
+    double[] angles = {base1.getEncoder().getPosition(), arm.getEncoder().getPosition()};
+    return angles;
   }
 
   public void setPosition(Translation2d pos){
-    double basePos = 0;
-    double armPos = 0;
 
-    base1.getPIDController().setReference(basePos, ControlType.kPosition);
-    base2.getPIDController().setReference(basePos, ControlType.kPosition);
-    arm.getPIDController().setReference(armPos, ControlType.kPosition);
+    double[][] positions = armModel.toAngles(pos);
+
+    double[] pos1 = positions[0];
+    double[] pos2 = positions[1];
+
+    double[] currentAngles = getCurrentAngles();
+
+    double dist1 = Math.abs(currentAngles[0] - pos1[0]) + Math.abs(currentAngles[1] - pos1[1]);
+    double dist2 = Math.abs(currentAngles[0] - pos2[0]) + Math.abs(currentAngles[1] - pos2[1]);
+
+    double[] posToUse = dist1 < dist2 ? pos1 : pos2;
+
+    double basePos = posToUse[0] * BASE_LINK_GEAR_RATIO / 2*Math.PI;
+    double armPos = posToUse[1] * UPPER_LINK_GEAR_RATIO / 2*Math.PI;
+
+
+    base1.getPIDController().setReference(basePos, ControlType.kSmartMotion);
+    arm.getPIDController().setReference(armPos, ControlType.kSmartMotion);
   }
 
   @Override

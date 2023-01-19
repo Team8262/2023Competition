@@ -34,8 +34,26 @@ public class Constants {
     public static final double BASE_LINK_LENGTH = 0.9144; //meters
     public static final double UPPER_LINK_LENGTH = 0.9144;
 
+    //Used to convert from final arm angle to motor angle... so 
+    public static final double BASE_LINK_GEAR_RATIO = 1.0;
+    public static final double UPPER_LINK_GEAR_RATIO = 1.0;
 
+    public static final double BASE_LINK_VELOCITY_P_CONTROLLER = 0.0;
+    public static final double BASE_LINK_VELOCITY_I_CONTROLLER = 0.0;
+    public static final double BASE_LINK_VELOCITY_D_CONTROLLER = 0.0;
+    public static final double BASE_LINK_VELOCITY_F_CONTROLLER = 0.0;
 
+    public static final double BASE_LINK_MAX_VELOCITY = 0.0; //RPM
+    public static final double BASE_LINK_MAX_ACCELERATION = 0.0;
+
+    public static final double UPPER_LINK_VELOCITY_P_CONTROLLER = 0.0;
+    public static final double UPPER_LINK_VELOCITY_I_CONTROLLER = 0.0;
+    public static final double UPPER_LINK_VELOCITY_D_CONTROLLER = 0.0;
+    public static final double UPPER_LINK_VELOCITY_F_CONTROLLER = 0.0;
+
+    public static final double UPPER_LINK_MAX_VELOCITY = 0.0; //RPM
+    public static final double UPPER_LINK_MAX_ACCELERATION = 0.0;
+    
 
 
     // FIXME: check dims on final robot
