@@ -28,6 +28,16 @@ public class Constants {
     public static final double driveSpeedCap = 1; //Percent of max speed
     public static final double rotationSpeedCap = 0.6; 
 
+
+
+    //Arm Subsystem
+    public static final double BASE_LINK_LENGTH = 0.9144; //meters
+    public static final double UPPER_LINK_LENGTH = 0.9144;
+
+
+
+
+
     // FIXME: check dims on final robot
     
     //The left-to-right distance between the drivetrain wheels
