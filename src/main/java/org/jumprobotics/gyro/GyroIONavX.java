@@ -1,23 +1,22 @@
 package org.jumprobotics.gyro;
 
-import static frc.robot.Constants.*;
+import com.kauailabs.navx.frc.AHRS;
 
-import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.sensors.Pigeon2;
+import edu.wpi.first.wpilibj.SPI;
 
-public class GyroIOPigeon implements GyroIO {
-  private final Pigeon2 gyro;
-  private final double[] xyzDps = new double[3];
+public class GyroIONavX implements GyroIO{
 
-  public GyroIOPigeon(int id) {
-    gyro = new Pigeon2(id, CAN_BUS_NAME);
-  }
+    private final AHRS gyro;
 
-  @Override
-  public void updateInputs(GyroIOInputs inputs) {
-    gyro.getRawGyro(xyzDps);
-    inputs.connected = gyro.getLastError().equals(ErrorCode.OK);
-    inputs.positionDeg = gyro.getYaw(); // degrees
-    inputs.velocityDegPerSec = xyzDps[2]; // degrees per second
-  }
+    public GyroIONavX(){
+        gyro = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
+    }
+
+    @Override
+    public void updateInputs(GyroIOInputs inputs) {
+      inputs.connected =gyro.isConnected();
+      inputs.positionDeg = -gyro.getYaw(); // degrees
+      inputs.velocityDegPerSec = -gyro.getRate(); //xyzDps[2]  degrees per second
+    }
+    
 }
