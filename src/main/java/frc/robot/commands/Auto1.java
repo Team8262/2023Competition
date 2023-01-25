@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.*;
-import frc.robot.Constants;
+import static frc.robot.Constants.*;
 import frc.robot.commands.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,19 +37,19 @@ public class Auto1 extends SequentialCommandGroup{
         eventMap.put("marker4", new PrintCommand("Passed marker 4"));
         eventMap.put("marker5", new PrintCommand("Passed marker 5"));
         
-
+/* 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             drivetrain.getPose(),
-            drivetrain.setStartPose(Pose2d startPose),
-            drivetrain.getKinematics(),
-            new PIDConstants(Constants.AUTO_DRIVE_P_CONTROLLER, Constants.AUTO_DRIVE_I_CONTROLLER, Constants.AUTO_DRIVE_D_CONTROLLER),
-            new PIDConstants(Constants.AUTO_TURN_P_CONTROLLER, Constants.AUTO_TURN_I_CONTROLLER, Constants.AUTO_TURN_D_CONTROLLER),
+            drivetrain.setStartPose(new Pose2d(0,0,new Rotation2d(0)),
+            YES,
+            new PIDConstants(AUTO_DRIVE_P_CONTROLLER,AUTO_DRIVE_I_CONTROLLER, AUTO_DRIVE_D_CONTROLLER),
+            new PIDConstants(AUTO_TURN_P_CONTROLLER, AUTO_TURN_I_CONTROLLER, AUTO_TURN_D_CONTROLLER),
             drivetrain.getStates(), 
             eventMap, 
             true,
             drivetrain);
 
-        Command fullAuto = autoBuilder.fullAuto(pathGroup);
+        Command fullAuto = autoBuilder.fullAuto(pathGroup);*/
 
     }
 }

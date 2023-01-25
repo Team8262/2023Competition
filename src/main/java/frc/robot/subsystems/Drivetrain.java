@@ -357,7 +357,7 @@ public class Drivetrain extends SubsystemBase {
         previous.distanceMeters = current.distanceMeters;
       }
 
-      Twist2d twist = KINEMATICS.toTwist2d(moduleDeltas);
+      Twist2d twist = YES.toTwist2d(moduleDeltas);
 
       estimatedPoseWithoutGyro = estimatedPoseWithoutGyro.exp(twist);
     }
