@@ -7,11 +7,13 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.*;
 
 import org.jumprobotics.gyro.GyroIO;
+import org.jumprobotics.gyro.GyroIOInputsAutoLogged;
 import org.jumprobotics.gyro.GyroIO.GyroIOInputs;
 import org.jumprobotics.swervedrive.SecondSwerveKinematics;
 import org.jumprobotics.swervedrive.SwerveModule;
 import org.jumprobotics.swervedrive.YepSwerveModuleState;
 import org.jumprobotics.util.TunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.math.controller.PIDController;
@@ -39,7 +41,7 @@ import org.jumprobotics.util.RobotOdometry;
  */
 public class Drivetrain extends SubsystemBase {
   private final GyroIO gyroIO;
-  private final GyroIOInputs gyroInputs = new GyroIOInputs();
+  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
   private final TunableNumber autoDriveKp =
       new TunableNumber("AutoDrive/DriveKp", AUTO_DRIVE_P_CONTROLLER);
@@ -274,6 +276,13 @@ public class Drivetrain extends SubsystemBase {
           chassisSpeeds = new ChassisSpeeds(xVelocity, yVelocity, rotationalVelocity);
         }
 
+        Logger.getInstance()
+            .recordOutput("Drivetrain/chassisSpeedVx", chassisSpeeds.vxMetersPerSecond);
+        Logger.getInstance()
+            .recordOutput("Drivetrain/chassisSpeedVy", chassisSpeeds.vyMetersPerSecond);
+        Logger.getInstance()
+            .recordOutput("Drivetrain/chassisSpeedVo", chassisSpeeds.omegaRadiansPerSecond);
+
         YepSwerveModuleState[] swerveModuleStates =
             YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
         SecondSwerveKinematics.desaturateWheelSpeeds(
@@ -320,6 +329,7 @@ public class Drivetrain extends SubsystemBase {
 
     // update and log gyro inputs
     gyroIO.updateInputs(gyroInputs);
+    Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);
 
     // update and log the swerve module inputs
     for (SwerveModule swerveModule : swerveModules) {
@@ -365,6 +375,13 @@ public class Drivetrain extends SubsystemBase {
     if (autoTurnKp.hasChanged() || autoTurnKi.hasChanged() || autoTurnKd.hasChanged()) {
       autoThetaController.setPID(autoTurnKp.get(), autoTurnKi.get(), autoTurnKd.get());
     }
+    
+    Pose2d poseEstimatorPose = poseEstimator.getEstimatedPosition();
+    Logger.getInstance().recordOutput("Odometry/RobotNoGyro", estimatedPoseWithoutGyro);
+    Logger.getInstance().recordOutput("Odometry/Robot", poseEstimatorPose);
+    Logger.getInstance().recordOutput("3DField", new Pose3d(poseEstimatorPose));
+    Logger.getInstance().recordOutput("SwerveModuleStates", states);
+    Logger.getInstance().recordOutput(SUBSYSTEM_NAME + "/gyroOffset", this.gyroOffset);
 
   }
 
