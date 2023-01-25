@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import org.jumprobotics.arm.TwoJointArm;
+import org.jumprobotics.arm.Arm.Method;
+
 import static frc.robot.Constants.*;
 
 import com.revrobotics.CANSparkMax;
@@ -59,7 +61,7 @@ public class Arm extends SubsystemBase {
 
   public void setPosition(Translation2d pos){
 
-    double[][] positions = armModel.toAngles(pos);
+    double[][] positions = armModel.toAngles(pos, Method.INVERSE_KINEMATICS);
 
     double[] pos1 = positions[0];
     double[] pos2 = positions[1];

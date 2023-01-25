@@ -24,7 +24,7 @@ public class InterpolatingTranslation2d implements Interpolable<InterpolatingTra
         Translation2d interpolated = translation.interpolate(other.translation, x);
         return new InterpolatingTranslation2d(interpolated);
     }
-
+    
     @Override
     public double inverseInterpolate(InterpolatingTranslation2d other, InterpolatingTranslation2d value) {
         return translation.inverseInterpolate(other.translation, value.translation);
