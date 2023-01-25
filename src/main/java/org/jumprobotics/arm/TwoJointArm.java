@@ -17,7 +17,23 @@ public class TwoJointArm implements Arm{
         this.length2 = length2;
     }
 
-    public double[][] toAngles(Translation2d position) {
+    public double[][] toAngles(Translation2d position, Method method) {
+        switch(method){
+            case INVERSE_KINEMATICS:
+                return inverseKinematics(position);
+            case LOOKUP_TABLE:
+                return lookupTable(position);
+            default:
+                return inverseKinematics(position);
+        }
+
+    }
+
+    private double[][] lookupTable(Translation2d position) {
+        return new double[0][];
+    }
+
+    private double[][] inverseKinematics(Translation2d position) {
         double x = position.getX();
         double y = position.getY();
         double angle2 = Math.acos((x*x + y*y - length1*length1 - length2*length2)/(2*length1*length2));
@@ -32,6 +48,7 @@ public class TwoJointArm implements Arm{
     public Translation2d toPosition(double[] angles) {
         return new Translation2d();
     }
-    
+
+
 
 }
