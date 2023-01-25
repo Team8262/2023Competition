@@ -1,3 +1,5 @@
+package frc.robot.commands;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -37,7 +39,7 @@ public class Auto1 extends SequentialCommandGroup{
         
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-            drivetrain.getpose(),
+            drivetrain.getPose(),
             drivetrain.setStartPose(Pose2d startPose),
             drivetrain.getKinematics(),
             new PIDConstants(Constants.AUTO_DRIVE_P_CONTROLLER, Constants.AUTO_DRIVE_I_CONTROLLER, Constants.AUTO_DRIVE_D_CONTROLLER),
