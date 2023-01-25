@@ -8,6 +8,7 @@ import static frc.robot.Constants.*;
 import static org.jumprobotics.swervedrive.SwerveModuleConstants.*;
 
 import org.jumprobotics.util.TunableNumber;
+import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -24,7 +25,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import org.jumprobotics.drivers.TalonFXFactory;
 
 public class SwerveModuleInterface {
-
+    @AutoLog
     public static class SwerveModuleInputs {
         double drivePositionDeg = 0.0;
         double driveDistanceMeters = 0.0;

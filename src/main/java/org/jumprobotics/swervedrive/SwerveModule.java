@@ -5,6 +5,7 @@
  package org.jumprobotics.swervedrive;
 
  import org.jumprobotics.swervedrive.SwerveModuleInterface.SwerveModuleInputs;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
  import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -14,7 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
  /** SwerveModule models a single swerve module. */
  public class SwerveModule {
    private final SwerveModuleInterface io;
-   private final SwerveModuleInputs inputs = new SwerveModuleInputs();
+   private final SwerveModuleInputsAutoLogged inputs = new SwerveModuleInputsAutoLogged();
  
    private int moduleNumber;
    private double lastAngle;
@@ -138,6 +139,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
     */
    public void updateAndProcessInputs() {
      io.updateInputs(inputs);
+     Logger.getInstance().processInputs("Mod" + moduleNumber, inputs);
    }
  
    /**

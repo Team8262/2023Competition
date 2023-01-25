@@ -4,6 +4,8 @@
 
 package org.jumprobotics.gyro;
 
+import org.littletonrobotics.junction.AutoLog;
+
 @java.lang.SuppressWarnings({"java:S1104"})
 
 /**
@@ -20,6 +22,7 @@ package org.jumprobotics.gyro;
  * positions when not connected.
  */
 public interface GyroIO {
+  @AutoLog
   public static class GyroIOInputs {
     public boolean connected = false;
     public double positionDeg = 0.0;
