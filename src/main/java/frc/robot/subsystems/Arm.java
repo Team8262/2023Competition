@@ -14,13 +14,25 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
-  CANSparkMax base1, base2, arm;
-  SparkMaxPIDController baseController, armController;
+  private CANSparkMax base1, base2, arm;
+  private SparkMaxPIDController baseController, armController;
   private TwoJointArm armModel;
+
+  private Mechanism2d mech;
+  private MechanismRoot2d root;
+  private MechanismLigament2d base, upper;
+   
   /** Creates a new Arm. */
   public Arm() {
     //Arm at natural resting: 19in forward, 9in up
@@ -52,6 +64,12 @@ public class Arm extends SubsystemBase {
 
     armModel = new TwoJointArm(BASE_LINK_LENGTH, UPPER_LINK_LENGTH);
 
+    mech = new Mechanism2d(6,6);
+    root = mech.getRoot("Base Link", 3, 1);
+    base = root.append(new MechanismLigament2d("base", 3, 90));
+    upper = base.append(new MechanismLigament2d("upper", 3, 90, 6, new Color8Bit(Color.kPurple)));
+
+    SmartDashboard.putData("Mech2d", mech);
   }
 
   public double[] getCurrentAngles(){
@@ -76,7 +94,9 @@ public class Arm extends SubsystemBase {
     double basePos = posToUse[0] * BASE_LINK_GEAR_RATIO / 2*Math.PI;
     double armPos = posToUse[1] * UPPER_LINK_GEAR_RATIO / 2*Math.PI;
 
-
+    base.setAngle(new Rotation2d(posToUse[0]));
+    upper.setAngle(new Rotation2d(posToUse[1]));
+    
     base1.getPIDController().setReference(basePos, ControlType.kSmartMotion);
     arm.getPIDController().setReference(armPos, ControlType.kSmartMotion);
   }

@@ -4,10 +4,17 @@
 
 package org.jumprobotics.util;
 
+import org.json.simple.JSONObject;
+
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 
 /** Add your docs here. */
 public class LookupTable {
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> table;
+
+    private void readTable(String path){
+        JSONObject json = JSONReader.read(path);
+    }
+
 }
