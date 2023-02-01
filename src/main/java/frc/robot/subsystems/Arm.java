@@ -63,6 +63,7 @@ public class Arm extends SubsystemBase {
     armController.setSmartMotionMaxAccel(UPPER_LINK_MAX_ACCELERATION, 0);
 
     armModel = new TwoJointArm(BASE_LINK_LENGTH, UPPER_LINK_LENGTH);
+    armModel.addLookupTable("ArmLookupTable.json");
 
     mech = new Mechanism2d(6,6);
     root = mech.getRoot("Base Link", 3, 1);

@@ -13,13 +13,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 /** Add your docs here. */
 public class LookupTable {
-    private HashMap<String, Object> table;
+    private JSONObject table;
 
     public void readTable(String path){
         table = JSONReader.read(path);
-        for (String key : table.keySet()) {
-            table.put(key, (double[][]) table.get(key));
-        }
     }
 
     public double[][] getAngles(Translation2d position){
