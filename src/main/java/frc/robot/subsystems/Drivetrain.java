@@ -99,7 +99,7 @@ public class Drivetrain extends SubsystemBase {
 
   private DriveMode driveMode = DriveMode.NORMAL;
   private double characterizationVoltage = 0.0;
-
+  
   /** Constructs a new DrivetrainSubsystem object. */
   public Drivetrain(
       GyroIO gyroIO,

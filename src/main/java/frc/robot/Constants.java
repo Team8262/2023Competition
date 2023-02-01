@@ -31,7 +31,7 @@ public class Constants {
 
 
     //Arm Subsystem
-    public static final double BASE_LINK_LENGTH = 0.9144; //meters
+    public static final double BASE_LINK_LENGTH = 0.8001; //meters
     public static final double UPPER_LINK_LENGTH = 0.9144;
 
     //Used to convert from final arm angle to motor angle... so 

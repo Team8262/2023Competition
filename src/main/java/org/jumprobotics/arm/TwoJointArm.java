@@ -5,16 +5,24 @@
 package org.jumprobotics.arm;
 
 
+import org.jumprobotics.util.LookupTable;
+
 import edu.wpi.first.math.geometry.Translation2d;
 
 /** Add your docs here. */
 public class TwoJointArm implements Arm{
     
     private double length1, length2;
+    private LookupTable table;
 
     public TwoJointArm(double length1, double length2) {
         this.length1 = length1;
         this.length2 = length2;
+        table = new LookupTable();
+    }
+
+    public void addLookupTable(String path){
+        table.readTable(path);
     }
 
     public double[][] toAngles(Translation2d position, Method method) {
@@ -32,13 +40,13 @@ public class TwoJointArm implements Arm{
     private double[][] lookupTable(Translation2d position) {
         return new double[0][];
     }
-
+    //Presumably the independent angle is upper while the dependent is base
     private double[][] inverseKinematics(Translation2d position) {
         double x = position.getX();
         double y = position.getY();
         double angle2 = Math.acos((x*x + y*y - length1*length1 - length2*length2)/(2*length1*length2));
         double angle1 = Math.atan(y/x) - Math.atan(length2*Math.sin(angle2)/(length1+length2*Math.cos(angle2)));
-        double[] solution1 = {angle2, angle1};
+        double[] solution1 = {angle1, angle2};
         double angle3 = -Math.acos((x*x + y*y - length1*length1 - length2*length2)/(2*length1*length2));
         double angle4 = Math.atan(y/x) + Math.atan(length2*Math.sin(angle3)/(length1+length2*Math.cos(angle3)));
         double[] solution2 = {angle4, angle3};

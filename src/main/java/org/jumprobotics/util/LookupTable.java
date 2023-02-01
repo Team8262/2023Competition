@@ -4,17 +4,30 @@
 
 package org.jumprobotics.util;
 
+import java.util.HashMap;
+
 import org.json.simple.JSONObject;
 
-import com.team254.lib.util.InterpolatingDouble;
-import com.team254.lib.util.InterpolatingTreeMap;
+import edu.wpi.first.math.geometry.Translation2d;
+
 
 /** Add your docs here. */
 public class LookupTable {
-    private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> table;
+    private HashMap<String, Object> table;
 
-    private void readTable(String path){
-        JSONObject json = JSONReader.read(path);
+    public void readTable(String path){
+        table = JSONReader.read(path);
+        for (String key : table.keySet()) {
+            table.put(key, (double[][]) table.get(key));
+        }
+    }
+
+    public double[][] getAngles(Translation2d position){
+        return (double[][]) table.get(stringify(position));
+    }
+
+    private String stringify(Translation2d position){
+        return "(" + position.getX() + "," + position.getY() + ")";
     }
 
 }
