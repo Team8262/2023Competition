@@ -33,24 +33,52 @@ public class RobotContainer {
       return new JoystickButton(j, 2);
     }
 
+    public static double getForwardAxis(){
+      return j.getRawAxis(1);
+    }
+
+    public static double getStrafeAxis(){
+      return j.getRawAxis(0);
+    }
+
+    public static double getRotationAxis(){
+      return j.getRawAxis(2);
+    }
+
     public static Joystick getJoystick(){
       return j;
     }
   }
 
+  public static class secondaryController{
+    private static final Joystick j = new Joystick(1);
+
+    public static double getFirstAxis(){
+      return j.getRawAxis(0);
+    }
+
+    public static double getSecondAxis(){
+      return j.getRawAxis(1);
+    }
+
+    public static Joystick geJoystick(){
+      return j;
+    }
+  }
+
   private Drivetrain m_drivetrain;
-  public static Joystick primaryJoystick = new Joystick(0);
+  private Arm m_arm;
 
   public RobotContainer() {
 
         buildRobot();
 
         // double forward = 0.0;
-        DoubleSupplier forwardsupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+        DoubleSupplier forwardsupp = () -> 1*modifyAxis(primaryController.getForwardAxis()) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
      
-        DoubleSupplier strafesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+        DoubleSupplier strafesupp = () -> 1*modifyAxis(primaryController.getStrafeAxis()) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
     
-         DoubleSupplier rotatesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
+        DoubleSupplier rotatesupp = () -> 1*modifyAxis(primaryController.getRotationAxis()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
     
         m_drivetrain.setDefaultCommand(new DefaultDriveCommand(
                 m_drivetrain, 
@@ -60,12 +88,13 @@ public class RobotContainer {
         ));
 
 
+        DoubleSupplier firstSupp = () -> 1*modifyAxis(secondaryController.getFirstAxis());
+        DoubleSupplier secondSupp = () -> 1*modifyAxis(secondaryController.getSecondAxis());
+
+        m_arm.setDefaultCommand(new TestArmCommand(m_arm, firstSupp, secondSupp));
+        
 
     configureBindings();
-  }
-
-  public Joystick getPrimaryJoystick(){
-    return primaryJoystick;
   }
 
   private void configureBindings() {
@@ -140,6 +169,8 @@ public class RobotContainer {
             MAX_VELOCITY_METERS_PER_SECOND);
 
     m_drivetrain = new Drivetrain(gyro, flModule, frModule, blModule, brModule);
+
+    m_arm = new Arm();
   }
 
   private static double modifyAxis(double value) {

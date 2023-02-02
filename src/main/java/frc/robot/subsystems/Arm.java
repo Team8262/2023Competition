@@ -16,6 +16,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -25,9 +27,12 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
-  private CANSparkMax base1, base2, arm;
+  public CANSparkMax base1, base2, arm;
   private SparkMaxPIDController baseController, armController;
   private TwoJointArm armModel;
+  private static final String SUBSYSTEM_NAME = "Arm";
+  
+  private static final boolean DEBUGGING = true;
 
   private Mechanism2d mech;
   private MechanismRoot2d root;
@@ -71,9 +76,16 @@ public class Arm extends SubsystemBase {
     upper = base.append(new MechanismLigament2d("upper", 3, 90, 6, new Color8Bit(Color.kPurple)));
 
     SmartDashboard.putData("Mech2d", mech);
+
+
+    if (DEBUGGING) {
+      ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
+      tab.addNumber("Base Position", () -> base1.getEncoder().getPosition());
+      tab.addNumber("Arm Position", () -> arm.getEncoder().getPosition());
+    }
   }
 
-  public double[] getCurrentAngles(){
+  public double[] getCurrentPositions(){
     double[] angles = {base1.getEncoder().getPosition(), arm.getEncoder().getPosition()};
     return angles;
   }
@@ -85,7 +97,7 @@ public class Arm extends SubsystemBase {
     double[] pos1 = positions[0];
     double[] pos2 = positions[1];
 
-    double[] currentAngles = getCurrentAngles();
+    double[] currentAngles = getCurrentPositions();
 
     double dist1 = Math.abs(currentAngles[0] - pos1[0]) + Math.abs(currentAngles[1] - pos1[1]);
     double dist2 = Math.abs(currentAngles[0] - pos2[0]) + Math.abs(currentAngles[1] - pos2[1]);
