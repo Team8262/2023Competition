@@ -33,6 +33,10 @@ public class RobotContainer {
       return new JoystickButton(j, 2);
     }
 
+    public static JoystickButton intakeButton(){
+      return new JoystickButton(j, 4);
+    }
+
     public static double getForwardAxis(){
       return j.getRawAxis(1);
     }
@@ -68,6 +72,8 @@ public class RobotContainer {
 
   private Drivetrain m_drivetrain;
   private Arm m_arm;
+  private Intake intake;
+  private End end;
 
   public RobotContainer() {
 
@@ -103,6 +109,7 @@ public class RobotContainer {
     primaryController.xStanceButton().onTrue(Commands.runOnce(m_drivetrain::enableXstance, m_drivetrain));
     primaryController.xStanceButton().onFalse(Commands.runOnce(m_drivetrain::disableXstance, m_drivetrain));
 
+    primaryController.intakeButton().whileTrue(new IntakeThings(intake, end));
 
   }
 

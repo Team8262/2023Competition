@@ -22,6 +22,14 @@ public class End extends SubsystemBase {
     topMotor = new CANSparkMax(END_TOP, MotorType.kBrushless);
   }
 
+  public CANSparkMax getBottom() {
+    return bottomMotor;
+  }
+
+  public CANSparkMax getTop() {
+    return topMotor;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
