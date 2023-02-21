@@ -19,14 +19,17 @@ public class Constants {
     // FIXME: an empty string uses the default CAN bus; specify the name of the CANivore as appropriate
     public static final String CAN_BUS_NAME = "";
 
-    //Joystick
-    public static final int forwardAxis = 1;
-    public static final int strafeAxis = 0;
-    public static final int rotationAxis = 2; //Uncomment for other thing
-
     //Drivetrain Constants
     public static final double driveSpeedCap = 1; //Percent of max speed
     public static final double rotationSpeedCap = 0.6; 
+
+
+    //Intake Constants
+    public static final int INTAKEMOTOR = 29;
+
+    //End Constants
+    public static final int END_BOTTOM = 30;
+    public static final int END_TOP = 43;
 
 
 

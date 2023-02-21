@@ -6,10 +6,12 @@ package frc.robot.subsystems;
 
 import org.jumprobotics.arm.TwoJointArm;
 import org.jumprobotics.arm.Arm.Method;
+import org.littletonrobotics.junction.Logger;
 
 import static frc.robot.Constants.*;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -29,7 +31,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Arm extends SubsystemBase {
   public CANSparkMax base1, base2, arm;
   private SparkMaxPIDController baseController, armController;
+  private RelativeEncoder baseEncoder, armEncoder;
   private TwoJointArm armModel;
+
   private static final String SUBSYSTEM_NAME = "Arm";
   
   private static final boolean DEBUGGING = true;
@@ -40,10 +44,7 @@ public class Arm extends SubsystemBase {
    
   /** Creates a new Arm. */
   public Arm() {
-    //Arm at natural resting: 19in forward, 9in up
-    //Bounding box is roughlty 14in horizontal by 11.5in vertical
-    //Starting angles: arm 1 at 90 deg, arm 2 at 30 deg
-    //Arm lengths are 36in
+
     base1 = new CANSparkMax(1, MotorType.kBrushless);
     base2 = new CANSparkMax(23, MotorType.kBrushless);
     arm = new CANSparkMax(21, MotorType.kBrushless);
@@ -67,6 +68,12 @@ public class Arm extends SubsystemBase {
     armController.setSmartMotionMaxVelocity(UPPER_LINK_MAX_VELOCITY, 0);
     armController.setSmartMotionMaxAccel(UPPER_LINK_MAX_ACCELERATION, 0);
 
+    //baseEncoder = base1.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
+    //armEncoder = arm.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
+    baseEncoder = base1.getEncoder();
+    armEncoder = arm.getEncoder();
+
+
     armModel = new TwoJointArm(BASE_LINK_LENGTH, UPPER_LINK_LENGTH);
     armModel.addLookupTable("ArmLookupTable.json");
 
@@ -76,17 +83,20 @@ public class Arm extends SubsystemBase {
     upper = base.append(new MechanismLigament2d("upper", 3, 90, 6, new Color8Bit(Color.kPurple)));
 
     SmartDashboard.putData("Mech2d", mech);
-
+    Logger.getInstance().recordOutput("Arm", mech);
 
     if (DEBUGGING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
-      tab.addNumber("Base Position", () -> base1.getEncoder().getPosition());
-      tab.addNumber("Arm Position", () -> arm.getEncoder().getPosition());
+      tab.addNumber("Base Degrees", () -> baseEncoder.getPosition()*360);
+      tab.addNumber("Arm Degrees", () -> armEncoder.getPosition()*360);
     }
   }
 
+  /*
+   * return the current position as radians
+   */
   public double[] getCurrentPositions(){
-    double[] angles = {base1.getEncoder().getPosition(), arm.getEncoder().getPosition()};
+    double[] angles = {baseEncoder.getPosition()*2*Math.PI, armEncoder.getPosition() * 2 * Math.PI};
     return angles;
   }
 

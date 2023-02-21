@@ -4,8 +4,6 @@
 
 package org.jumprobotics.util;
 
-import java.util.HashMap;
-
 import org.json.simple.JSONObject;
 
 import edu.wpi.first.math.geometry.Translation2d;

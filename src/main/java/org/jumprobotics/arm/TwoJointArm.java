@@ -38,7 +38,7 @@ public class TwoJointArm implements Arm{
     }
 
     private double[][] lookupTable(Translation2d position) {
-        return new double[0][];
+        return table.getAngles(position);
     }
     //Presumably the independent angle is upper while the dependent is base
     private double[][] inverseKinematics(Translation2d position) {
