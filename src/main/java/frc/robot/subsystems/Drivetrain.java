@@ -4,224 +4,589 @@
 
 package frc.robot.subsystems;
 
-import com.kauailabs.navx.frc.AHRS;
-import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
-import com.swervedrivespecialties.swervelib.SwerveModule;
-
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import static frc.robot.Constants.*;
 
+import org.jumprobotics.gyro.GyroIO;
+import org.jumprobotics.gyro.GyroIOInputsAutoLogged;
+import org.jumprobotics.gyro.GyroIO.GyroIOInputs;
+import org.jumprobotics.swervedrive.SecondSwerveKinematics;
+import org.jumprobotics.swervedrive.SwerveModule;
+import org.jumprobotics.swervedrive.YepSwerveModuleState;
+import org.jumprobotics.util.TunableNumber;
+import org.littletonrobotics.junction.Logger;
+
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.jumprobotics.util.RobotOdometry;
+
+/**
+ * This subsystem models the robot's drivetrain mechanism. It consists of a four MK4 swerve modules,
+ * each with two motors and an encoder. It also consists of a Pigeon which is used to measure the
+ * robot's rotation.
+ */
 public class Drivetrain extends SubsystemBase {
+  private final GyroIO gyroIO;
+  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
-  public static final double MAX_VOLTAGE = 13.0;
+  private final TunableNumber autoDriveKp =
+      new TunableNumber("AutoDrive/DriveKp", AUTO_DRIVE_P_CONTROLLER);
+  private final TunableNumber autoDriveKi =
+      new TunableNumber("AutoDrive/DriveKi", AUTO_DRIVE_I_CONTROLLER);
+  private final TunableNumber autoDriveKd =
+      new TunableNumber("AutoDrive/DriveKd", AUTO_DRIVE_D_CONTROLLER);
+  private final TunableNumber autoTurnKp =
+      new TunableNumber("AutoDrive/TurnKp", AUTO_TURN_P_CONTROLLER);
+  private final TunableNumber autoTurnKi =
+      new TunableNumber("AutoDrive/TurnKi", AUTO_TURN_I_CONTROLLER);
+  private final TunableNumber autoTurnKd =
+      new TunableNumber("AutoDrive/TurnKd", AUTO_TURN_D_CONTROLLER);
 
-  SwerveDrivePoseEstimator m_PoseEstimator;
-  public static Pose2d DFLT_START_POSE = new Pose2d();
+  private final PIDController autoXController =
+      new PIDController(autoDriveKp.get(), autoDriveKi.get(), autoDriveKd.get());
+  private final PIDController autoYController =
+      new PIDController(autoDriveKp.get(), autoDriveKi.get(), autoDriveKd.get());
+  private final PIDController autoThetaController =
+      new PIDController(autoTurnKp.get(), autoTurnKi.get(), autoTurnKd.get());
 
-  public static void setStartPose(Pose2d startPose){
-        DFLT_START_POSE = startPose;
-  }
+  private final SwerveModule[] swerveModules = new SwerveModule[4]; // FL, FR, BL, BR
 
-  
-  Pose2d curEstPose = new Pose2d(DFLT_START_POSE.getTranslation(), DFLT_START_POSE.getRotation());
-  SwerveModuleState[] states;
+  private Translation2d centerGravity;
 
+  private final SwerveModulePosition[] swerveModulePositions =
+      new SwerveModulePosition[] {
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
+      };
+  private final SwerveModulePosition[] prevSwerveModulePositions =
+      new SwerveModulePosition[] {
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
+      };
+  private Pose2d estimatedPoseWithoutGyro = new Pose2d();
 
+  private boolean isFieldRelative;
 
-  public static TrapezoidProfile.Constraints THETACONTROLLERCONSTRAINTS = 
-        new TrapezoidProfile.Constraints(Math.PI, Math.PI);
-  
-  
-  // FIXME Measure the drivetrain's maximum velocity or calculate the theoretical.
-  //  The formula for calculating the theoretical maximum velocity is:
-  //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
-  //  By default this value is setup for a Mk3 standard module using Falcon500s to drive.
-  //  An example of this constant for a Mk4 L2 module with NEOs to drive is:
-  //   5880.0 / 60.0 / SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI
-  /**
-   * The maximum velocity of the robot in meters per second.
-   * <p>
-   * This is a measure of how fast the robot should be able to drive in a straight line.
-   */
+  private double gyroOffset;
 
-  public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
-          SdsModuleConfigurations.MK4_L2.getDriveReduction() *
-          SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI;
+  private ChassisSpeeds chassisSpeeds;
 
+  private static final String SUBSYSTEM_NAME = "Drivetrain";
+  private static final boolean TESTING = false;
+  private static final boolean DEBUGGING = true;
 
-    /**
-   * The maximum angular velocity of the robot in radians per second.
-   * <p>
-   * This is a measure of how fast the robot can rotate in place.
-   */
-  // Here we calculate the theoretical maximum angular velocity. You can also replace this with a measured amount.
-  public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
-          Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
+  private final SwerveDrivePoseEstimator poseEstimator;
+  private Timer timer;
+  private boolean brakeMode;
 
-  private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
-          // Front left
-          new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
-          // Front right
-          new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0),
-          // Back left
-          new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
-          // Back right
-          new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0)
-  );        
+  private DriveMode driveMode = DriveMode.NORMAL;
+  private double characterizationVoltage = 0.0;
 
+  /** Constructs a new DrivetrainSubsystem object. */
+  public Drivetrain(
+      GyroIO gyroIO,
+      SwerveModule flModule,
+      SwerveModule frModule,
+      SwerveModule blModule,
+      SwerveModule brModule) {
+    this.gyroIO = gyroIO;
+    this.swerveModules[0] = flModule;
+    this.swerveModules[1] = frModule;
+    this.swerveModules[2] = blModule;
+    this.swerveModules[3] = brModule;
 
-  // private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
-  // FIXME Uncomment if you are using a NavX
-  private final AHRS m_navx;
+    this.autoThetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-  private final SwerveModule m_frontLeftModule;
-  private final SwerveModule m_frontRightModule;
-  private final SwerveModule m_backLeftModule;
-  private final SwerveModule m_backRightModule;
+    this.centerGravity = new Translation2d(); // default to (0,0)
 
-  private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+    this.zeroGyroscope();
 
-  public boolean auto = false;
-  public Drivetrain() {
-    m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
+    this.isFieldRelative = true;
 
-    m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-      // This parameter is optional, but will allow you to see the current state of the module on the dashboard.
-  //     tab.getLayout("Front Left Module", BuiltInLayouts.kList)
-  //             .withSize(2, 4)
-  //             .withPosition(0, 0),
-      Mk4SwerveModuleHelper.GearRatio.L2,
-      FRONT_LEFT_MODULE_DRIVE_MOTOR,
-      FRONT_LEFT_MODULE_STEER_MOTOR,
-      FRONT_LEFT_MODULE_STEER_ENCODER,
-      FRONT_LEFT_MODULE_STEER_OFFSET
-    );
+    this.gyroOffset = 0;
 
-    m_frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
-          // tab.getLayout("Front Right Module", BuiltInLayouts.kList)
-          //         .withSize(2, 4)
-          //         .withPosition(2, 0),
-          Mk4SwerveModuleHelper.GearRatio.L2,
-          FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-          FRONT_RIGHT_MODULE_STEER_MOTOR,
-          FRONT_RIGHT_MODULE_STEER_ENCODER,
-          FRONT_RIGHT_MODULE_STEER_OFFSET
-    );
+    this.chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-    m_backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-          // tab.getLayout("Back Left Module", BuiltInLayouts.kList)
-          //         .withSize(2, 4)
-          //         .withPosition(4, 0),
-          Mk4SwerveModuleHelper.GearRatio.L2,
-          BACK_LEFT_MODULE_DRIVE_MOTOR,
-          BACK_LEFT_MODULE_STEER_MOTOR,
-          BACK_LEFT_MODULE_STEER_ENCODER,
-          BACK_LEFT_MODULE_STEER_OFFSET
-    );
+    this.timer = new Timer();
+    this.startTimer();
 
-    m_backRightModule = Mk4SwerveModuleHelper.createFalcon500(
-      //     tab.getLayout("Back Right Module", BuiltInLayouts.kList)
-      //             .withSize(2, 4)
-      //             .withPosition(6, 0),
-          Mk4SwerveModuleHelper.GearRatio.L2,
-          BACK_RIGHT_MODULE_DRIVE_MOTOR,
-          BACK_RIGHT_MODULE_STEER_MOTOR,
-          BACK_RIGHT_MODULE_STEER_ENCODER,
-          BACK_RIGHT_MODULE_STEER_OFFSET
-    );
+    this.poseEstimator = RobotOdometry.getInstance().getPoseEstimator();
 
+    ShuffleboardTab tabMain = Shuffleboard.getTab("MAIN");
+    tabMain.addNumber("Gyroscope Angle", () -> getRotation().getDegrees());
+    tabMain.addBoolean("X-Stance On?", this::isXstance);
+    tabMain.addBoolean("Field-Relative Enabled?", () -> this.isFieldRelative);
 
-    var stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
-    var localMeasurementStdDevs = VecBuilder.fill(Units.degreesToRadians(0.1));
-    var visionMeasurementStdDevs = VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.1));
+    if (DEBUGGING) {
+      ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
+      tab.add(SUBSYSTEM_NAME, this);
+      tab.addNumber("vx", this::getVelocityX);
+      tab.addNumber("vy", this::getVelocityY);
+      tab.addNumber("Pose Est X", () -> poseEstimator.getEstimatedPosition().getX());
+      tab.addNumber("Pose Est Y", () -> poseEstimator.getEstimatedPosition().getY());
+      tab.addNumber(
+          "Pose Est Rot", () -> poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+      tab.addNumber("CoG X", () -> this.centerGravity.getX());
+      tab.addNumber("CoG Y", () -> this.centerGravity.getY());
+      tab.addNumber("FL Angle", () -> flModule.getPosition().angle.getDegrees());
+      tab.addNumber("FR Angle", () -> frModule.getPosition().angle.getDegrees());
+      tab.addNumber("BL Angle", () -> blModule.getPosition().angle.getDegrees());
+      tab.addNumber("BR Angle", () -> brModule.getPosition().angle.getDegrees());
 
-    //m_PoseEstimator = new SwerveDrivePoseEstimator(getGyroscopeRotation(), DFLT_START_POSE, m_kinematics, stateStdDevs, localMeasurementStdDevs, visionMeasurementStdDevs,0.02);
-
-    setknownPose(DFLT_START_POSE);
-    
-
-    states = new SwerveModuleState[] {new SwerveModuleState(),new SwerveModuleState(),new SwerveModuleState(),new SwerveModuleState()};
-
-
-  }
-
-  public void setknownPose(Pose2d in){
-    //wants us to reset wheel encoders?
-    zeroGyroscope();
-    //m_PoseEstimator.resetPosition(in, getGyroscopeRotation());
-    curEstPose = in;
-  }
-
-  public Pose2d getpose(){
-          
-    return m_PoseEstimator.getEstimatedPosition();
-  }
-
-  public void resetStates(){
-    states = new SwerveModuleState[] {new SwerveModuleState(),new SwerveModuleState(),new SwerveModuleState(),new SwerveModuleState()};
-  }
-
-  public void zeroGyroscope() {
-      m_navx.zeroYaw();
-  }
-
-  public Rotation2d getGyroscopeRotation() {
-        /*
-    if (m_navx.isMagnetometerCalibrated()) {
-    // We will only get valid fused headings if the magnetometer is calibrated
-    return Rotation2d.fromDegrees(-m_navx.getFusedHeading());
-    }*/
-    //
-    //    // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes the angle increase.
-    //    return Rotation2d.fromDegrees(360-m_navx.getYaw());
-    //return Rotation2d.fromDegrees(-(360.0 - m_navx.getYaw()));
-    return Rotation2d.fromDegrees(-m_navx.getYaw());
-  }
-
-  public void drive(ChassisSpeeds chassisSpeeds) {
-    m_chassisSpeeds = chassisSpeeds;
-  }
-
-  public void periodicTelemetry() {
-    double FLdegree = Math.toDegrees(m_frontLeftModule.getSteerAngle());
-    double FRdegree = Math.toDegrees(m_frontRightModule.getSteerAngle());
-    double BLdegree = Math.toDegrees(m_backLeftModule.getSteerAngle());
-    double BRdegree = Math.toDegrees(m_backRightModule.getSteerAngle());
-
-    SmartDashboard.putNumber("Front Left Module Angle ", FLdegree);
-    SmartDashboard.putNumber("Front Right Module Angle ", FRdegree);
-    SmartDashboard.putNumber("Back Left Module Angle ", BLdegree);
-    SmartDashboard.putNumber("Back Right Module Angle ", BRdegree);
-  }
-
-  @Override
-  public void periodic() {
-    if(!auto){
-      states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);  
-    }else{
-        //m_PoseEstimator.update(getGyroscopeRotation(), states);
     }
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-    m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
-    m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
-    m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
-    m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
+    if (TESTING) {
+      ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
+      tab.add("Enable XStance", new InstantCommand(this::enableXstance));
+      tab.add("Disable XStance", new InstantCommand(this::disableXstance));
+    }
+  }
 
-    periodicTelemetry();
+  /**
+   * Zeroes the gyroscope. This sets the current rotation of the robot to zero degrees. This method
+   * is intended to be invoked only when the alignment beteween the robot's rotation and the gyro is
+   * sufficiently different to make field-relative driving difficult. The robot needs to be
+   * positioned facing away from the driver, ideally aligned to a field wall before this method is
+   * invoked.
+   */
+  public void zeroGyroscope() {
+    setGyroOffset(0.0);
+  }
+
+  /**
+   * Returns the rotation of the robot. Zero degrees is facing away from the driver station; CCW is
+   * positive. This method should always be invoked instead of obtaining the yaw directly from the
+   * Pigeon as the local offset needs to be added. If the gyro is not connected, the rotation from
+   * the estimated pose is returned.
+   *
+   * @return the rotation of the robot
+   */
+  private Rotation2d getRotation() {
+    if (gyroInputs.connected) {
+      return Rotation2d.fromDegrees(gyroInputs.positionDeg + this.gyroOffset);
+    } else {
+      return estimatedPoseWithoutGyro.getRotation();
+    }
+  }
+
+  /**
+   * Sets the rotation of the robot to the specified value. This method should only be invoked when
+   * the rotation of the robot is known (e.g., at the start of an autonomous path). Zero degrees is
+   * facing away from the driver station; CCW is positive.
+   *
+   * @param expectedYaw the rotation of the robot (in degrees)
+   */
+  public void setGyroOffset(double expectedYaw) {
+    // There is a delay between setting the yaw on the Pigeon and that change
+    //      taking effect. As a result, it is recommended to never set the yaw and
+    //      adjust the local offset instead.
+    if (gyroInputs.connected) {
+      this.gyroOffset = expectedYaw - gyroInputs.positionDeg;
+    } else {
+      this.gyroOffset = 0;
+      this.estimatedPoseWithoutGyro =
+          new Pose2d(
+              estimatedPoseWithoutGyro.getX(),
+              estimatedPoseWithoutGyro.getY(),
+              Rotation2d.fromDegrees(expectedYaw));
+    }
+  }
+
+  /**
+   * Returns the pose of the robot (e.g., x and y position of the robot on the field and the robot's
+   * rotation). The origin of the field to the lower left corner (i.e., the corner of the field to
+   * the driver's right). Zero degrees is away from the driver and increases in the CCW direction.
+   *
+   * @return the pose of the robot
+   */
+  public Pose2d getPose() {
+    return poseEstimator.getEstimatedPosition();
+  }
+
+  /**
+   * Sets the odometry of the robot to the specified PathPlanner state. This method should only be
+   * invoked when the rotation of the robot is known (e.g., at the start of an autonomous path). The
+   * origin of the field to the lower left corner (i.e., the corner of the field to the driver's
+   * right). Zero degrees is away from the driver and increases in the CCW direction.
+   *
+   * @param state the specified PathPlanner state to which is set the odometry
+   */
+  public void resetOdometry(PathPlannerState state) {
+    setGyroOffset(state.holonomicRotation.getDegrees());
+
+    for (int i = 0; i < 4; i++) {
+      swerveModulePositions[i] = swerveModules[i].getPosition();
+    }
+
+    estimatedPoseWithoutGyro =
+        new Pose2d(state.poseMeters.getTranslation(), state.holonomicRotation);
+    poseEstimator.resetPosition(
+        this.getRotation(),
+        swerveModulePositions,
+        new Pose2d(state.poseMeters.getTranslation(), state.holonomicRotation));
+  }
+
+  /**
+   * Controls the drivetrain to move the robot with the desired velocities in the x, y, and
+   * rotational directions. The velocities may be specified from either the robot's frame of
+   * reference of the field's frame of reference. In the robot's frame of reference, the positive x
+   * direction is forward; the positive y direction, left; position rotation, CCW. In the field
+   * frame of reference, the origin of the field to the lower left corner (i.e., the corner of the
+   * field to the driver's right). Zero degrees is away from the driver and increases in the CCW
+   * direction.
+   *
+   * <p>If the drive mode is XSTANCE, the robot will ignore the specified velocities and turn the
+   * swerve modules into the x-stance orientation.
+   *
+   * <p>If the drive mode is CHARACTERIZATION, the robot will ignore the specified velocities and
+   * run the characterization routine.
+   *
+   * @param translationXSupplier the desired velocity in the x direction (m/s)
+   * @param translationYSupplier the desired velocity in the y direction (m/s)
+   * @param rotationSupplier the desired rotational velcoity (rad/s)
+   */
+  public void drive(double xVelocity, double yVelocity, double rotationalVelocity) {
+
+    switch (driveMode) {
+      case NORMAL:
+        if (isFieldRelative) {
+          chassisSpeeds =
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  xVelocity, yVelocity, rotationalVelocity, getRotation());
+
+        } else {
+          chassisSpeeds = new ChassisSpeeds(xVelocity, yVelocity, rotationalVelocity);
+        }
+
+        Logger.getInstance()
+            .recordOutput("Drivetrain/chassisSpeedVx", chassisSpeeds.vxMetersPerSecond);
+        Logger.getInstance()
+            .recordOutput("Drivetrain/chassisSpeedVy", chassisSpeeds.vyMetersPerSecond);
+        Logger.getInstance()
+            .recordOutput("Drivetrain/chassisSpeedVo", chassisSpeeds.omegaRadiansPerSecond);
+
+        YepSwerveModuleState[] swerveModuleStates =
+            YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
+        SecondSwerveKinematics.desaturateWheelSpeeds(
+            swerveModuleStates, MAX_VELOCITY_METERS_PER_SECOND);
+
+        for (SwerveModule swerveModule : swerveModules) {
+          swerveModule.setDesiredState(
+              swerveModuleStates[swerveModule.getModuleNumber()], true, false);
+        }
+        break;
+
+      case CHARACTERIZATION:
+        // In characterization mode, drive at the specified voltage (and turn to zero degrees)
+        for (SwerveModule swerveModule : swerveModules) {
+          swerveModule.setVoltageForCharacterization(characterizationVoltage);
+        }
+        break;
+
+      case X:
+        this.setXStance();
+
+        break;
+    }
+  }
+
+  /**
+   * Stops the motion of the robot. Since the motors are in break mode, the robot will stop soon
+   * after this method is invoked.
+   */
+  public void stop() {
+    chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+    YepSwerveModuleState[] states = YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
+    setSwerveModuleStates(states);
+  }
+
+  /**
+   * This method is invoked each iteration of the scheduler. Typically, when using a command-based
+   * model, subsystems don't override the periodic method. However, the drivetrain needs to
+   * continually update the odometry of the robot, update and log the gyro and swerve module inputs,
+   * update brake mode, and update the tunable values.
+   */
+  @Override
+  public void periodic() {
+
+    // update and log gyro inputs
+    gyroIO.updateInputs(gyroInputs);
+    Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);
+
+    // update and log the swerve module inputs
+    for (SwerveModule swerveModule : swerveModules) {
+      swerveModule.updateAndProcessInputs();
+    }
+
+    // update estimated poses
+    YepSwerveModuleState[] states = new YepSwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
+      states[i] = swerveModules[i].getState();
+      swerveModulePositions[i] = swerveModules[i].getPosition();
+    }
+
+    // if the gyro is not connected, use the swerve module positions to estimate the robot's
+    // rotation
+    if (!gyroInputs.connected) {
+      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+      for (int index = 0; index < moduleDeltas.length; index++) {
+        SwerveModulePosition current = swerveModulePositions[index];
+        SwerveModulePosition previous = prevSwerveModulePositions[index];
+
+        moduleDeltas[index] =
+            new SwerveModulePosition(
+                current.distanceMeters - previous.distanceMeters, current.angle);
+        previous.distanceMeters = current.distanceMeters;
+      }
+
+      Twist2d twist = YES.toTwist2d(moduleDeltas);
+
+      estimatedPoseWithoutGyro = estimatedPoseWithoutGyro.exp(twist);
+    }
+
+    poseEstimator.updateWithTime(this.timer.get(), this.getRotation(), swerveModulePositions);
+
+    // update the brake mode based on the robot's velocity and state (enabled/disabled)
+    updateBrakeMode();
+
+    // update tunables
+    if (autoDriveKp.hasChanged() || autoDriveKi.hasChanged() || autoDriveKd.hasChanged()) {
+      autoXController.setPID(autoDriveKp.get(), autoDriveKi.get(), autoDriveKd.get());
+      autoYController.setPID(autoDriveKp.get(), autoDriveKi.get(), autoDriveKd.get());
+    }
+    if (autoTurnKp.hasChanged() || autoTurnKi.hasChanged() || autoTurnKd.hasChanged()) {
+      autoThetaController.setPID(autoTurnKp.get(), autoTurnKi.get(), autoTurnKd.get());
+    }
+    
+    Pose2d poseEstimatorPose = poseEstimator.getEstimatedPosition();
+    Logger.getInstance().recordOutput("Odometry/RobotNoGyro", estimatedPoseWithoutGyro);
+    Logger.getInstance().recordOutput("Odometry/Robot", poseEstimatorPose);
+    Logger.getInstance().recordOutput("3DField", new Pose3d(poseEstimatorPose));
+    Logger.getInstance().recordOutput("SwerveModuleStates", states);
+    Logger.getInstance().recordOutput(SUBSYSTEM_NAME + "/gyroOffset", this.gyroOffset);
+
+  }
+
+  /**
+   * If the robot is enabled and brake mode is not enabled, enable it. If the robot is disabled, has
+   * stopped moving, and brake mode is enabled, disable it.
+   */
+  private void updateBrakeMode() {
+    if (DriverStation.isEnabled() && !brakeMode) {
+      brakeMode = true;
+      setBrakeMode(true);
+
+    } else {
+      boolean stillMoving = false;
+      for (SwerveModule mod : swerveModules) {
+        if (Math.abs(mod.getState().speedMetersPerSecond) > MAX_COAST_VELOCITY_METERS_PER_SECOND) {
+          stillMoving = true;
+        }
+      }
+
+      if (brakeMode && !stillMoving) {
+        brakeMode = false;
+        setBrakeMode(false);
+      }
+    }
+  }
+
+  private void setBrakeMode(boolean enable) {
+    for (SwerveModule mod : swerveModules) {
+      mod.setAngleBrakeMode(enable);
+      mod.setDriveBrakeMode(enable);
+    }
+  }
+
+  /**
+   * Sets each of the swerve modules based on the specified corresponding swerve module state.
+   * Incorporates the configured feedforward when setting each swerve module. The order of the
+   * states in the array must be front left, front right, back left, back right.
+   *
+   * <p>This method is invoked by the FollowPath autonomous command.
+   *
+   * @param states the specified swerve module state for each swerve module
+   */
+  public void setSwerveModuleStates(YepSwerveModuleState[] states) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+
+    for (SwerveModule swerveModule : swerveModules) {
+      swerveModule.setDesiredState(states[swerveModule.getModuleNumber()], false, false);
+    }
+  }
+
+  /**
+   * Returns true if field relative mode is enabled
+   *
+   * @return true if field relative mode is enabled
+   */
+  public boolean getFieldRelative() {
+    return isFieldRelative;
+  }
+
+  /**
+   * Enables field-relative mode. When enabled, the joystick inputs specify the velocity of the
+   * robot in the frame of reference of the field.
+   */
+  public void enableFieldRelative() {
+    this.isFieldRelative = true;
+  }
+
+  /**
+   * Disables field-relative mode. When disabled, the joystick inputs specify the velocity of the
+   * robot in the frame of reference of the robot.
+   */
+  public void disableFieldRelative() {
+    this.isFieldRelative = false;
+  }
+
+  /**
+   * Sets the swerve modules in the x-stance orientation. In this orientation the wheels are aligned
+   * to make an 'X'. This makes it more difficult for other robots to push the robot, which is
+   * useful when shooting.
+   */
+  public void setXStance() {
+    chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+    YepSwerveModuleState[] states = YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
+    states[0].angle = new Rotation2d(Math.PI / 2 - Math.atan(DRIVETRAIN_TRACKWIDTH_METERS / DRIVETRAIN_WHEELBASE_METERS));
+    states[1].angle = new Rotation2d(Math.PI / 2 + Math.atan(DRIVETRAIN_TRACKWIDTH_METERS / DRIVETRAIN_WHEELBASE_METERS));
+    states[2].angle = new Rotation2d(Math.PI / 2 + Math.atan(DRIVETRAIN_TRACKWIDTH_METERS / DRIVETRAIN_WHEELBASE_METERS));
+    states[3].angle =
+        new Rotation2d(3.0 / 2.0 * Math.PI - Math.atan(DRIVETRAIN_TRACKWIDTH_METERS / DRIVETRAIN_WHEELBASE_METERS));
+    for (SwerveModule swerveModule : swerveModules) {
+      swerveModule.setDesiredState(states[swerveModule.getModuleNumber()], true, true);
+    }
+  }
+
+  /**
+   * Sets the robot's center of gravity about which it will rotate. The origin is at the center of
+   * the robot. The positive x direction is forward; the positive y direction, left.
+   *
+   * @param x the x coordinate of the robot's center of gravity (in meters)
+   * @param y the y coordinate of the robot's center of gravity (in meters)
+   */
+  public void setCenterGrav(double x, double y) {
+    this.centerGravity = new Translation2d(x, y);
+  }
+
+  /** Resets the robot's center of gravity about which it will rotate to the center of the robot. */
+  public void resetCenterGrav() {
+    setCenterGrav(0.0, 0.0);
+  }
+
+  /**
+   * Returns the desired velocity of the drivetrain in the x direction (units of m/s)
+   *
+   * @return the desired velocity of the drivetrain in the x direction (units of m/s)
+   */
+  public double getVelocityX() {
+    return chassisSpeeds.vxMetersPerSecond;
+  }
+
+  /**
+   * Returns the desired velocity of the drivetrain in the y direction (units of m/s)
+   *
+   * @return the desired velocity of the drivetrain in the y direction (units of m/s)
+   */
+  public double getVelocityY() {
+    return chassisSpeeds.vyMetersPerSecond;
+  }
+
+  /**
+   * Puts the drivetrain into the x-stance orientation. In this orientation the wheels are aligned
+   * to make an 'X'. This makes it more difficult for other robots to push the robot, which is
+   * useful when shooting. The robot cannot be driven until x-stance is disabled.
+   */
+  public void enableXstance() {
+    this.driveMode = DriveMode.X;
+    this.setXStance();
+  }
+
+  /** Disables the x-stance, allowing the robot to be driven. */
+  public void disableXstance() {
+    this.driveMode = DriveMode.NORMAL;
+  }
+
+  /**
+   * Returns true if the robot is in the x-stance orientation.
+   *
+   * @return true if the robot is in the x-stance orientation
+   */
+  public boolean isXstance() {
+    return this.driveMode == DriveMode.X;
+  }
+
+  private void startTimer() {
+    this.timer.reset();
+    this.timer.start();
+  }
+
+  /**
+   * Returns the PID controller used to control the robot's x position during autonomous.
+   *
+   * @return the PID controller used to control the robot's x position during autonomous
+   */
+  public PIDController getAutoXController() {
+    return autoXController;
+  }
+
+  /**
+   * Returns the PID controller used to control the robot's y position during autonomous.
+   *
+   * @return the PID controller used to control the robot's y position during autonomous
+   */
+  public PIDController getAutoYController() {
+    return autoYController;
+  }
+
+  /**
+   * Returns the PID controller used to control the robot's rotation during autonomous.
+   *
+   * @return the PID controller used to control the robot's rotation during autonomous
+   */
+  public PIDController getAutoThetaController() {
+    return autoThetaController;
+  }
+
+  /** Runs forwards at the commanded voltage. */
+  public void runCharacterizationVolts(double volts) {
+    driveMode = DriveMode.CHARACTERIZATION;
+    characterizationVoltage = volts;
+
+    // invoke drive which will set the characterization voltage to each module
+    drive(0, 0, 0);
+  }
+
+  /** Returns the average drive velocity in meters/sec. */
+  public double getCharacterizationVelocity() {
+    double driveVelocityAverage = 0.0;
+    for (SwerveModule swerveModule : swerveModules) {
+      driveVelocityAverage += swerveModule.getState().speedMetersPerSecond;
+    }
+    return driveVelocityAverage / 4.0;
+  }
+
+  private enum DriveMode {
+    NORMAL,
+    X,
+    CHARACTERIZATION
   }
 }
