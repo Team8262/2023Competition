@@ -71,7 +71,7 @@ public class RobotContainer {
   }
 
   private Drivetrain m_drivetrain;
-  private Arm m_arm;
+  //private Arm m_arm;
   private Intake intake;
   private End end;
 
@@ -97,7 +97,7 @@ public class RobotContainer {
         DoubleSupplier firstSupp = () -> 1*modifyAxis(secondaryController.getFirstAxis());
         DoubleSupplier secondSupp = () -> 1*modifyAxis(secondaryController.getSecondAxis());
 
-        m_arm.setDefaultCommand(new TestArmCommand(m_arm, firstSupp, secondSupp));
+        //m_arm.setDefaultCommand(new TestArmCommand(m_arm, firstSupp, secondSupp));
         
 
     configureBindings();
@@ -177,7 +177,7 @@ public class RobotContainer {
 
     m_drivetrain = new Drivetrain(gyro, flModule, frModule, blModule, brModule);
 
-    m_arm = new Arm();
+    //m_arm = new Arm();
 
     intake = new Intake();
 

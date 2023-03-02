@@ -13,6 +13,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 /** Add your docs here. */
 public class Constants {
 
+    public static final double loopPeriodSecs = 0.02;
+    public static final int configCANTimeout = 2000;
+
+
     //Obviously tune it if you need to tune it...
     public static final boolean TUNING_MODE = true;
 
