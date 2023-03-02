@@ -38,6 +38,8 @@ public class Constants {
     public static final double BASE_LINK_LENGTH = 0.8001; //meters
     public static final double UPPER_LINK_LENGTH = 0.5842;
 
+    public static final double MAX_TRANSLATION_SPEED = 1; //meters per second
+
     //Used to convert from final arm angle to motor angle... so 
     public static final double BASE_LINK_GEAR_RATIO = 1.0;
     public static final double UPPER_LINK_GEAR_RATIO = 1.0;

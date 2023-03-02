@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -54,6 +55,11 @@ public class Arm extends SubsystemBase {
     baseController = base1.getPIDController();
     armController = arm.getPIDController();
 
+    base1.setSoftLimit(SoftLimitDirection.kForward, 2);//These are fake numbers
+    base1.setSoftLimit(SoftLimitDirection.kReverse, 2);
+    arm.setSoftLimit(SoftLimitDirection.kForward, 2);
+    arm.setSoftLimit(SoftLimitDirection.kReverse, 2);
+
     baseController.setP(BASE_LINK_VELOCITY_P_CONTROLLER);
     baseController.setI(BASE_LINK_VELOCITY_I_CONTROLLER);
     baseController.setD(BASE_LINK_VELOCITY_D_CONTROLLER);
@@ -90,6 +96,10 @@ public class Arm extends SubsystemBase {
       tab.addNumber("Base Degrees", () -> baseEncoder.getPosition()*360);
       tab.addNumber("Arm Degrees", () -> armEncoder.getPosition()*360);
     }
+  }
+
+  public TwoJointArm getArmModel(){
+    return armModel;
   }
 
   /*

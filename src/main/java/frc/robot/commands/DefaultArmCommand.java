@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
+import static frc.robot.Constants.*;
+
 public class DefaultArmCommand extends CommandBase {
 
   private final Arm m_Arm;
@@ -33,11 +35,16 @@ public class DefaultArmCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    position = new Translation2d(position.getX() + m_xSupp.getAsDouble(), position.getY() + m_ySupp.getAsDouble());
-    
+    Translation2d newPosition = new Translation2d(position.getX() + m_xSupp.getAsDouble()*MAX_TRANSLATION_SPEED, position.getY() + m_ySupp.getAsDouble()*MAX_TRANSLATION_SPEED);
+    if(m_Arm.getArmModel().isValid(newPosition)){
+      position = newPosition;
+    }
+
     m_Arm.setPosition(position);
 
   }
+
+
 
   // Called once the command ends or is interrupted.
   @Override

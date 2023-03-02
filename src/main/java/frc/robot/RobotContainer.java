@@ -178,6 +178,10 @@ public class RobotContainer {
     m_drivetrain = new Drivetrain(gyro, flModule, frModule, blModule, brModule);
 
     m_arm = new Arm();
+
+    intake = new Intake();
+
+    end = new End();
   }
 
   private static double modifyAxis(double value) {

@@ -37,6 +37,10 @@ public class TwoJointArm implements Arm{
 
     }
 
+    public boolean isValid(Translation2d position) {
+        return (position.getX() * position.getX()) + (position.getY() * position.getY()) <= (length1 + length2) * (length1 + length2);
+    }
+
     private double[][] lookupTable(Translation2d position) {
         return table.getAngles(position);
     }
