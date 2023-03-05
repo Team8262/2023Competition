@@ -1,0 +1,136 @@
+{
+  "origin": [
+    0.0,
+    0.654
+  ],
+  "shoulder": {
+    "mass": 1.790329,
+    "length": 0.686,
+    "moi": 0.216988,
+    "cgRadius": 0.4318,
+    "minAngle": 0.0,
+    "maxAngle": 3.1415926536,
+    "motor": {
+      "type": "neo",
+      "count": 2,
+      "reduction": 204.9327846365
+    }
+  },
+  "elbow": {
+    "mass": 2.5,
+    "length": 0.84,
+    "moi": 0.21851,
+    "cgRadius": 0.4318,
+    "minAngle": 0.2617994,
+    "maxAngle": 6.0213859072,
+    "motor": {
+      "type": "neo",
+      "count": 1,
+      "reduction": 150.0
+    }
+  },
+  "wrist": {
+    "mass": 1.5,
+    "length": 0.261,
+    "moi": 0.036998,
+    "cgRadius": 0.03556,
+    "minAngle": -2.0943951024,
+    "maxAngle": 2.0943951024,
+    "motor": {
+      "type": "neo",
+      "count": 1,
+      "reduction": 60.0
+    }
+  },
+  "solver": {
+    "interiorPoints": 15,
+    "maxVoltageShoulder": 8,
+    "maxVoltageElbow": 8,
+    "maxAccelerationMinExtension": 15,
+    "maxAccelerationMaxExtension": 3,
+    "maxJerk": 30
+  },
+  "constraints": {
+    "floor": {
+      "type": "minY",
+      "args": [
+        0.0
+      ]
+    },
+    "floorRaised": {
+      "type": "minY",
+      "args": [
+        0.35
+      ]
+    },
+    "maxHeight": {
+      "type": "maxY",
+      "args": [
+        1.5
+      ]
+    },
+    "robotBody": {
+      "type": "rectangle",
+      "args": [
+        -0.35,
+        -1,
+        0.4,
+        0.4
+      ]
+    },
+    "robotBodyExtended": {
+      "type": "rectangle",
+      "args": [
+        -0.4,
+        -1,
+        0.7,
+        0.4
+      ]
+    },
+    "cubeIntake": {
+      "type": "rectangle",
+      "args": [
+        0.4,
+        -1,
+        0.7,
+        0.55
+      ]
+    },
+    "nodeMidFront": {
+      "type": "rectangle",
+      "args": [
+        0.55,
+        -1,
+        5,
+        0.9
+      ]
+    },
+    "nodeHighFront": {
+      "type": "rectangle",
+      "args": [
+        1.1,
+        -1,
+        5,
+        1.2
+      ]
+    },
+    "nodeMidBack": {
+      "type": "rectangle",
+      "args": [
+        -5,
+        -1,
+        -0.55,
+        0.9
+      ]
+    },
+    "nodeHighBack": {
+      "type": "rectangle",
+      "args": [
+        -5,
+        -1,
+        -1.1,
+        1.2
+      ]
+    }
+  }
+}
