@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import org.jumprobotics.gyro.GyroIO;
 import org.jumprobotics.gyro.GyroIOInputsAutoLogged;
 import org.jumprobotics.gyro.GyroIO.GyroIOInputs;
@@ -15,7 +18,11 @@ import org.jumprobotics.swervedrive.YepSwerveModuleState;
 import org.jumprobotics.util.TunableNumber;
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,11 +33,16 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.jumprobotics.util.RobotOdometry;
 
@@ -42,6 +54,7 @@ import org.jumprobotics.util.RobotOdometry;
 public class Drivetrain extends SubsystemBase {
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private final Field2d field2d = new Field2d();
 
   private final TunableNumber autoDriveKp =
       new TunableNumber("AutoDrive/DriveKp", AUTO_DRIVE_P_CONTROLLER);
@@ -99,6 +112,17 @@ public class Drivetrain extends SubsystemBase {
 
   private DriveMode driveMode = DriveMode.NORMAL;
   private double characterizationVoltage = 0.0;
+
+  private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+          // Front left
+          new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
+          // Front right
+          new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0),
+          // Back left
+          new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
+          // Back right
+          new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0)
+  );  
 
   /** Constructs a new DrivetrainSubsystem object. */
   public Drivetrain(
@@ -427,7 +451,6 @@ public class Drivetrain extends SubsystemBase {
    */
   public void setSwerveModuleStates(YepSwerveModuleState[] states) {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-
     for (SwerveModule swerveModule : swerveModules) {
       swerveModule.setDesiredState(states[swerveModule.getModuleNumber()], false, false);
     }
@@ -589,4 +612,32 @@ public class Drivetrain extends SubsystemBase {
     X,
     CHARACTERIZATION
   }
+
+  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+    Supplier<Pose2d> pose = () -> getPose();
+    Consumer<SwerveModuleState[]> joe = commandStates -> System.out.println("hi");//{setSwerveModuleStates(new YepSwerveModuleState(commandStates.speedMetersPerSecond, commandStates.angle, chassisSpeeds.omegaRadiansPerSecond));};
+
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> {
+          // (PLEASE FIX) Reset odometry for the first path you run during auto 
+          if(isFirstPath){
+              //this.resetOdometry(traj.getInitialHolonomicPose());
+          }
+        }),
+
+
+        new PPSwerveControllerCommand(
+            traj, 
+            pose, // Pose supplier
+            m_kinematics, // SwerveDriveKinematics
+            new PIDController(0, 0, 0), 
+            new PIDController(0, 0, 0), 
+            new PIDController(0, 0, 0),
+            joe, //joe consumer
+            (Subsystem) this // Requires this drive subsystem
+        )
+    );
+    
+    
+}
 }
