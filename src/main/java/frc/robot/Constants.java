@@ -22,7 +22,7 @@ public class Constants {
     //Joystick
     public static final int forwardAxis = 1;
     public static final int strafeAxis = 0;
-    public static final int rotationAxis = 2; //Uncomment for other thing
+    public static final int rotationAxis = 4; //Uncomment for other thing
 
     //Drivetrain Constants
     public static final double driveSpeedCap = 1; //Percent of max speed
@@ -62,6 +62,15 @@ public class Constants {
     public static final double AUTO_TURN_I_CONTROLLER = 0.0;
     public static final double AUTO_TURN_D_CONTROLLER = 0.0;
 
+    //Intake Constants
+    public static final int  intakeMotor = 29;
+
+    //End Constants
+    public static final int END_BOTTOM = 30;
+    public static final int END_TOP = 43;
+    public static final double MAX_END_CURRENT = 40; //Amps
+
+    
     public static final SwerveDriveKinematics KINEMATICS =
       new SwerveDriveKinematics(
           // Front left

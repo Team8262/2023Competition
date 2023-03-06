@@ -17,19 +17,26 @@ import static frc.robot.Constants.*;
 import frc.robot.commands.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 import java.util.HashMap;
 // import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+
 
 public class Auto1 extends SequentialCommandGroup{
     
     public Auto1(Drivetrain drivetrain){
 
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", 4, 3);
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Test Path 1", 4, 3);
 
         HashMap<String, Command> eventMap = new HashMap<>();
+        
+        Consumer<Pose2d> thing = drivetrain::resetPose;
+
 
         eventMap.put("marker1", new PrintCommand("Passed marker 1"));
         eventMap.put("marker2", new PrintCommand("Passed marker 2"));
@@ -37,19 +44,17 @@ public class Auto1 extends SequentialCommandGroup{
         eventMap.put("marker4", new PrintCommand("Passed marker 4"));
         eventMap.put("marker5", new PrintCommand("Passed marker 5"));
         
-/* 
+
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-            drivetrain.getPose(),
-            drivetrain.setStartPose(new Pose2d(0,0,new Rotation2d(0)),
-            YES,
+            drivetrain::getPose,
+            thing,
             new PIDConstants(AUTO_DRIVE_P_CONTROLLER,AUTO_DRIVE_I_CONTROLLER, AUTO_DRIVE_D_CONTROLLER),
             new PIDConstants(AUTO_TURN_P_CONTROLLER, AUTO_TURN_I_CONTROLLER, AUTO_TURN_D_CONTROLLER),
-            drivetrain.getStates(), 
+            drivetrain::getStates, 
             eventMap, 
-            true,
             drivetrain);
 
-        Command fullAuto = autoBuilder.fullAuto(pathGroup);*/
+        Command fullAuto = autoBuilder.fullAuto(pathGroup);
 
     }
 }

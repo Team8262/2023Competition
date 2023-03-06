@@ -16,6 +16,7 @@ import org.jumprobotics.swervedrive.SwerveModuleInterface;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -36,10 +37,21 @@ public class RobotContainer {
     public static Joystick getJoystick(){
       return j;
     }
+
+    private static  JoystickButton intakeCubeButton(){
+      return new JoystickButton(j, 6);
+    }
+
+    private static JoystickButton intakeConeButton(){
+      return new JoystickButton(j, 5);
+    }
+
   }
 
   private Drivetrain m_drivetrain;
   public static Joystick primaryJoystick = new Joystick(0);
+  private Intake intake;
+  private End end;
 
   public RobotContainer() {
 
@@ -74,11 +86,28 @@ public class RobotContainer {
     primaryController.xStanceButton().onTrue(Commands.runOnce(m_drivetrain::enableXstance, m_drivetrain));
     primaryController.xStanceButton().onFalse(Commands.runOnce(m_drivetrain::disableXstance, m_drivetrain));
 
+    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(1.0)));
+    primaryController.intakeConeButton().whileFalse(new InstantCommand(() -> coneIntake(0.0)));
+    primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(1.0)));
+    primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> cubeIntake(0.0)));
+    
 
   }
 
+  public void coneIntake(double speed){
+    intake.setSpeed(speed);
+    end.setConeSpeed(speed);
+  }
+
+  public void cubeIntake(double speed){
+    intake.setSpeed(speed);
+    end.setCubeSpeed(speed);
+  }
+
+
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
+    // return Auto1.fullAuto;
   }
 
   private static double deadband(double value, double deadband) {

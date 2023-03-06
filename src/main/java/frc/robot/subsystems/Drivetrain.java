@@ -245,6 +245,13 @@ public class Drivetrain extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
+  public void resetPose(Pose2d pos){
+    poseEstimator.resetPosition(
+        this.getRotation(),
+        swerveModulePositions,
+        pos);
+  }
+
   /**
    * Sets the odometry of the robot to the specified PathPlanner state. This method should only be
    * invoked when the rotation of the robot is known (e.g., at the start of an autonomous path). The
@@ -341,6 +348,13 @@ public class Drivetrain extends SubsystemBase {
     YepSwerveModuleState[] states = YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
     setSwerveModuleStates(states);
   }
+
+  public void getStates(ChassisSpeeds chassispeeds){
+    YepSwerveModuleState[] states = YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
+    setSwerveModuleStates(states);
+  }
+
+
 
   /**
    * This method is invoked each iteration of the scheduler. Typically, when using a command-based
