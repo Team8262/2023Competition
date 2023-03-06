@@ -613,21 +613,29 @@ public class Drivetrain extends SubsystemBase {
     CHARACTERIZATION
   }
 
-  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+  public Command followTrajectoryCommand(PathPlannerTrajectory trajectory, boolean isFirstPath) {
+    //stupid and dumb lamda expression stufff
     Supplier<Pose2d> pose = () -> getPose();
-    Consumer<SwerveModuleState[]> joe = commandStates -> System.out.println("hi");//{setSwerveModuleStates(new YepSwerveModuleState(commandStates.speedMetersPerSecond, commandStates.angle, chassisSpeeds.omegaRadiansPerSecond));};
+    Consumer<SwerveModuleState[]> joe = commandStates -> {
+      YepSwerveModuleState[] sadff = new YepSwerveModuleState[4];
+      sadff[0] = new YepSwerveModuleState(commandStates[0].speedMetersPerSecond, commandStates[0].angle, 0);
+      sadff[1] = new YepSwerveModuleState(commandStates[1].speedMetersPerSecond, commandStates[1].angle, 0);
+      sadff[2] = new YepSwerveModuleState(commandStates[2].speedMetersPerSecond, commandStates[2].angle, 0);
+      sadff[3] = new YepSwerveModuleState(commandStates[3].speedMetersPerSecond, commandStates[3].angle, 0);
+      setSwerveModuleStates(sadff);
+    };
 
     return new SequentialCommandGroup(
         new InstantCommand(() -> {
           // (PLEASE FIX) Reset odometry for the first path you run during auto 
           if(isFirstPath){
-              //this.resetOdometry(traj.getInitialHolonomicPose());
+              this.resetOdometry(trajectory.getInitialHolonomicPose());
           }
         }),
 
-
+        //generate path command
         new PPSwerveControllerCommand(
-            traj, 
+            trajectory, 
             pose, // Pose supplier
             m_kinematics, // SwerveDriveKinematics
             new PIDController(0, 0, 0), 
@@ -637,7 +645,22 @@ public class Drivetrain extends SubsystemBase {
             (Subsystem) this // Requires this drive subsystem
         )
     );
-    
-    
-}
+  }
+
+  //this is a refactored versioj of the other resetOdometry function.. i have no clue if this works
+  private void resetOdometry(Pose2d initialHolonomicPose) {
+    setGyroOffset(initialHolonomicPose.getRotation().getRadians());
+
+    for (int i = 0; i < 4; i++) {
+      swerveModulePositions[i] = swerveModules[i].getPosition();
+    }
+
+    estimatedPoseWithoutGyro =
+        new Pose2d(initialHolonomicPose.getTranslation(), initialHolonomicPose.getRotation());
+    poseEstimator.resetPosition(
+        this.getRotation(),
+        swerveModulePositions,
+        new Pose2d(initialHolonomicPose.getTranslation(), initialHolonomicPose.getRotation()));
+  }
+
 }
