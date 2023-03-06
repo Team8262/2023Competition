@@ -1,10 +1,10 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -14,11 +14,16 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.*;
 import static frc.robot.Constants.*;
+
+import frc.robot.Constants;
 import frc.robot.commands.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import frc.robot.RobotContainer;
+
 
 
 import java.util.HashMap;
@@ -36,16 +41,19 @@ public class Auto1 extends SequentialCommandGroup{
         HashMap<String, Command> eventMap = new HashMap<>();
         
         Consumer<Pose2d> thing = drivetrain::resetPose;
+        SwerveDriveKinematics kinematics = Constants.KINEMATICS; 
+        Consumer<SwerveModuleState[]> joeph = drivetrain.joe;
+        RobotContainer container = new RobotContainer();
+
+        eventMap.put("start1", new PrintCommand("Passed marker 1"));
+        eventMap.put("place1", new PrintCommand("Passed marker 2"));
+        eventMap.put("pick1", new InstantCommand(() ->  container.coneIntake(1.0)));
+        eventMap.put("pick2", new PrintCommand("Passed marker 4"));
+        eventMap.put("place2", new InstantCommand(() ->  container.coneIntake(0.0)));        
+        // eventMap.put("marker5", new PrintCommand("Passed marker 5"));
 
 
-        eventMap.put("marker1", new PrintCommand("Passed marker 1"));
-        eventMap.put("marker2", new PrintCommand("Passed marker 2"));
-        eventMap.put("marker3", new PrintCommand("Passed marker 3"));
-        eventMap.put("marker4", new PrintCommand("Passed marker 4"));
-        eventMap.put("marker5", new PrintCommand("Passed marker 5"));
-        
-
-        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+        SwerveAutoBuilder autoBuilderC = new SwerveAutoBuilder(
             drivetrain::getPose,
             thing,
             new PIDConstants(AUTO_DRIVE_P_CONTROLLER,AUTO_DRIVE_I_CONTROLLER, AUTO_DRIVE_D_CONTROLLER),
@@ -54,7 +62,25 @@ public class Auto1 extends SequentialCommandGroup{
             eventMap, 
             drivetrain);
 
-        Command fullAuto = autoBuilder.fullAuto(pathGroup);
+        SwerveAutoBuilder autoBuilderS = new SwerveAutoBuilder(
+            drivetrain::getPose,
+            thing,
+            kinematics,
+            new PIDConstants(AUTO_DRIVE_P_CONTROLLER,AUTO_DRIVE_I_CONTROLLER, AUTO_DRIVE_D_CONTROLLER),
+            new PIDConstants(AUTO_TURN_P_CONTROLLER, AUTO_TURN_I_CONTROLLER, AUTO_TURN_D_CONTROLLER),
+            joeph, 
+            eventMap, 
+            drivetrain);
+        
+
+      
+      
+        Command fullAuto = autoBuilderS.fullAuto(pathGroup);
+        
+        // public Commmand getauto(){
+        //     return fullAuto;
+        // }
+
 
     }
 }

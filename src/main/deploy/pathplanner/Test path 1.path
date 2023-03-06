@@ -71,7 +71,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "pick1"
+          "pick2"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -80,11 +80,11 @@
     },
     {
       "anchorPoint": {
-        "x": 1.9066409696800444,
+        "x": 1.8971430359922339,
         "y": 4.691979241778389
       },
       "prevControl": {
-        "x": 3.4989033437782435,
+        "x": 3.4894054100904333,
         "y": 4.696728208622296
       },
       "nextControl": null,
@@ -106,5 +106,18 @@
   "maxVelocity": null,
   "maxAcceleration": null,
   "isReversed": true,
-  "markers": []
+  "markers": [
+    {
+      "position": 0.0,
+      "names": [
+        "pick1"
+      ]
+    },
+    {
+      "position": 1.7636363636364094,
+      "names": [
+        "pick1"
+      ]
+    }
+  ]
 }

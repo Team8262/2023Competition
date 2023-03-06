@@ -486,6 +486,7 @@ public class Drivetrain extends SubsystemBase {
   public void enableFieldRelative() {
     this.isFieldRelative = true;
   }
+  
 
   /**
    * Disables field-relative mode. When disabled, the joystick inputs specify the velocity of the
@@ -627,17 +628,30 @@ public class Drivetrain extends SubsystemBase {
     CHARACTERIZATION
   }
 
+  public Consumer<SwerveModuleState[]> joe = commandStates -> {
+    YepSwerveModuleState[] sadff = new YepSwerveModuleState[4];
+    sadff[0] = new YepSwerveModuleState(commandStates[0].speedMetersPerSecond, commandStates[0].angle, 0);
+    sadff[1] = new YepSwerveModuleState(commandStates[1].speedMetersPerSecond, commandStates[1].angle, 0);
+    sadff[2] = new YepSwerveModuleState(commandStates[2].speedMetersPerSecond, commandStates[2].angle, 0);
+    sadff[3] = new YepSwerveModuleState(commandStates[3].speedMetersPerSecond, commandStates[3].angle, 0);
+    setSwerveModuleStates(sadff);
+  };
+
+  public Consumer<SwerveModuleState[]> getjoe(){
+    return joe;
+  }
+
   public Command followTrajectoryCommand(PathPlannerTrajectory trajectory, boolean isFirstPath) {
     //stupid and dumb lamda expression stufff
     Supplier<Pose2d> pose = () -> getPose();
-    Consumer<SwerveModuleState[]> joe = commandStates -> {
-      YepSwerveModuleState[] sadff = new YepSwerveModuleState[4];
-      sadff[0] = new YepSwerveModuleState(commandStates[0].speedMetersPerSecond, commandStates[0].angle, 0);
-      sadff[1] = new YepSwerveModuleState(commandStates[1].speedMetersPerSecond, commandStates[1].angle, 0);
-      sadff[2] = new YepSwerveModuleState(commandStates[2].speedMetersPerSecond, commandStates[2].angle, 0);
-      sadff[3] = new YepSwerveModuleState(commandStates[3].speedMetersPerSecond, commandStates[3].angle, 0);
-      setSwerveModuleStates(sadff);
-    };
+    // Consumer<SwerveModuleState[]> joe = commandStates -> {
+    //   YepSwerveModuleState[] sadff = new YepSwerveModuleState[4];
+    //   sadff[0] = new YepSwerveModuleState(commandStates[0].speedMetersPerSecond, commandStates[0].angle, 0);
+    //   sadff[1] = new YepSwerveModuleState(commandStates[1].speedMetersPerSecond, commandStates[1].angle, 0);
+    //   sadff[2] = new YepSwerveModuleState(commandStates[2].speedMetersPerSecond, commandStates[2].angle, 0);
+    //   sadff[3] = new YepSwerveModuleState(commandStates[3].speedMetersPerSecond, commandStates[3].angle, 0);
+    //   setSwerveModuleStates(sadff);
+    // };
 
     return new SequentialCommandGroup(
         new InstantCommand(() -> {
@@ -652,9 +666,9 @@ public class Drivetrain extends SubsystemBase {
             trajectory, 
             pose, // Pose supplier
             m_kinematics, // SwerveDriveKinematics
-            new PIDController(0, 0, 0), 
-            new PIDController(0, 0, 0), 
-            new PIDController(0, 0, 0),
+            new PIDController(AUTO_DRIVE_P_CONTROLLER,AUTO_DRIVE_I_CONTROLLER, AUTO_DRIVE_D_CONTROLLER), 
+            new PIDController(AUTO_DRIVE_P_CONTROLLER,AUTO_DRIVE_I_CONTROLLER, AUTO_DRIVE_D_CONTROLLER), 
+            new PIDController(AUTO_TURN_P_CONTROLLER, AUTO_TURN_I_CONTROLLER, AUTO_TURN_D_CONTROLLER),
             joe, //joe consumer
             (Subsystem) this // Requires this drive subsystem
         )

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.commands.Auto1;
 
 public class RobotContainer {
 
@@ -106,8 +107,9 @@ public class RobotContainer {
 
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
-    // return Auto1.fullAuto;
+    // return Commands.print("No autonomous command configured");
+    // Auto1 auto = new Auto1(m_drivetrain);
+    return new Auto1(m_drivetrain);
   }
 
   private static double deadband(double value, double deadband) {
