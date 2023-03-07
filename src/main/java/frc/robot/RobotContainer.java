@@ -26,7 +26,7 @@ import frc.robot.commands.Auto1;
 public class RobotContainer {
 
   //private Drivetrain m_drivetrain = new Drivetrain();
-  private CameraContainer cams;
+  //private CameraContainer cams;
   public static class primaryController{
     private static final Joystick j = new Joystick(0);
 
@@ -75,11 +75,11 @@ public class RobotContainer {
                 rotatesupp
         ));
 
-        try {
+        /*try {
           cams = new CameraContainer();
         } catch(IOException e) {
           
-        }
+        }*/
 
 
 
@@ -95,7 +95,8 @@ public class RobotContainer {
     primaryController.resetGyroButton().onTrue(Commands.runOnce(m_drivetrain::zeroGyroscope, m_drivetrain));
     primaryController.xStanceButton().onTrue(Commands.runOnce(m_drivetrain::enableXstance, m_drivetrain));
     primaryController.xStanceButton().onFalse(Commands.runOnce(m_drivetrain::disableXstance, m_drivetrain));
-
+  
+   
     primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(1.0)));
     primaryController.intakeConeButton().whileFalse(new InstantCommand(() -> coneIntake(0.0)));
     primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(1.0)));
