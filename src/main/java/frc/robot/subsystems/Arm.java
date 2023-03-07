@@ -33,6 +33,10 @@ public class Arm extends SubsystemBase {
   
   private static final boolean DEBUGGING = true;
 
+  //angles
+  private double base_angle;
+  private double upper_angle;
+
    
   /** Creates a new Arm. */
   public Arm() {
@@ -40,6 +44,9 @@ public class Arm extends SubsystemBase {
     base1 = new CANSparkMax(1, MotorType.kBrushless);
     base2 = new CANSparkMax(23, MotorType.kBrushless);
     arm = new CANSparkMax(21, MotorType.kBrushless);
+
+    base_angle = 0.0;
+    upper_angle = 0.0;
 
     base2.follow(base1, false);
 
@@ -119,19 +126,20 @@ public class Arm extends SubsystemBase {
 
   //In radians
   public void setAngles(double lower, double upper){
-    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getBaseFF());
+    // order matters here
     armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getUpperFF());
+    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getBaseFF());
   }
 
   private double getBaseFF(){
-    double angle = baseEncoder.getPosition()*Constants.BASE_LINK_GEAR_RATIO;
-    
-    return Math.cos(angle*2*Math.PI)*Constants.BASE_VOLTAGE_COMPENSATION;
+    base_angle = baseEncoder.getPosition()*Constants.BASE_LINK_GEAR_RATIO;
+    // torque calculation
+    return (Math.cos(base_angle*2*Math.PI)*Constants.BASE_CENTER_OF_MASS*Constants.BASE_MASS+(Math.cos(upper_angle*2*Math.PI)*Constants.UPPER_CENTER_OF_MASS+Math.cos(base_angle*2*Math.PI)*Constants.BASE_LENGTH)*Constants.UPPER_MASS)*Constants.BASE_VOLTAGE_COMPENSATION;
   }
 
   private double getUpperFF(){
-    double angle = armEncoder.getPosition()*Constants.UPPER_LINK_GEAR_RATIO;
-    return Math.cos(angle*2*Math.PI)*Constants.UPPER_VOLTAGE_COMPENSATION;
+    upper_angle = armEncoder.getPosition()*Constants.UPPER_LINK_GEAR_RATIO;
+    return Math.cos(upper_angle*2*Math.PI)*Constants.UPPER_CENTER_OF_MASS*Constants.UPPER_MASS*Constants.UPPER_VOLTAGE_COMPENSATION;
   }
 
   @Override
