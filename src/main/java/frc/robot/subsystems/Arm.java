@@ -17,16 +17,9 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -40,9 +33,6 @@ public class Arm extends SubsystemBase {
   
   private static final boolean DEBUGGING = true;
 
-  private Mechanism2d mech;
-  private MechanismRoot2d root;
-  private MechanismLigament2d base, upper;
    
   /** Creates a new Arm. */
   public Arm() {
@@ -68,6 +58,7 @@ public class Arm extends SubsystemBase {
     baseController.setSmartMotionMaxVelocity(BASE_LINK_MAX_VELOCITY, 0);
     baseController.setSmartMotionMaxAccel(BASE_LINK_MAX_ACCELERATION, 0);
 
+
     armController.setP(UPPER_LINK_VELOCITY_P_CONTROLLER);
     armController.setI(UPPER_LINK_VELOCITY_I_CONTROLLER);
     armController.setD(UPPER_LINK_VELOCITY_D_CONTROLLER);
@@ -79,18 +70,12 @@ public class Arm extends SubsystemBase {
     //armEncoder = arm.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
     baseEncoder = base1.getEncoder();
     armEncoder = arm.getEncoder();
+    baseEncoder.setPosition(2); //These are fake numbers... replace them with init values in rotations
+    armEncoder.setPosition(2);
 
 
     armModel = new TwoJointArm(BASE_LINK_LENGTH, UPPER_LINK_LENGTH);
     armModel.addLookupTable("ArmLookupTable.json");
-
-    mech = new Mechanism2d(6,6);
-    root = mech.getRoot("Base Link", 3, 1);
-    base = root.append(new MechanismLigament2d("base", 3, 90));
-    upper = base.append(new MechanismLigament2d("upper", 3, 90, 6, new Color8Bit(Color.kPurple)));
-
-    SmartDashboard.putData("Mech2d", mech);
-    Logger.getInstance().recordOutput("Arm", mech);
 
     if (DEBUGGING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
@@ -107,7 +92,7 @@ public class Arm extends SubsystemBase {
    * return the current position as radians
    */
   public double[] getCurrentPositions(){
-    double[] angles = {baseEncoder.getPosition()*2*Math.PI, armEncoder.getPosition() * 2 * Math.PI};
+    double[] angles = {baseEncoder.getPosition()*2*Math.PI/BASE_LINK_GEAR_RATIO, armEncoder.getPosition() * 2 * Math.PI/UPPER_LINK_GEAR_RATIO};
     return angles;
   }
 
@@ -127,9 +112,6 @@ public class Arm extends SubsystemBase {
 
     double basePos = posToUse[0] * BASE_LINK_GEAR_RATIO / (2*Math.PI);
     double armPos = posToUse[1] * UPPER_LINK_GEAR_RATIO / (2*Math.PI);
-
-    base.setAngle(new Rotation2d(posToUse[0]));
-    upper.setAngle(new Rotation2d(posToUse[1]));
     
     base1.getPIDController().setReference(basePos, ControlType.kSmartMotion,0,getBaseFF());
     arm.getPIDController().setReference(armPos, ControlType.kSmartMotion,0,getUpperFF());
