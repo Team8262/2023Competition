@@ -38,7 +38,12 @@ public class Constants {
     public static final double BASE_LINK_LENGTH = 0.8001; //meters
     public static final double UPPER_LINK_LENGTH = 0.5842;
 
+    public static final double BASE_VOLTAGE_COMPENSATION = 1.5;//Voltage required to keep base horizontal - should probably test
+    public static final double UPPER_VOLTAGE_COMPENSATION = 1.5; //Voltage required to keep upper horizontal
+
     public static final double MAX_TRANSLATION_SPEED = 1; //meters per second
+    public static final double MAX_ANGULAR_SPEED = 0.2; //Radians per execution loop
+
 
     //Used to convert from final arm angle to motor angle... so 
     public static final double BASE_LINK_GEAR_RATIO = 1.0;

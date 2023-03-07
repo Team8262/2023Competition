@@ -12,15 +12,14 @@ import frc.robot.subsystems.Arm;
 
 import static frc.robot.Constants.*;
 
-public class DefaultArmCommand extends CommandBase {
+public class ManualArmControl extends CommandBase {
 
   private final Arm m_Arm;
   private final DoubleSupplier m_xSupp;
   private final DoubleSupplier m_ySupp;
-  private Translation2d position;
 
   /** Creates a new DefaultArmCommand. */
-  public DefaultArmCommand(Arm armSubsystem, DoubleSupplier xSupp, DoubleSupplier ySupp) {
+  public ManualArmControl(Arm armSubsystem, DoubleSupplier xSupp, DoubleSupplier ySupp) {
     this.m_Arm = armSubsystem;
     this.m_xSupp = xSupp;
     this.m_ySupp = ySupp;
@@ -35,13 +34,11 @@ public class DefaultArmCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d newPosition = new Translation2d(position.getX() + m_xSupp.getAsDouble()*MAX_TRANSLATION_SPEED, position.getY() + m_ySupp.getAsDouble()*MAX_TRANSLATION_SPEED);
-    if(m_Arm.getArmModel().isValid(newPosition)){
-      position = newPosition;
-    }
+    double[] positions = m_Arm.getCurrentPositions();
+    positions[0]+=m_xSupp.getAsDouble()*MAX_ANGULAR_SPEED;
+    positions[1]+=m_ySupp.getAsDouble();
 
-    m_Arm.setPosition(position);
-
+    m_Arm.setAngles(positions[0],positions[1]);
   }
 
 
@@ -49,7 +46,6 @@ public class DefaultArmCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Arm.setPosition(new Translation2d(0.48,0.48));
   }
 
   // Returns true when the command should end.

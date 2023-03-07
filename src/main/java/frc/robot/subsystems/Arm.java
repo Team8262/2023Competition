@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
   public CANSparkMax base1, base2, arm;
@@ -124,14 +125,31 @@ public class Arm extends SubsystemBase {
 
     double[] posToUse = dist1 < dist2 ? pos1 : pos2;
 
-    double basePos = posToUse[0] * BASE_LINK_GEAR_RATIO / 2*Math.PI;
-    double armPos = posToUse[1] * UPPER_LINK_GEAR_RATIO / 2*Math.PI;
+    double basePos = posToUse[0] * BASE_LINK_GEAR_RATIO / (2*Math.PI);
+    double armPos = posToUse[1] * UPPER_LINK_GEAR_RATIO / (2*Math.PI);
 
     base.setAngle(new Rotation2d(posToUse[0]));
     upper.setAngle(new Rotation2d(posToUse[1]));
     
-    base1.getPIDController().setReference(basePos, ControlType.kSmartMotion);
-    arm.getPIDController().setReference(armPos, ControlType.kSmartMotion);
+    base1.getPIDController().setReference(basePos, ControlType.kSmartMotion,0,getBaseFF());
+    arm.getPIDController().setReference(armPos, ControlType.kSmartMotion,0,getUpperFF());
+  }
+
+  //In radians
+  public void setAngles(double lower, double upper){
+    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getBaseFF());
+    armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getUpperFF());
+  }
+
+  private double getBaseFF(){
+    double angle = baseEncoder.getPosition()*Constants.BASE_LINK_GEAR_RATIO;
+    
+    return Math.cos(angle*2*Math.PI)*Constants.BASE_VOLTAGE_COMPENSATION;
+  }
+
+  private double getUpperFF(){
+    double angle = armEncoder.getPosition()*Constants.UPPER_LINK_GEAR_RATIO;
+    return Math.cos(angle*2*Math.PI)*Constants.UPPER_VOLTAGE_COMPENSATION;
   }
 
   @Override
