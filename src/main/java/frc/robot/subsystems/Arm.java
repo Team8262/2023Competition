@@ -48,16 +48,21 @@ public class Arm extends SubsystemBase {
     base_angle = 0.0;
     upper_angle = 0.0;
 
-    base2.follow(base1, false);
+    base2.follow(base1, true);
 
     baseController = base1.getPIDController();
     armController = arm.getPIDController();
 
     //TODO set real limits---these are arbitrary
-    base1.setSoftLimit(SoftLimitDirection.kForward, 2);
-    base1.setSoftLimit(SoftLimitDirection.kReverse, 2);
-    arm.setSoftLimit(SoftLimitDirection.kForward, 2);
-    arm.setSoftLimit(SoftLimitDirection.kReverse, 2);
+    base1.setSoftLimit(SoftLimitDirection.kForward, (float) (2*BASE_LINK_GEAR_RATIO));
+    base1.setSoftLimit(SoftLimitDirection.kReverse, (float) (2*BASE_LINK_GEAR_RATIO));
+    arm.setSoftLimit(SoftLimitDirection.kForward, (float) (2*UPPER_LINK_GEAR_RATIO));
+    arm.setSoftLimit(SoftLimitDirection.kReverse, (float) (2*UPPER_LINK_GEAR_RATIO));
+
+    arm.enableSoftLimit(SoftLimitDirection.kForward, false);
+    arm.enableSoftLimit(SoftLimitDirection.kReverse, false);
+    base1.enableSoftLimit(SoftLimitDirection.kForward, false);
+    base1.enableSoftLimit(SoftLimitDirection.kReverse, false);
 
     baseController.setP(BASE_LINK_VELOCITY_P_CONTROLLER);
     baseController.setI(BASE_LINK_VELOCITY_I_CONTROLLER);
