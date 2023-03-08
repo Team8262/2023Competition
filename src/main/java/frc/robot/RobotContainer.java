@@ -97,7 +97,7 @@ public class RobotContainer {
         DoubleSupplier firstSupp = () -> 1*modifyAxis(secondaryController.getFirstAxis());
         DoubleSupplier secondSupp = () -> 1*modifyAxis(secondaryController.getSecondAxis());
 
-        m_arm.setDefaultCommand(new TestArmCommand(m_arm, firstSupp, secondSupp));
+        m_arm.setDefaultCommand(new ManualArmControl(m_arm, firstSupp, secondSupp));
         
 
     configureBindings();

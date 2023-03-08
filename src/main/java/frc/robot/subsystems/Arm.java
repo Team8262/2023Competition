@@ -41,9 +41,9 @@ public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
   public Arm() {
 
-    base1 = new CANSparkMax(1, MotorType.kBrushless);
+    base1 = new CANSparkMax(25, MotorType.kBrushless);
     base2 = new CANSparkMax(23, MotorType.kBrushless);
-    arm = new CANSparkMax(21, MotorType.kBrushless);
+    arm = new CANSparkMax(1, MotorType.kBrushless);
 
     base_angle = 0.0;
     upper_angle = 0.0;
