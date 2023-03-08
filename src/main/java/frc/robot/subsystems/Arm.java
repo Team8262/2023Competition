@@ -123,6 +123,11 @@ public class Arm extends SubsystemBase {
     armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getUpperFF());
   }
 
+  //Super basic, probably wrong
+  public boolean stowed(){
+    return armModel.toPosition(getCurrentPositions()).getY() <= 0.5;
+  }
+
   private double getBaseFF(){
     double angle = baseEncoder.getPosition()*Constants.BASE_LINK_GEAR_RATIO;
     
