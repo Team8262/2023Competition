@@ -41,7 +41,6 @@ public class IntakeThings extends CommandBase {
 
   private boolean intaked() {
     return end.getTop().getOutputCurrent() > MAX_END_CURRENT || end.getBottom().getOutputCurrent() > MAX_END_CURRENT;
-
   }
 
   // Called once the command ends or is interrupted.

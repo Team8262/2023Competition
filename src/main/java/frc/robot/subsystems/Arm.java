@@ -33,6 +33,10 @@ public class Arm extends SubsystemBase {
   
   private static final boolean DEBUGGING = true;
 
+  //angles
+  private double base_angle;
+  private double upper_angle;
+
    
   /** Creates a new Arm. */
   public Arm() {
@@ -41,12 +45,16 @@ public class Arm extends SubsystemBase {
     base2 = new CANSparkMax(23, MotorType.kBrushless);
     arm = new CANSparkMax(21, MotorType.kBrushless);
 
+    base_angle = 0.0;
+    upper_angle = 0.0;
+
     base2.follow(base1, false);
 
     baseController = base1.getPIDController();
     armController = arm.getPIDController();
 
-    base1.setSoftLimit(SoftLimitDirection.kForward, 2);//These are fake numbers
+    //TODO set real limits---these are arbitrary
+    base1.setSoftLimit(SoftLimitDirection.kForward, 2);
     base1.setSoftLimit(SoftLimitDirection.kReverse, 2);
     arm.setSoftLimit(SoftLimitDirection.kForward, 2);
     arm.setSoftLimit(SoftLimitDirection.kReverse, 2);
@@ -57,7 +65,6 @@ public class Arm extends SubsystemBase {
     baseController.setFF(BASE_LINK_VELOCITY_F_CONTROLLER);
     baseController.setSmartMotionMaxVelocity(BASE_LINK_MAX_VELOCITY, 0);
     baseController.setSmartMotionMaxAccel(BASE_LINK_MAX_ACCELERATION, 0);
-
 
     armController.setP(UPPER_LINK_VELOCITY_P_CONTROLLER);
     armController.setI(UPPER_LINK_VELOCITY_I_CONTROLLER);
@@ -72,7 +79,6 @@ public class Arm extends SubsystemBase {
     armEncoder = arm.getEncoder();
     baseEncoder.setPosition(2); //These are fake numbers... replace them with init values in rotations
     armEncoder.setPosition(2);
-
 
     armModel = new TwoJointArm(BASE_LINK_LENGTH, UPPER_LINK_LENGTH);
     armModel.addLookupTable("ArmLookupTable.json");
@@ -113,14 +119,15 @@ public class Arm extends SubsystemBase {
     double basePos = posToUse[0] * BASE_LINK_GEAR_RATIO / (2*Math.PI);
     double armPos = posToUse[1] * UPPER_LINK_GEAR_RATIO / (2*Math.PI);
     
-    base1.getPIDController().setReference(basePos, ControlType.kSmartMotion,0,getBaseFF());
     arm.getPIDController().setReference(armPos, ControlType.kSmartMotion,0,getUpperFF());
+    base1.getPIDController().setReference(basePos, ControlType.kSmartMotion,0,getBaseFF());
   }
 
   //In radians
   public void setAngles(double lower, double upper){
-    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getBaseFF());
+    // order matters here
     armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getUpperFF());
+    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getBaseFF());
   }
 
   //Super basic, probably wrong
@@ -128,15 +135,26 @@ public class Arm extends SubsystemBase {
     return armModel.toPosition(getCurrentPositions()).getY() <= 0.5;
   }
 
-  private double getBaseFF(){
-    double angle = baseEncoder.getPosition()*Constants.BASE_LINK_GEAR_RATIO;
-    
-    return Math.cos(angle*2*Math.PI)*Constants.BASE_VOLTAGE_COMPENSATION;
+  public void moveTo(double lower, double upper, double speed) {
+    //
   }
 
+  //second
+  private double getBaseFF(){
+    base_angle = baseEncoder.getPosition()*BASE_LINK_GEAR_RATIO;
+    //double torque = (Math.cos(base_angle*2*Math.PI)*BASE_CENTER_OF_MASS*BASE_MASS+(Math.cos(upper_angle*2*Math.PI)*UPPER_CENTER_OF_MASS+Math.cos(base_angle*2*Math.PI)*BASE_LENGTH)*UPPER_MASS);
+    
+    //TODO movement feedforward 
+
+    return 2; //torque*BASE_VOLTAGE_COMPENSATION;
+  }
+
+  //first
   private double getUpperFF(){
-    double angle = armEncoder.getPosition()*Constants.UPPER_LINK_GEAR_RATIO;
-    return Math.cos(angle*2*Math.PI)*Constants.UPPER_VOLTAGE_COMPENSATION;
+    upper_angle = armEncoder.getPosition()*UPPER_LINK_GEAR_RATIO;
+    //double torque = Math.cos(upper_angle*2*Math.PI)*UPPER_CENTER_OF_MASS*UPPER_MASS;
+    //TODO movement feedforward 
+    return 2;//torque*UPPER_VOLTAGE_COMPENSATION;
   }
 
   @Override
