@@ -50,6 +50,10 @@ public class RobotContainer {
       return new JoystickButton(j, 5);
     }
 
+    private static JoystickButton spitOut(){
+      return new JoystickButton(j, 1);
+    }
+
   }
 
   private Drivetrain m_drivetrain;
@@ -97,11 +101,13 @@ public class RobotContainer {
     primaryController.xStanceButton().onFalse(Commands.runOnce(m_drivetrain::disableXstance, m_drivetrain));
   
    
-    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(0.5)));
+    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(0.75)));
     primaryController.intakeConeButton().whileFalse(new InstantCommand(() -> coneIntake(0.0)));
     primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(0.5)));
     primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> cubeIntake(0.0)));
-    
+
+    primaryController.spitOut().whileTrue(new InstantCommand(() -> cubeIntake(-5)));
+    primaryController.spitOut().whileFalse(new InstantCommand(() -> cubeIntake(0)));
 
   }
 
@@ -119,7 +125,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return Commands.print("No autonomous command configured");
     // Auto1 auto = new Auto1(m_drivetrain);
-    return new Auto1(m_drivetrain);
+    return new Auto1(m_drivetrain, this);
   }
 
   private static double deadband(double value, double deadband) {

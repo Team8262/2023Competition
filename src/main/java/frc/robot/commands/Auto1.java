@@ -34,16 +34,15 @@ import java.util.function.Consumer;
 
 public class Auto1 extends SequentialCommandGroup{
     
-    public Auto1(Drivetrain drivetrain){
+    public Auto1(Drivetrain drivetrain, RobotContainer container){
 
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Test Path 1", 4, 3);
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Test_path_1", 4, 3);
 
         HashMap<String, Command> eventMap = new HashMap<>();
         
         Consumer<Pose2d> thing = drivetrain::resetPose;
         SwerveDriveKinematics kinematics = Constants.KINEMATICS; 
         Consumer<SwerveModuleState[]> joeph = drivetrain.joe;
-        RobotContainer container = new RobotContainer();
 
         eventMap.put("start1", new PrintCommand("Passed marker 1"));
         eventMap.put("place1", new PrintCommand("Passed marker 2"));
@@ -76,7 +75,7 @@ public class Auto1 extends SequentialCommandGroup{
       
       
         Command fullAuto = autoBuilderS.fullAuto(pathGroup);
-        
+        addCommands(fullAuto);
         // public Commmand getauto(){
         //     return fullAuto;
         // }
