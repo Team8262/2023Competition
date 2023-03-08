@@ -81,7 +81,7 @@ public class Arm extends SubsystemBase {
     armEncoder.setPosition(2);
 
     armModel = new TwoJointArm(BASE_LINK_LENGTH, UPPER_LINK_LENGTH);
-    armModel.addLookupTable("ArmLookupTable.json");
+    //armModel.addLookupTable("ArmLookupTable.json");
 
     if (DEBUGGING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
@@ -126,8 +126,8 @@ public class Arm extends SubsystemBase {
   //In radians
   public void setAngles(double lower, double upper){
     // order matters here
-    armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getUpperFF());
-    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getBaseFF());
+    armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getUpperFF());
+    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getBaseFF());
   }
 
   //Super basic, probably wrong
@@ -146,7 +146,7 @@ public class Arm extends SubsystemBase {
     
     //TODO movement feedforward 
 
-    return 2; //torque*BASE_VOLTAGE_COMPENSATION;
+    return Math.cos(base_angle)*6; //torque*BASE_VOLTAGE_COMPENSATION;
   }
 
   //first
@@ -154,7 +154,7 @@ public class Arm extends SubsystemBase {
     upper_angle = armEncoder.getPosition()*UPPER_LINK_GEAR_RATIO;
     //double torque = Math.cos(upper_angle*2*Math.PI)*UPPER_CENTER_OF_MASS*UPPER_MASS;
     //TODO movement feedforward 
-    return 2;//torque*UPPER_VOLTAGE_COMPENSATION;
+    return Math.cos(upper_angle)*2;//torque*UPPER_VOLTAGE_COMPENSATION;
   }
 
   @Override
