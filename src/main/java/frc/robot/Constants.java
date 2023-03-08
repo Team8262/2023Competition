@@ -38,21 +38,19 @@ public class Constants {
     public static final double BASE_LINK_LENGTH = 0.8001; //meters
     public static final double UPPER_LINK_LENGTH = 0.5842;
 
-    // Nm compensation units 
+    // in*lb compensation units 
     //TODO actually measure
     public static final double BASE_VOLTAGE_COMPENSATION = 1.5;//Voltage required to keep base horizontal - should probably test
     public static final double UPPER_VOLTAGE_COMPENSATION = 1.5; //Voltage required to keep upper horizontal
 
-    // meters
-    //TODO actually measure 
-    public static final double BASE_CENTER_OF_MASS = 1;
-    public static final double BASE_LENGTH = 2;
-    public static final double UPPER_CENTER_OF_MASS = 1;
+    // inches for some reason
+    public static final double BASE_CENTER_OF_MASS = 17;
+    public static final double BASE_LENGTH = 32;
+    public static final double UPPER_CENTER_OF_MASS = 19;
 
-    // kilos
-    //TODO actually measure
-    public static final double BASE_MASS = 10;
-    public static final double UPPER_MASS = 10;
+    // pounds
+    public static final double BASE_MASS = 16;
+    public static final double UPPER_MASS = 26;
 
     public static final double MAX_TRANSLATION_SPEED = 1; //meters per second
     public static final double MAX_ANGULAR_SPEED = 0.2; //Radians per execution loop
