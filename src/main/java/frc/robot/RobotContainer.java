@@ -54,8 +54,8 @@ public class RobotContainer {
 
   private Drivetrain m_drivetrain;
   public static Joystick primaryJoystick = new Joystick(0);
-  private Intake intake;
-  private End end;
+  private Intake intake = new Intake();
+  private End end = new End();
 
   public RobotContainer() {
 
@@ -97,9 +97,9 @@ public class RobotContainer {
     primaryController.xStanceButton().onFalse(Commands.runOnce(m_drivetrain::disableXstance, m_drivetrain));
   
    
-    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(1.0)));
+    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(0.5)));
     primaryController.intakeConeButton().whileFalse(new InstantCommand(() -> coneIntake(0.0)));
-    primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(1.0)));
+    primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(0.5)));
     primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> cubeIntake(0.0)));
     
 

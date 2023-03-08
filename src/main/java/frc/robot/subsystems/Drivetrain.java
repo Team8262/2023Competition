@@ -691,4 +691,8 @@ public class Drivetrain extends SubsystemBase {
         new Pose2d(initialHolonomicPose.getTranslation(), initialHolonomicPose.getRotation()));
   }
 
+  public ChassisSpeeds getChassisSpeeds() {
+    return chassisSpeeds;
+  }
+
 }
