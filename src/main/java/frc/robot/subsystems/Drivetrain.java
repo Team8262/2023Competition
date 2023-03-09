@@ -205,6 +205,10 @@ public class Drivetrain extends SubsystemBase {
     setGyroOffset(0.0);
   }
 
+  public GyroIOInputsAutoLogged getGyroIOInputs() {
+    return gyroInputs;
+  }
+
   /**
    * Returns the rotation of the robot. Zero degrees is facing away from the driver station; CCW is
    * positive. This method should always be invoked instead of obtaining the yaw directly from the

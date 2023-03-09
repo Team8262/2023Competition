@@ -16,8 +16,6 @@ import frc.robot.subsystems.Drivetrain;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AutoBalance extends PIDCommand {
   /** Creates a new AutoBalance. */
-
-  private static AHRS gyro = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
   private Drivetrain dt;
 
   public AutoBalance(Drivetrain dt) {
@@ -25,7 +23,7 @@ public class AutoBalance extends PIDCommand {
         // The controller that the command will use
         new PIDController(3, 0, 0.2),
         // This should return the measurement
-        () -> AutoBalance.getGyroAngle(),
+        () -> dt.getGyroIOInputs().connected ? dt.getGyroIOInputs().pitchPosition : 0,
         // This should return the setpoint (can also be a constant)
         () -> 0,
         // This uses the output
@@ -38,11 +36,6 @@ public class AutoBalance extends PIDCommand {
     getController().setTolerance(4);
 
     // Configure additional PID options by calling `getController` here.
-  }
-
-  // In degrees
-  private static double getGyroAngle(){
-    return gyro.getPitch();
   }
 
   // Returns true when the command should end.

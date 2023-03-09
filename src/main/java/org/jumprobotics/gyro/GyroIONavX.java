@@ -17,6 +17,7 @@ public class GyroIONavX implements GyroIO{
       inputs.connected =gyro.isConnected();
       inputs.positionDeg = -gyro.getYaw(); // degrees
       inputs.velocityDegPerSec = -gyro.getRate(); //xyzDps[2]  degrees per second
+      inputs.pitchPosition = gyro.getPitch(); // degrees
     }
     
 }
