@@ -37,6 +37,9 @@ public class Constants {
     //Arm Subsystem
     public static final double BASE_LINK_LENGTH = 0.8001; //meters
     public static final double UPPER_LINK_LENGTH = 0.5842;
+    public static final int ARM_MOTOR = 1;
+    public static final int BASE_1_MOTOR = 23;
+    public static final int BASE_2_MOTOR = 25;
 
     // in*lb compensation units 
     //TODO actually measure
