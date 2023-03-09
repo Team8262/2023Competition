@@ -71,8 +71,8 @@ public class Constants {
     public static final int  intakeMotor = 29;
 
     //End Constants
-    public static final int END_BOTTOM = 21;
-    public static final int END_TOP = 22;
+    public static final int END_BOTTOM = 22;
+    public static final int END_TOP = 21;
     public static final double MAX_END_CURRENT = 40; //Amps
 
     

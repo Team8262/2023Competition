@@ -21,17 +21,17 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.commands.Auto1;
 
 public class RobotContainer {
 
   //private Drivetrain m_drivetrain = new Drivetrain();
-  public Vision vision;
-
+  //private CameraContainer cams;
   public static class primaryController{
     private static final Joystick j = new Joystick(0);
 
     public static JoystickButton resetGyroButton(){
-      return new JoystickButton(j,1);
+      return new JoystickButton(j,4);
     }
 
     public static JoystickButton xStanceButton(){
@@ -50,13 +50,8 @@ public class RobotContainer {
       return new JoystickButton(j, 5);
     }
 
-    private static JoystickButton spitOut(){
+    private static JoystickButton spitOutButton(){
       return new JoystickButton(j, 1);
-    }
-
-    //temporary button for testing auto align
-    private static JoystickButton GoToAuto() {
-      return new JoystickButton(j, 3);
     }
 
   }
@@ -83,11 +78,11 @@ public class RobotContainer {
                 strafesupp,
                 rotatesupp
         ));
-        /* 
-        try {
-          vision = new Vision();
+
+        /*try {
+          cams = new CameraContainer();
         } catch(IOException e) {
-          System.out.println("camera cant be made lol");
+          
         }*/
 
 
@@ -106,15 +101,13 @@ public class RobotContainer {
     primaryController.xStanceButton().onFalse(Commands.runOnce(m_drivetrain::disableXstance, m_drivetrain));
   
    
-    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(0.75)));
+    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(0.5)));
     primaryController.intakeConeButton().whileFalse(new InstantCommand(() -> coneIntake(0.0)));
     primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(0.5)));
     primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> cubeIntake(0.0)));
-
-    primaryController.spitOut().whileTrue(new InstantCommand(() -> cubeIntake(-5)));
-    primaryController.spitOut().whileFalse(new InstantCommand(() -> cubeIntake(0)));
-
-    //primaryController.GoToAuto().onTrue(new InstantCommand(() -> new GoToAuto(0, m_drivetrain, vision.getVisualPose())));
+   
+    primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(0.5)));
+    primaryController.spitOutButton().whileFalse(new InstantCommand(() -> spitout(0.0)));
 
   }
 
@@ -128,11 +121,16 @@ public class RobotContainer {
     end.setCubeSpeed(speed);
   }
 
+  public void spitout(double speed){
+    intake.setSpeed(-speed);
+    end.setConeSpeed(-speed);
+  }
+  
 
   public Command getAutonomousCommand() {
     // return Commands.print("No autonomous command configured");
-    // Auto1 auto = new Auto1(m_drivetrain);
-    return new Auto1(m_drivetrain, this);
+    Auto1 auto = new Auto1(m_drivetrain, this);
+    return auto;
   }
 
   private static double deadband(double value, double deadband) {
