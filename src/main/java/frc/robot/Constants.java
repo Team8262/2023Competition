@@ -38,8 +38,8 @@ public class Constants {
     public static final double BASE_LINK_LENGTH = 0.8128; //meters
     public static final double UPPER_LINK_LENGTH = 0.635+0.1778;//double check this one
     public static final int ARM_MOTOR = 1;
-    public static final int BASE_1_MOTOR = 23;
-    public static final int BASE_2_MOTOR = 25;
+    public static final int BASE_1_MOTOR = 25;
+    public static final int BASE_2_MOTOR = 23;
 
     // in*lb compensation units 
     //TODO actually measure
