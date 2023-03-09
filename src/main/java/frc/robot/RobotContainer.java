@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
 import static frc.robot.Constants.*;
@@ -21,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.commands.Auto1;
 
 public class RobotContainer {
 
@@ -56,34 +56,57 @@ public class RobotContainer {
 
   }
 
+  public static class secondaryController{
+    private static final Joystick j = new Joystick(1);
+
+    public static Joystick getJoystick(){
+      return j;
+    }
+
+    public static JoystickButton scoreHigh(){
+      return new JoystickButton(j, 1);
+    }
+
+  }
+
   private Drivetrain m_drivetrain;
-  public static Joystick primaryJoystick = new Joystick(0);
+  //public static Joystick primaryJoystick = new Joystick(0);
   private Intake intake = new Intake();
   private End end = new End();
-
+  private Arm arm = new Arm();
+  private HashMap<String, double[][]> armPaths = new HashMap<String, double[][]>();
+  
   public RobotContainer() {
 
-        buildRobot();
+    armPaths.put("high", new double[][]{{0,0}});
 
-        // double forward = 0.0;
-        DoubleSupplier forwardsupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+
+    buildRobot();
+
+    // double forward = 0.0;
+    DoubleSupplier forwardsupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
      
-        DoubleSupplier strafesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+    DoubleSupplier strafesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
     
-         DoubleSupplier rotatesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
+    DoubleSupplier rotatesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
     
-        m_drivetrain.setDefaultCommand(new DefaultDriveCommand(
-                m_drivetrain, 
-                forwardsupp,
-                strafesupp,
-                rotatesupp
-        ));
+    m_drivetrain.setDefaultCommand(new DefaultDriveCommand(
+            m_drivetrain, 
+            forwardsupp,
+            strafesupp,
+            rotatesupp
+    ));
 
-        /*try {
-          cams = new CameraContainer();
-        } catch(IOException e) {
-          
-        }*/
+    DoubleSupplier baseSupp = () -> modifyAxis(getSecondaryJoystick().getRawAxis(0))*MAX_ANGULAR_SPEED;
+    DoubleSupplier armSupp = () -> modifyAxis(getSecondaryJoystick().getRawAxis(1))*MAX_ANGULAR_SPEED;
+
+    arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
+
+    /*try {
+      cams = new CameraContainer();
+    } catch(IOException e) {
+      
+    }*/
 
 
 
@@ -91,7 +114,11 @@ public class RobotContainer {
   }
 
   public Joystick getPrimaryJoystick(){
-    return primaryJoystick;
+    return primaryController.getJoystick();
+  }
+
+  public Joystick getSecondaryJoystick(){
+    return secondaryController.getJoystick();
   }
 
   private void configureBindings() {
@@ -108,6 +135,8 @@ public class RobotContainer {
    
     primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(0.5)));
     primaryController.spitOutButton().whileFalse(new InstantCommand(() -> spitout(0.0)));
+
+    secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
 
   }
 

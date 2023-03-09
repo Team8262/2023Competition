@@ -70,6 +70,36 @@ public class Constants {
     //Intake Constants
     public static final int  intakeMotor = 29;
 
+    //Arm Subsystem
+    public static final double BASE_LINK_LENGTH = 0.8128; //meters
+    public static final double UPPER_LINK_LENGTH = 0.635+0.1778;//double check this one
+
+    public static final double BASE_VOLTAGE_COMPENSATION = 1.5;//Voltage required to keep base horizontal - should probably test
+    public static final double UPPER_VOLTAGE_COMPENSATION = 1.5; //Voltage required to keep upper horizontal
+    
+    public static final double MAX_TRANSLATION_SPEED = 1; //meters per second
+    public static final double MAX_ANGULAR_SPEED = 0.1; //Radians per execution loop
+
+    //Used to convert from final arm angle to motor angle... so 
+    public static final double BASE_LINK_GEAR_RATIO = 4*4*3*30/15;
+    public static final double UPPER_LINK_GEAR_RATIO = 5*4*4*42/22;
+
+    public static final double BASE_LINK_VELOCITY_P_CONTROLLER = 6.0;
+    public static final double BASE_LINK_VELOCITY_I_CONTROLLER = 0.0;
+    public static final double BASE_LINK_VELOCITY_D_CONTROLLER = 0.5;
+    public static final double BASE_LINK_VELOCITY_F_CONTROLLER = 0.0;
+
+    public static final double BASE_LINK_MAX_VELOCITY = 0.0; //RPM
+    public static final double BASE_LINK_MAX_ACCELERATION = 0.0;
+
+    public static final double UPPER_LINK_VELOCITY_P_CONTROLLER = 8.0;
+    public static final double UPPER_LINK_VELOCITY_I_CONTROLLER = 0.0;
+    public static final double UPPER_LINK_VELOCITY_D_CONTROLLER = 0.2;
+    public static final double UPPER_LINK_VELOCITY_F_CONTROLLER = 0.0;
+
+    public static final double UPPER_LINK_MAX_VELOCITY = 50.0; //RPM
+    public static final double UPPER_LINK_MAX_ACCELERATION = 50.0;
+
     //End Constants
     public static final int END_BOTTOM = 22;
     public static final int END_TOP = 21;
