@@ -75,6 +75,10 @@ public class RobotContainer {
   private End end = new End();
   private Arm arm = new Arm();
 
+  public Drivetrain getDrivetrain(){
+    return m_drivetrain;
+  }
+
   //Currently using raw (rotations)
   private HashMap<String, double[][]> armPaths = new HashMap<String, double[][]>();
   

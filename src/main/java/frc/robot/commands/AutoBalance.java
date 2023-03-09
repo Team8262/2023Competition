@@ -17,7 +17,7 @@ import frc.robot.subsystems.Drivetrain;
 public class AutoBalance extends PIDCommand {
   /** Creates a new AutoBalance. */
 
-  private static AHRS gyro;
+  private static AHRS gyro = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
   private Drivetrain dt;
 
   public AutoBalance(Drivetrain dt) {
@@ -33,10 +33,8 @@ public class AutoBalance extends PIDCommand {
           dt.drive(0, output, 0);
         });
         
-    this.dt = dt;
-    gyro = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX connected over MXP
     addRequirements(dt);
-
+    this.dt = dt;
     getController().setTolerance(4);
 
     // Configure additional PID options by calling `getController` here.
@@ -51,5 +49,11 @@ public class AutoBalance extends PIDCommand {
   @Override
   public boolean isFinished() {
     return getController().atSetpoint();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    super.end(interrupted);
+    dt.drive(0, 0, 0);
   }
 }
