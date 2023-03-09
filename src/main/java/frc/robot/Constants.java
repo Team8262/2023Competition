@@ -7,7 +7,10 @@ package frc.robot;
 import org.jumprobotics.swervedrive.SecondSwerveKinematics;
 import org.jumprobotics.swervedrive.SwerveModuleConstants;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 /** Add your docs here. */
@@ -117,6 +120,11 @@ public class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 12; // FIXME Set back right steer encoder ID
     // public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 352.08;//Math.toRadians(352.08); //ID 3
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 286.4 + 180;//Math.toRadians(352.08); //ID 3
+
+    public static final Transform3d LIMELIGHT_POSITION = new Transform3d(
+        new Translation3d(0, 0, 0), 
+        new Rotation3d(0,0,0) //one of the values might need to be flipped by 180 because the limelight is mounted on the back
+    );
 
 
 }

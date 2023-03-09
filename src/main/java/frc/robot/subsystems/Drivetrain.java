@@ -44,6 +44,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+
 import org.jumprobotics.util.RobotOdometry;
 
 /**
@@ -107,11 +109,15 @@ public class Drivetrain extends SubsystemBase {
   private static final boolean DEBUGGING = true;
 
   private final SwerveDrivePoseEstimator poseEstimator;
+  private Pose2d wheelOdomoetryDrift = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
   private Timer timer;
   private boolean brakeMode;
 
   private DriveMode driveMode = DriveMode.NORMAL;
   private double characterizationVoltage = 0.0;
+
+  private Vision vision;
+  private RobotContainer robotContainer;
 
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
           // Front left
@@ -126,11 +132,13 @@ public class Drivetrain extends SubsystemBase {
 
   /** Constructs a new DrivetrainSubsystem object. */
   public Drivetrain(
+      RobotContainer robotContainer,
       GyroIO gyroIO,
       SwerveModule flModule,
       SwerveModule frModule,
       SwerveModule blModule,
       SwerveModule brModule) {
+    this.robotContainer = robotContainer;
     this.gyroIO = gyroIO;
     this.swerveModules[0] = flModule;
     this.swerveModules[1] = frModule;
@@ -182,6 +190,8 @@ public class Drivetrain extends SubsystemBase {
       tab.add("Enable XStance", new InstantCommand(this::enableXstance));
       tab.add("Disable XStance", new InstantCommand(this::disableXstance));
     }
+
+    vision = robotContainer.vision;
   }
 
   /**
@@ -242,6 +252,24 @@ public class Drivetrain extends SubsystemBase {
    * @return the pose of the robot
    */
   public Pose2d getPose() {
+/* 
+    Pose2d visualPose2d = vision.getVisualPose();
+    Pose2d wheelPose2d = poseEstimator.getEstimatedPosition();
+
+    if(vision.fudicalsExist()) {
+      wheelOdomoetryDrift = new Pose2d(
+        new Translation2d(visualPose2d.getX() - wheelPose2d.getX(), visualPose2d.getY() - visualPose2d.getY()),
+        new Rotation2d(visualPose2d.getRotation().getRadians() - wheelPose2d.getRotation().getRadians())
+        );
+      return visualPose2d;
+    }
+    else {
+      return new Pose2d(
+        new Translation2d(wheelOdomoetryDrift.getX() + wheelPose2d.getX(), wheelOdomoetryDrift.getY() + visualPose2d.getY()),
+        new Rotation2d(wheelOdomoetryDrift.getRotation().getRadians() + wheelPose2d.getRotation().getRadians())
+        );
+      //return poseEstimator.getEstimatedPosition();
+    }*/
     return poseEstimator.getEstimatedPosition();
   }
 

@@ -25,9 +25,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Vision extends SubsystemBase {
 
@@ -38,13 +41,15 @@ public class Vision extends SubsystemBase {
   private AprilTagFieldLayout aprilTagFieldLayout;
   
   private RobotPoseEstimator robotPoseEstimator;
-  private Pose2d currentPose2d = new Pose2d(0,0,new Rotation2d(0));
-  private Transform3d robotToCam = new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0));
+  private Pose2d currentPose2d = new Pose2d(0,0,new Rotation2d(0)); //this may need to be updater pre-emptively before the match
   private Double poseLatency = 0.0;
 
   //define all cameras here!
   private PhotonCamera limelightCamera = new PhotonCamera("OV5647");
   //private PhotonCamera cam;
+
+  NetworkTableInstance instance = NetworkTableInstance.getDefault();
+  NetworkTable table = instance.getTable("photonvision");
 
   /** Creates a new Vision. */
   public Vision() throws IOException{
@@ -52,7 +57,7 @@ public class Vision extends SubsystemBase {
 
      //add all your cameras here!
      var camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
-     camList.add(new Pair<PhotonCamera, Transform3d>(limelightCamera, robotToCam));
+     camList.add(new Pair<PhotonCamera, Transform3d>(limelightCamera, Constants.LIMELIGHT_POSITION));
      
      aprilTagFieldLayout  = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
      robotPoseEstimator = new RobotPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camList);
@@ -93,5 +98,10 @@ public class Vision extends SubsystemBase {
 
   public Pose2d getVisualPose() {
     return currentPose2d;
+  }
+
+  public boolean fudicalsExist() {
+    SmartDashboard.putBoolean("has targets", table.getEntry("hasTarget").getBoolean(false));
+    return table.getEntry("hasTarget").getBoolean(false);
   }
 }

@@ -21,12 +21,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.commands.Auto1;
 
 public class RobotContainer {
 
   //private Drivetrain m_drivetrain = new Drivetrain();
-  //private CameraContainer cams;
+  public Vision vision;
+
   public static class primaryController{
     private static final Joystick j = new Joystick(0);
 
@@ -54,6 +54,11 @@ public class RobotContainer {
       return new JoystickButton(j, 1);
     }
 
+    //temporary button for testing auto align
+    private static JoystickButton GoToAuto() {
+      return new JoystickButton(j, 3);
+    }
+
   }
 
   private Drivetrain m_drivetrain;
@@ -78,11 +83,11 @@ public class RobotContainer {
                 strafesupp,
                 rotatesupp
         ));
-
-        /*try {
-          cams = new CameraContainer();
+        /* 
+        try {
+          vision = new Vision();
         } catch(IOException e) {
-          
+          System.out.println("camera cant be made lol");
         }*/
 
 
@@ -108,6 +113,8 @@ public class RobotContainer {
 
     primaryController.spitOut().whileTrue(new InstantCommand(() -> cubeIntake(-5)));
     primaryController.spitOut().whileFalse(new InstantCommand(() -> cubeIntake(0)));
+
+    //primaryController.GoToAuto().onTrue(new InstantCommand(() -> new GoToAuto(0, m_drivetrain, vision.getVisualPose())));
 
   }
 
@@ -186,7 +193,7 @@ public class RobotContainer {
             3,
             MAX_VELOCITY_METERS_PER_SECOND);
 
-    m_drivetrain = new Drivetrain(gyro, flModule, frModule, blModule, brModule);
+    m_drivetrain = new Drivetrain(this, gyro, flModule, frModule, blModule, brModule);
   }
 
   private static double modifyAxis(double value) {

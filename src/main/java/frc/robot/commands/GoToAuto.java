@@ -23,6 +23,7 @@ public class GoToAuto extends SequentialCommandGroup{
     Drivetrain drivetrain;
     Pose2d robotPose2d;
 
+    //these values need to be set
     final Pose2d[] TARGETS = {
         new Pose2d(0,0, new Rotation2d(0)),
         new Pose2d(0,0, new Rotation2d(0)),
@@ -48,7 +49,7 @@ public class GoToAuto extends SequentialCommandGroup{
             new PathConstraints(Constants.MAX_VELOCITY_METERS_PER_SECOND, Constants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED), 
             false,
             new ArrayList<PathPoint>() {{
-                PathPoint.fromCurrentDifferentialState(robotPose2d, drivetrain.getChassisSpeeds());
+                PathPoint.fromCurrentHolonomicState(robotPose2d, drivetrain.getChassisSpeeds());
                 new PathPoint(
                     new Translation2d(TARGETS[id].getX(), 
                     TARGETS[id].getY()), 
