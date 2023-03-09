@@ -41,24 +41,19 @@ public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
   public Arm() {
 
-    base1 = new CANSparkMax(1, MotorType.kBrushless);
+    base1 = new CANSparkMax(25, MotorType.kBrushless);
     base2 = new CANSparkMax(23, MotorType.kBrushless);
-    arm = new CANSparkMax(21, MotorType.kBrushless);
+    arm = new CANSparkMax(1, MotorType.kBrushless);
 
     base_angle = 0.0;
     upper_angle = 0.0;
 
-    base2.follow(base1, false);
+    base2.follow(base1, true);
 
     baseController = base1.getPIDController();
     armController = arm.getPIDController();
 
     //TODO set real limits---these are arbitrary
-    base1.setSoftLimit(SoftLimitDirection.kForward, 2);
-    base1.setSoftLimit(SoftLimitDirection.kReverse, 2);
-    arm.setSoftLimit(SoftLimitDirection.kForward, 2);
-    arm.setSoftLimit(SoftLimitDirection.kReverse, 2);
-
     baseController.setP(BASE_LINK_VELOCITY_P_CONTROLLER);
     baseController.setI(BASE_LINK_VELOCITY_I_CONTROLLER);
     baseController.setD(BASE_LINK_VELOCITY_D_CONTROLLER);

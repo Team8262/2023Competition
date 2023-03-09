@@ -28,8 +28,8 @@ public class Constants {
     public static final int INTAKEMOTOR = 29;
 
     //End Constants
-    public static final int END_BOTTOM = 30;
-    public static final int END_TOP = 43;
+    public static final int END_BOTTOM = 21;
+    public static final int END_TOP = 22;
     public static final double MAX_END_CURRENT = 40; //Amps
 
 

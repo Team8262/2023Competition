@@ -34,7 +34,7 @@ public class RobotContainer {
     }
 
     public static JoystickButton intakeButton(){
-      return new JoystickButton(j, 4);
+      return new JoystickButton(j, 5);
     }
 
     public static double getForwardAxis(){
