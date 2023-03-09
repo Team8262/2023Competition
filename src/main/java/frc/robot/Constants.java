@@ -17,7 +17,7 @@ public class Constants {
     public static final boolean TUNING_MODE = true;
 
     // FIXME: an empty string uses the default CAN bus; specify the name of the CANivore as appropriate
-    public static final String CAN_BUS_NAME = "";
+    public static final String CAN_BUS_NAME = "swerve";
 
     //Drivetrain Constants
     public static final double driveSpeedCap = 1; //Percent of max speed
@@ -35,8 +35,8 @@ public class Constants {
 
 
     //Arm Subsystem
-    public static final double BASE_LINK_LENGTH = 0.8001; //meters
-    public static final double UPPER_LINK_LENGTH = 0.5842;
+    public static final double BASE_LINK_LENGTH = 0.8128; //meters
+    public static final double UPPER_LINK_LENGTH = 0.635+0.1778;//double check this one
     public static final int ARM_MOTOR = 1;
     public static final int BASE_1_MOTOR = 23;
     public static final int BASE_2_MOTOR = 25;
@@ -56,28 +56,28 @@ public class Constants {
     public static final double UPPER_MASS = 26;
 
     public static final double MAX_TRANSLATION_SPEED = 1; //meters per second
-    public static final double MAX_ANGULAR_SPEED = 0.2; //Radians per execution loop
+    public static final double MAX_ANGULAR_SPEED = 0.1; //Radians per execution loop
 
 
     //Used to convert from final arm angle to motor angle... so 
-    public static final double BASE_LINK_GEAR_RATIO = 1.0;
-    public static final double UPPER_LINK_GEAR_RATIO = 1.0;
+    public static final double BASE_LINK_GEAR_RATIO = 4*4*3*30/15;
+    public static final double UPPER_LINK_GEAR_RATIO = 5*4*4*42/22;
 
-    public static final double BASE_LINK_VELOCITY_P_CONTROLLER = 0.0;
+    public static final double BASE_LINK_VELOCITY_P_CONTROLLER = 6.0;
     public static final double BASE_LINK_VELOCITY_I_CONTROLLER = 0.0;
-    public static final double BASE_LINK_VELOCITY_D_CONTROLLER = 0.0;
+    public static final double BASE_LINK_VELOCITY_D_CONTROLLER = 0.5;
     public static final double BASE_LINK_VELOCITY_F_CONTROLLER = 0.0;
 
     public static final double BASE_LINK_MAX_VELOCITY = 0.0; //RPM
     public static final double BASE_LINK_MAX_ACCELERATION = 0.0;
 
-    public static final double UPPER_LINK_VELOCITY_P_CONTROLLER = 0.0;
+    public static final double UPPER_LINK_VELOCITY_P_CONTROLLER = 8.0;
     public static final double UPPER_LINK_VELOCITY_I_CONTROLLER = 0.0;
-    public static final double UPPER_LINK_VELOCITY_D_CONTROLLER = 0.0;
+    public static final double UPPER_LINK_VELOCITY_D_CONTROLLER = 0.2;
     public static final double UPPER_LINK_VELOCITY_F_CONTROLLER = 0.0;
 
-    public static final double UPPER_LINK_MAX_VELOCITY = 0.0; //RPM
-    public static final double UPPER_LINK_MAX_ACCELERATION = 0.0;
+    public static final double UPPER_LINK_MAX_VELOCITY = 50.0; //RPM
+    public static final double UPPER_LINK_MAX_ACCELERATION = 50.0;
     
 
 

@@ -57,8 +57,11 @@ public class TwoJointArm implements Arm{
         return new double[][]{solution1, solution2};
     }
 
+    //This doesn't seem right - should check later
     public Translation2d toPosition(double[] angles) {
-        return new Translation2d();
+        double x = length1 * Math.cos(angles[0]) + length2 * Math.cos(angles[0] + angles[1]);
+        double y = length1 * Math.sin(angles[0]) + length2 * Math.sin(angles[0] + angles[1]);
+        return new Translation2d(x, y);
     }
 
 

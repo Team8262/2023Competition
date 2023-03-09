@@ -41,9 +41,9 @@ public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
   public Arm() {
 
-    base1 = new CANSparkMax(BASE_1_MOTOR, MotorType.kBrushless);
-    base2 = new CANSparkMax(BASE_2_MOTOR, MotorType.kBrushless);
-    arm = new CANSparkMax(ARM_MOTOR, MotorType.kBrushless);
+    base1 = new CANSparkMax(25, MotorType.kBrushless);
+    base2 = new CANSparkMax(23, MotorType.kBrushless);
+    arm = new CANSparkMax(1, MotorType.kBrushless);
 
     base_angle = 0.0;
     upper_angle = 0.0;
@@ -54,6 +54,16 @@ public class Arm extends SubsystemBase {
     armController = arm.getPIDController();
 
     //TODO set real limits---these are arbitrary
+    base1.setSoftLimit(SoftLimitDirection.kForward, (float) (2*BASE_LINK_GEAR_RATIO));
+    base1.setSoftLimit(SoftLimitDirection.kReverse, (float) (2*BASE_LINK_GEAR_RATIO));
+    arm.setSoftLimit(SoftLimitDirection.kForward, (float) (2*UPPER_LINK_GEAR_RATIO));
+    arm.setSoftLimit(SoftLimitDirection.kReverse, (float) (2*UPPER_LINK_GEAR_RATIO));
+
+    arm.enableSoftLimit(SoftLimitDirection.kForward, false);
+    arm.enableSoftLimit(SoftLimitDirection.kReverse, false);
+    base1.enableSoftLimit(SoftLimitDirection.kForward, false);
+    base1.enableSoftLimit(SoftLimitDirection.kReverse, false);
+
     baseController.setP(BASE_LINK_VELOCITY_P_CONTROLLER);
     baseController.setI(BASE_LINK_VELOCITY_I_CONTROLLER);
     baseController.setD(BASE_LINK_VELOCITY_D_CONTROLLER);
@@ -76,7 +86,7 @@ public class Arm extends SubsystemBase {
     armEncoder.setPosition(2);
 
     armModel = new TwoJointArm(BASE_LINK_LENGTH, UPPER_LINK_LENGTH);
-    armModel.addLookupTable("ArmLookupTable.json");
+    //armModel.addLookupTable("ArmLookupTable.json");
 
     if (DEBUGGING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
@@ -121,8 +131,13 @@ public class Arm extends SubsystemBase {
   //In radians
   public void setAngles(double lower, double upper){
     // order matters here
-    armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getUpperFF());
-    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kSmartMotion,0,getBaseFF());
+    armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getUpperFF());
+    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getBaseFF());
+  }
+
+  //Super basic, probably wrong
+  public boolean stowed(){
+    return armModel.toPosition(getCurrentPositions()).getY() <= 0.5;
   }
 
   public void moveTo(double lower, double upper, double speed) {

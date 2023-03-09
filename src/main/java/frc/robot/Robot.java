@@ -7,7 +7,6 @@ package frc.robot;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
@@ -24,14 +23,14 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
 
-    Logger logger = Logger.getInstance();
+    //Logger logger = Logger.getInstance();
 
-    logger.recordMetadata("RuntimeType", getRuntimeType().toString());
-    logger.recordMetadata("ProjectName", "2023CompetitionCode");
+    //logger.recordMetadata("RuntimeType", getRuntimeType().toString());
+    //logger.recordMetadata("ProjectName", "2023CompetitionCode");
 
     if (isReal()) {
-      Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
-      Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+      //Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
+      //Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
       new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
         setUseTiming(false); // Run as fast as possible
@@ -40,8 +39,8 @@ public class Robot extends LoggedRobot {
         Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
     }
 
-    logger.start();
-
+    //logger.start();
+    /*
     CommandScheduler.getInstance()
     .onCommandInitialize(
         command -> Logger.getInstance().recordOutput("Command initialized", command.getName()));
@@ -51,7 +50,7 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance()
     .onCommandFinish(
         command -> Logger.getInstance().recordOutput("Command finished", command.getName()));
-
+*/
     m_robotContainer = new RobotContainer();
 
   }

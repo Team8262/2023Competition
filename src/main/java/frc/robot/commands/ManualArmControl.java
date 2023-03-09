@@ -36,7 +36,7 @@ public class ManualArmControl extends CommandBase {
   public void execute() {
     double[] positions = m_Arm.getCurrentPositions();
     positions[0]+=m_xSupp.getAsDouble()*MAX_ANGULAR_SPEED;
-    positions[1]+=m_ySupp.getAsDouble();
+    positions[1]+=m_ySupp.getAsDouble()*MAX_ANGULAR_SPEED;
 
     m_Arm.setAngles(positions[0],positions[1]);
   }
