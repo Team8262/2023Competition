@@ -102,6 +102,12 @@ public class Arm extends SubsystemBase {
     return angles;
   }
 
+  //return raw in rotations
+  public double[] getRawPositions(){
+    double[] angles = {baseEncoder.getPosition(), armEncoder.getPosition()};
+    return angles;
+  }
+
   /*
   public void setPosition(Translation2d pos){
 
@@ -129,6 +135,12 @@ public class Arm extends SubsystemBase {
     // order matters here
     armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getUpperFF());
     baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getBaseFF());
+  }
+
+  //In rotations
+  public void setAnglesRaw(double lower, double upper){
+    armController.setReference(upper, ControlType.kPosition,0,getUpperFF());
+    baseController.setReference(lower, ControlType.kPosition,0,getBaseFF());
   }
 
   //Super basic, probably wrong

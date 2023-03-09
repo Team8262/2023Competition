@@ -74,11 +74,13 @@ public class RobotContainer {
   private Intake intake = new Intake();
   private End end = new End();
   private Arm arm = new Arm();
+
+  //Currently using raw (rotations)
   private HashMap<String, double[][]> armPaths = new HashMap<String, double[][]>();
   
   public RobotContainer() {
 
-    armPaths.put("high", new double[][]{{0,0}});
+    armPaths.put("high", new double[][]{{44,35}});
 
 
     buildRobot();

@@ -28,14 +28,14 @@ public class FollowArmPath extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.setAngles(path[step][0], path[step][1]);
+    arm.setAnglesRaw(path[step][0], path[step][1]);
     if(atPoint(path[step][0], path[step][1])){
       step++;
     }
   }
 
   private boolean atPoint(double basePos, double armPos){
-    double[] current = arm.getCurrentPositions();
+    double[] current = arm.getRawPositions();
 
     return Math.abs(current[0] - basePos) < positionTolerance && Math.abs(current[1] - armPos) < positionTolerance;
   }
@@ -47,6 +47,8 @@ public class FollowArmPath extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    //THis should be removed before comp
+    System.out.println("Did it");
     return step == path.length;
   }
 }
