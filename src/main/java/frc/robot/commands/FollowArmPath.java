@@ -36,19 +36,19 @@ public class FollowArmPath extends CommandBase {
 
   private boolean atPoint(double basePos, double armPos){
     double[] current = arm.getRawPositions();
-
     return Math.abs(current[0] - basePos) < positionTolerance && Math.abs(current[1] - armPos) < positionTolerance;
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    System.out.println("Did it");
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     //THis should be removed before comp
-    System.out.println("Did it");
     return step == path.length;
   }
 }

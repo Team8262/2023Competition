@@ -81,7 +81,7 @@ public class Constants {
     public static final double MAX_ANGULAR_SPEED = 0.1; //Radians per execution loop
 
     //Used to convert from final arm angle to motor angle... so 
-    public static final double BASE_LINK_GEAR_RATIO = 4*4*3*30/15;
+    public static final double BASE_LINK_GEAR_RATIO = 5*4*4*30/15;
     public static final double UPPER_LINK_GEAR_RATIO = 5*4*4*42/22;
 
     public static final double BASE_LINK_VELOCITY_P_CONTROLLER = 6.0;

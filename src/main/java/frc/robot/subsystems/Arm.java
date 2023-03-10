@@ -45,21 +45,21 @@ public class Arm extends SubsystemBase {
     base_angle = 0.0;
     upper_angle = 0.0;
 
-    base2.follow(base1, true);
+    base1.follow(base2, true);
 
-    baseController = base1.getPIDController();
+    baseController = base2.getPIDController();
     armController = arm.getPIDController();
 
     //TODO set real limits---these are arbitrary
-    base1.setSoftLimit(SoftLimitDirection.kForward, (float) (2*BASE_LINK_GEAR_RATIO));
-    base1.setSoftLimit(SoftLimitDirection.kReverse, (float) (2*BASE_LINK_GEAR_RATIO));
+    base2.setSoftLimit(SoftLimitDirection.kForward, (float) (2*BASE_LINK_GEAR_RATIO));
+    base2.setSoftLimit(SoftLimitDirection.kReverse, (float) (2*BASE_LINK_GEAR_RATIO));
     arm.setSoftLimit(SoftLimitDirection.kForward, (float) (2*UPPER_LINK_GEAR_RATIO));
     arm.setSoftLimit(SoftLimitDirection.kReverse, (float) (2*UPPER_LINK_GEAR_RATIO));
 
     arm.enableSoftLimit(SoftLimitDirection.kForward, false);
     arm.enableSoftLimit(SoftLimitDirection.kReverse, false);
-    base1.enableSoftLimit(SoftLimitDirection.kForward, false);
-    base1.enableSoftLimit(SoftLimitDirection.kReverse, false);
+    base2.enableSoftLimit(SoftLimitDirection.kForward, false);
+    base2.enableSoftLimit(SoftLimitDirection.kReverse, false);
 
     baseController.setP(BASE_LINK_VELOCITY_P_CONTROLLER);
     baseController.setI(BASE_LINK_VELOCITY_I_CONTROLLER);
@@ -68,7 +68,7 @@ public class Arm extends SubsystemBase {
     baseController.setSmartMotionMaxVelocity(BASE_LINK_MAX_VELOCITY, 0);
     baseController.setSmartMotionMaxAccel(BASE_LINK_MAX_ACCELERATION, 0);
 
-    baseController.setOutputRange(-0.5, 0.5);
+    baseController.setOutputRange(-0.7, 0.7);
 
     armController.setP(UPPER_LINK_VELOCITY_P_CONTROLLER);
     armController.setI(UPPER_LINK_VELOCITY_I_CONTROLLER);
@@ -77,11 +77,11 @@ public class Arm extends SubsystemBase {
     armController.setSmartMotionMaxVelocity(UPPER_LINK_MAX_VELOCITY, 0);
     armController.setSmartMotionMaxAccel(UPPER_LINK_MAX_ACCELERATION, 0);
 
-    armController.setOutputRange(-0.5, 0.5);
+    armController.setOutputRange(-0.7, 0.7);
 
     //baseEncoder = base1.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
     //armEncoder = arm.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
-    baseEncoder = base1.getEncoder();
+    baseEncoder = base2.getEncoder();
     armEncoder = arm.getEncoder();
     baseEncoder.setPosition(0); //These are fake numbers... replace them with init values in rotations
     armEncoder.setPosition(0);
@@ -95,6 +95,11 @@ public class Arm extends SubsystemBase {
       tab.addNumber("Base Angle", () -> baseEncoder.getPosition() * 2 * Math.PI / BASE_LINK_GEAR_RATIO);
       tab.addNumber("Arm Angle", () -> armEncoder.getPosition() * 2 * Math.PI / UPPER_LINK_GEAR_RATIO);
     }
+  
+    base2.set(0);
+    arm.set(0);
+
+
   }
 
 
