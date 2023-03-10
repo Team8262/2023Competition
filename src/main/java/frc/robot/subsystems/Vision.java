@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import javax.swing.DebugGraphics;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.RobotPoseEstimator;
 import org.photonvision.RobotPoseEstimator.PoseStrategy;
@@ -28,11 +30,15 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Vision extends SubsystemBase {
+
+  public boolean DEBUGGING = true;
 
   private SwerveDrivePoseEstimator poseEstimator;
   
@@ -62,6 +68,10 @@ public class Vision extends SubsystemBase {
      aprilTagFieldLayout  = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
      robotPoseEstimator = new RobotPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camList);
      robotPoseEstimator.setLastPose(new Pose3d(0,0,0,new Rotation3d(0,0,0)));
+     ShuffleboardTab tab = Shuffleboard.getTab("homosexual subsystem");
+     tab.addBoolean("has targets", () ->  table.getEntry("hasTarget").getBoolean(false));
+     
+     
   }
 
   @Override
@@ -72,11 +82,15 @@ public class Vision extends SubsystemBase {
       currentPose2d = (Pose2d) temp.getFirst();
       poseLatency = (Double) temp.getSecond();
 
-      } catch(NullPointerException e) {
-      System.out.println("NullPointerException: no Apriltag fudicals in sight!");
-      } catch(NoSuchElementException f) {
-      System.out.println("NoSuchElementException: no Apriltag fudicals in sight!");
-  }   
+    } catch(NullPointerException e) {
+      if(DEBUGGING){
+        System.out.println("NullPointerException: no Apriltag fudicals in sight!");
+      }
+    } catch(NoSuchElementException f) {
+      if(DEBUGGING){
+        System.out.println("NoSuchElementException: no Apriltag fudicals in sight!");
+      }
+    }   
 
       SmartDashboard.putNumber("x (visual)", currentPose2d.getX());
       SmartDashboard.putNumber("y (visual)", currentPose2d.getY());

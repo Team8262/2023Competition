@@ -64,8 +64,16 @@ public class RobotContainer {
     }
 
     public static JoystickButton scoreHigh(){
+      return new JoystickButton(j, 10);
+    }
+
+    //public static JoystickButton 
+
+    public static JoystickButton runNewAuto() {
       return new JoystickButton(j, 1);
     }
+
+
 
   }
 
@@ -74,6 +82,11 @@ public class RobotContainer {
   private Intake intake = new Intake();
   private End end = new End();
   private Arm arm = new Arm();
+  private Vision vision;
+
+  public Vision getVision() {
+    return vision;
+  }
 
   public Drivetrain getDrivetrain(){
     return m_drivetrain;
@@ -108,11 +121,11 @@ public class RobotContainer {
 
     arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
 
-    /*try {
-      cams = new CameraContainer();
+    try {
+      vision = new Vision();
     } catch(IOException e) {
-      
-    }*/
+      System.err.println("vision shatted itself");
+    }
 
 
 
@@ -143,6 +156,7 @@ public class RobotContainer {
     primaryController.spitOutButton().whileFalse(new InstantCommand(() -> spitout(0.0)));
 
     secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
+    secondaryController.runNewAuto().onTrue(new GoToAuto(1, m_drivetrain, m_drivetrain.getPose()));
 
   }
 

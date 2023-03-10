@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -19,6 +21,7 @@ public class AutoBalance extends PIDCommand {
   private Drivetrain dt;
 
   public AutoBalance(Drivetrain dt) {
+
     super(
         // The controller that the command will use
         new PIDController(3, 0, 0.2),
@@ -29,13 +32,14 @@ public class AutoBalance extends PIDCommand {
         // This uses the output
         output -> {
           dt.drive(0, output, 0);
-        });
+        }, null);
         
     addRequirements(dt);
     this.dt = dt;
     getController().setTolerance(4);
 
     // Configure additional PID options by calling `getController` here.
+    
   }
 
   // Returns true when the command should end.

@@ -191,7 +191,7 @@ public class Drivetrain extends SubsystemBase {
       tab.add("Disable XStance", new InstantCommand(this::disableXstance));
     }
 
-    // vision = robotContainer.vision;
+    vision = robotContainer.getVision();
   }
 
   /**
@@ -203,10 +203,6 @@ public class Drivetrain extends SubsystemBase {
    */
   public void zeroGyroscope() {
     setGyroOffset(0.0);
-  }
-
-  public GyroIOInputsAutoLogged getGyroIOInputs() {
-    return gyroInputs;
   }
 
   /**
@@ -725,6 +721,10 @@ public class Drivetrain extends SubsystemBase {
 
   public ChassisSpeeds getChassisSpeeds() {
     return chassisSpeeds;
+  }
+
+  public GyroIOInputsAutoLogged getGyroIOInputs() {
+    return gyroInputs;
   }
 
 }
