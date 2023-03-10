@@ -68,7 +68,7 @@ public class RobotContainer {
     }
 
     public static JoystickButton scoreHigh(){
-      return new JoystickButton(j, 10);
+      return new JoystickButton(j, 8);
     }
 
     //public static JoystickButton 
@@ -125,11 +125,12 @@ public class RobotContainer {
 
     arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
 
+    /* 
     try {
       vision = new Vision();
     } catch(IOException e) {
       System.err.println("vision shatted itself");
-    }
+    }*/
 
 
 
@@ -163,7 +164,7 @@ public class RobotContainer {
     primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
 
     secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
-    secondaryController.runNewAuto().onTrue(new GoToAuto(1, m_drivetrain, m_drivetrain.getPose()));
+    //secondaryController.runNewAuto().onTrue(new GoToAuto(1, m_drivetrain, m_drivetrain.getPose()));
 
   }
 

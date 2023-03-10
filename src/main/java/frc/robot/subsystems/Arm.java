@@ -38,14 +38,14 @@ public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
   public Arm() {
 
-    base1 = new CANSparkMax(25, MotorType.kBrushless);
+    base1 = new CANSparkMax(33, MotorType.kBrushless);
     base2 = new CANSparkMax(23, MotorType.kBrushless);
-    arm = new CANSparkMax(1, MotorType.kBrushless);
+    arm = new CANSparkMax(44, MotorType.kBrushless);
 
     base_angle = 0.0;
     upper_angle = 0.0;
 
-    base2.setInverted(TUNING_MODE);
+    base2.setInverted(false);
 
     base1.follow(base2, true);
 
@@ -152,6 +152,7 @@ public class Arm extends SubsystemBase {
   public void setAnglesRaw(double lower, double upper){
     armController.setReference(upper, ControlType.kPosition,0,getUpperFF());
     baseController.setReference(lower, ControlType.kPosition,0,getBaseFF());
+    System.out.println("Goal: " + lower + "    , Actual: " + baseEncoder.getPosition());
   }
 
   //Super basic, probably wrong
@@ -168,7 +169,7 @@ public class Arm extends SubsystemBase {
     
     //TODO movement feedforward 
 
-    return Math.sin(angle)*6; //torque*BASE_VOLTAGE_COMPENSATION;
+    return Math.sin(angle)*10; //torque*BASE_VOLTAGE_COMPENSATION;
   }
 
   //first
@@ -182,5 +183,6 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  System.out.println(base1.getEncoder().getPosition());
   }
 }

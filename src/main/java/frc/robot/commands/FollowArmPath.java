@@ -31,6 +31,7 @@ public class FollowArmPath extends CommandBase {
     arm.setAnglesRaw(path[step][0], path[step][1]);
     if(atPoint(path[step][0], path[step][1])){
       step++;
+      System.out.println(step);
     }
   }
 
