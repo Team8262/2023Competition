@@ -17,12 +17,15 @@ public class ManualArmControl extends CommandBase {
   private final Arm m_Arm;
   private final DoubleSupplier m_xSupp;
   private final DoubleSupplier m_ySupp;
+  private double upperTarget, lowerTarget;
 
   /** Creates a new DefaultArmCommand. */
   public ManualArmControl(Arm armSubsystem, DoubleSupplier xSupp, DoubleSupplier ySupp) {
     this.m_Arm = armSubsystem;
     this.m_xSupp = xSupp;
     this.m_ySupp = ySupp;
+    upperTarget = 0;
+    lowerTarget=0;
     
     addRequirements(armSubsystem);
   }
@@ -34,11 +37,17 @@ public class ManualArmControl extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double[] positions = m_Arm.getCurrentPositions();
-    positions[0]+=m_xSupp.getAsDouble()*MAX_ANGULAR_SPEED;
-    positions[1]+=m_ySupp.getAsDouble()*MAX_ANGULAR_SPEED;
+    //double[] positions = m_Arm.getCurrentPositions();
+    lowerTarget+=m_xSupp.getAsDouble()*MAX_ANGULAR_SPEED;
+    upperTarget+=m_ySupp.getAsDouble()*MAX_ANGULAR_SPEED;
+    if(lowerTarget<=0){
+      lowerTarget=0;
+    }
+    if(upperTarget<=0){
+      upperTarget=0;
+    }
 
-    m_Arm.setAngles(positions[0],positions[1]);
+    m_Arm.setAngles(lowerTarget, upperTarget);
   }
 
 

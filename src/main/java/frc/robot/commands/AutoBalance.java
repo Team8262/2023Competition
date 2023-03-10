@@ -31,12 +31,14 @@ public class AutoBalance extends PIDCommand {
         () -> 0,
         // This uses the output
         output -> {
-          dt.drive(0, output, 0);
-        }, null);
+          dt.drive(0, output*2, 0);
+        });
         
     addRequirements(dt);
     this.dt = dt;
-    getController().setTolerance(4);
+
+    //This might do something
+    //getController().setTolerance(1);
 
     // Configure additional PID options by calling `getController` here.
     
@@ -52,5 +54,6 @@ public class AutoBalance extends PIDCommand {
   public void end(boolean interrupted) {
     super.end(interrupted);
     dt.drive(0, 0, 0);
+    System.out.println("done");
   }
 }

@@ -54,6 +54,10 @@ public class RobotContainer {
       return new JoystickButton(j, 1);
     }
 
+    private static JoystickButton testButton(){
+      return new JoystickButton(j, 3);
+    }
+
   }
 
   public static class secondaryController{
@@ -97,7 +101,7 @@ public class RobotContainer {
   
   public RobotContainer() {
 
-    armPaths.put("high", new double[][]{{44,35}});
+    armPaths.put("high", new double[][]{{33,-2},{44,35}});
 
 
     buildRobot();
@@ -154,6 +158,9 @@ public class RobotContainer {
    
     primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(0.5)));
     primaryController.spitOutButton().whileFalse(new InstantCommand(() -> spitout(0.0)));
+
+
+    primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
 
     secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
     secondaryController.runNewAuto().onTrue(new GoToAuto(1, m_drivetrain, m_drivetrain.getPose()));
