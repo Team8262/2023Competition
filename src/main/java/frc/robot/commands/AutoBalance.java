@@ -28,14 +28,14 @@ public class AutoBalance extends PIDCommand {
         () -> 0,
         // This uses the output
         output -> {
-          dt.drive(0, output*5, 0);
+          dt.drive(0, output*2, 0);
         });
         
     addRequirements(dt);
     this.dt = dt;
 
     //This might do something
-    getController().setTolerance(4);
+    //getController().setTolerance(1);
 
     // Configure additional PID options by calling `getController` here.
   }

@@ -45,6 +45,8 @@ public class Arm extends SubsystemBase {
     base_angle = 0.0;
     upper_angle = 0.0;
 
+    base2.setInverted(TUNING_MODE);
+
     base1.follow(base2, true);
 
     baseController = base2.getPIDController();
@@ -161,20 +163,20 @@ public class Arm extends SubsystemBase {
 
   //second
   private double getBaseFF(){
-    base_angle = baseEncoder.getPosition()*BASE_LINK_GEAR_RATIO;
+    double angle = baseEncoder.getPosition()*BASE_LINK_GEAR_RATIO;
     //double torque = (Math.cos(base_angle*2*Math.PI)*BASE_CENTER_OF_MASS*BASE_MASS+(Math.cos(upper_angle*2*Math.PI)*UPPER_CENTER_OF_MASS+Math.cos(base_angle*2*Math.PI)*BASE_LENGTH)*UPPER_MASS);
     
     //TODO movement feedforward 
 
-    return Math.cos(base_angle)*6; //torque*BASE_VOLTAGE_COMPENSATION;
+    return Math.sin(angle)*6; //torque*BASE_VOLTAGE_COMPENSATION;
   }
 
   //first
   private double getUpperFF(){
-    upper_angle = armEncoder.getPosition()*UPPER_LINK_GEAR_RATIO;
+    double angle = armEncoder.getPosition()*UPPER_LINK_GEAR_RATIO;
     //double torque = Math.cos(upper_angle*2*Math.PI)*UPPER_CENTER_OF_MASS*UPPER_MASS;
     //TODO movement feedforward 
-    return Math.cos(upper_angle)*2;//torque*UPPER_VOLTAGE_COMPENSATION;
+    return Math.sin(angle)*4;//torque*UPPER_VOLTAGE_COMPENSATION;
   }
 
   @Override
