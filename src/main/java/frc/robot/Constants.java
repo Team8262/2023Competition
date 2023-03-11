@@ -84,7 +84,7 @@ public class Constants {
     public static final double BASE_LINK_GEAR_RATIO = 5*4*4*30/15;
     public static final double UPPER_LINK_GEAR_RATIO = 5*4*4*42/22;
 
-    public static final double BASE_LINK_VELOCITY_P_CONTROLLER = 6.0;
+    public static final double BASE_LINK_VELOCITY_P_CONTROLLER = 7.0;
     public static final double BASE_LINK_VELOCITY_I_CONTROLLER = 0.0;
     public static final double BASE_LINK_VELOCITY_D_CONTROLLER = 0.5;
     public static final double BASE_LINK_VELOCITY_F_CONTROLLER = 0.0;

@@ -71,6 +71,10 @@ public class RobotContainer {
       return new JoystickButton(j, 8);
     }
 
+    public static JoystickButton returnHome(){
+      return new JoystickButton(j, 1);
+    }
+
     //public static JoystickButton 
 
     public static JoystickButton runNewAuto() {
@@ -101,17 +105,18 @@ public class RobotContainer {
   
   public RobotContainer() {
 
-    armPaths.put("high", new double[][]{{33,-2},{44,35}});
+    armPaths.put("high", new double[][]{{20,-1},{44,35}});
+    armPaths.put("home", new double[][]{{10,-2},{0,0}});
 
 
     buildRobot();
 
     // double forward = 0.0;
-    DoubleSupplier forwardsupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+    DoubleSupplier forwardsupp = () -> 0.6*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
      
-    DoubleSupplier strafesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+    DoubleSupplier strafesupp = () -> 0.6*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
     
-    DoubleSupplier rotatesupp = () -> 1*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
+    DoubleSupplier rotatesupp = () -> 0.5*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
     
     m_drivetrain.setDefaultCommand(new DefaultDriveCommand(
             m_drivetrain, 
@@ -123,8 +128,7 @@ public class RobotContainer {
     DoubleSupplier baseSupp = () -> modifyAxis(getSecondaryJoystick().getRawAxis(0))*MAX_ANGULAR_SPEED;
     DoubleSupplier armSupp = () -> modifyAxis(getSecondaryJoystick().getRawAxis(1))*MAX_ANGULAR_SPEED;
 
-    arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
-
+    //arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
     /* 
     try {
       vision = new Vision();
@@ -152,9 +156,9 @@ public class RobotContainer {
     primaryController.xStanceButton().onFalse(Commands.runOnce(m_drivetrain::disableXstance, m_drivetrain));
   
    
-    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(0.5)));
+    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(1)));
     primaryController.intakeConeButton().whileFalse(new InstantCommand(() -> coneIntake(0.0)));
-    primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(0.5)));
+    primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(1)));
     primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> cubeIntake(0.0)));
    
     primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(0.5)));
@@ -164,6 +168,7 @@ public class RobotContainer {
     primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
 
     secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
+    secondaryController.returnHome().whileTrue(new FollowArmPath(arm, armPaths.get("home")));
     //secondaryController.runNewAuto().onTrue(new GoToAuto(1, m_drivetrain, m_drivetrain.getPose()));
 
   }

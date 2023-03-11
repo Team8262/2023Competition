@@ -31,7 +31,7 @@ public class AutoBalance extends PIDCommand {
         () -> 0,
         // This uses the output
         output -> {
-          dt.drive(0, output*2, 0);
+          dt.drive(0.1*output, 0, 0);
         });
         
     addRequirements(dt);

@@ -70,7 +70,7 @@ public class Arm extends SubsystemBase {
     baseController.setSmartMotionMaxVelocity(BASE_LINK_MAX_VELOCITY, 0);
     baseController.setSmartMotionMaxAccel(BASE_LINK_MAX_ACCELERATION, 0);
 
-    baseController.setOutputRange(-0.7, 0.7);
+    baseController.setOutputRange(-0.5, 0.5);
 
     armController.setP(UPPER_LINK_VELOCITY_P_CONTROLLER);
     armController.setI(UPPER_LINK_VELOCITY_I_CONTROLLER);
@@ -79,7 +79,7 @@ public class Arm extends SubsystemBase {
     armController.setSmartMotionMaxVelocity(UPPER_LINK_MAX_VELOCITY, 0);
     armController.setSmartMotionMaxAccel(UPPER_LINK_MAX_ACCELERATION, 0);
 
-    armController.setOutputRange(-0.7, 0.7);
+    armController.setOutputRange(-0.5, 0.5);
 
     //baseEncoder = base1.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
     //armEncoder = arm.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
@@ -169,7 +169,7 @@ public class Arm extends SubsystemBase {
     
     //TODO movement feedforward 
 
-    return Math.sin(angle)*10; //torque*BASE_VOLTAGE_COMPENSATION;
+    return Math.sin(angle)*6; //torque*BASE_VOLTAGE_COMPENSATION;
   }
 
   //first
