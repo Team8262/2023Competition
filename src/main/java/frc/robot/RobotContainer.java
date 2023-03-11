@@ -68,18 +68,22 @@ public class RobotContainer {
     }
 
     public static JoystickButton scoreHigh(){
-      return new JoystickButton(j, 8);
+      return new JoystickButton(j, 5);
+    }
+
+    public static JoystickButton scoreLow() {
+      return new JoystickButton(j, 3);
     }
 
     public static JoystickButton returnHome(){
-      return new JoystickButton(j, 1);
+      return new JoystickButton(j, 2);
     }
 
     //public static JoystickButton 
-
+    /*
     public static JoystickButton runNewAuto() {
       return new JoystickButton(j, 1);
-    }
+    }*/
 
 
 
@@ -106,6 +110,7 @@ public class RobotContainer {
   public RobotContainer() {
 
     armPaths.put("high", new double[][]{{20,-1},{44,35}});
+    armPaths.put("low", new double[][]{{10,-2},{0,0}});
     armPaths.put("home", new double[][]{{10,-2},{0,0}});
 
 
