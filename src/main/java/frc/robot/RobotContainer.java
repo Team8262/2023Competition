@@ -174,6 +174,7 @@ public class RobotContainer {
 
     secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
     secondaryController.returnHome().whileTrue(new FollowArmPath(arm, armPaths.get("home")));
+    secondaryController.scoreLow().whileTrue(new FollowArmPath(arm, armPaths.get("low")));
     //secondaryController.runNewAuto().onTrue(new GoToAuto(1, m_drivetrain, m_drivetrain.getPose()));
 
   }

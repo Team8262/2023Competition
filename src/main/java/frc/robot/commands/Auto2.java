@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 
-public class Auto1 extends SequentialCommandGroup{
+public class Auto2 extends SequentialCommandGroup{
     
-    public Auto1(Drivetrain drivetrain, RobotContainer container){
+    public Auto2(Drivetrain drivetrain, RobotContainer container){
 
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Test_path_1", 4, 3);
 
