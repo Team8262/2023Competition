@@ -28,7 +28,7 @@ public class FollowArmPath extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.setAnglesRaw(path[step][0], path[step][1]);
+    arm.setsAnglesRaw(path[step][0], path[step][1]);
     if(atPoint(path[step][0], path[step][1])){
       step++;
       System.out.println(step);

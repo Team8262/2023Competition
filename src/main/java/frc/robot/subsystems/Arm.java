@@ -149,13 +149,13 @@ public class Arm extends SubsystemBase {
   }
 
   //In rotations
-  public void setAnglesRaw(double lower, double upper){
+  public void setsAnglesRaw(double lower, double upper){
     armController.setReference(upper, ControlType.kPosition,0,getUpperFF());
     baseController.setReference(lower, ControlType.kPosition,0,getBaseFF());
     System.out.println("Goal: " + lower + "    , Actual: " + baseEncoder.getPosition());
   }
 
-  //Super basic, probably wrong
+  //Super basic, probably wsrong
   /* 
   public boolean stowed(){
     return armModel.toPosition(getCurrentPositions()).getY() <= 0.5;

@@ -17,7 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 public class Constants {
 
     //Obviously tune it if you need to tune it...
-    public static final boolean TUNING_MODE = true;
+    public static final boolean TUNING_MODE = false;
 
     // FIXME: an empty string uses the default CAN bus; specify the name of the CANivore as appropriate
     public static final String CAN_BUS_NAME = "swerve";
@@ -28,7 +28,7 @@ public class Constants {
     public static final int rotationAxis = 4; //Uncomment for other thing
 
     //Drivetrain Constants
-    public static final double driveSpeedCap = 1; //Percent of max speed
+    public static double driveSpeedCap = 0.8; //Percent of max speed
     public static final double rotationSpeedCap = 0.6; 
 
     // FIXME: check dims on final robot
