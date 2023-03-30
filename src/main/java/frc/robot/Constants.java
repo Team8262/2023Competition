@@ -138,7 +138,7 @@ public class Constants {
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 12; // FIXME Set back right steer encoder ID
 
     // public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 16.87;//Math.toRadians(16.87); //ID 1
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 15.9;//Math.toRadians(16.87); //ID 1
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 198 - 180;//1.1;//15.9;//Math.toRadians(16.87); //ID 1
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 5; // FIXME Set back left drive motor ID
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 7; // FIXME Set back left steer motor ID
@@ -150,12 +150,23 @@ public class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 4; // FIXME Set front right steer motor ID
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 3;
     // public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 352.08;//Math.toRadians(352.08); //ID 3
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 0.43-90;//Math.toRadians(352.08); //ID 3
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 85 + 180;//-149;//-125.6;//0.43-90;//Math.toRadians(352.08); //ID 3
 
     public static final Transform3d LIMELIGHT_POSITION = new Transform3d(
         new Translation3d(0, 0, 0), 
         new Rotation3d(0,0,0) //one of the values might need to be flipped by 180 because the limelight is mounted on the back
     );
+
+    public static final int REFLECTIVE_TAPE_PIPELINE_INDEX = 1;
+
+    //in meters
+    public static final double CAMERA_HEIGHT = 0.43;
+
+    public static final double POLE_HEIGHT = 0.56+0.05;
+
+    public static String cameraName = "OV5647";
+
+    public static Transform3d robotToCam = new Transform3d(new Translation3d(0,0,0), new Rotation3d(0,0,0));
 
 
 }

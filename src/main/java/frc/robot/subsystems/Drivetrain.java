@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -17,6 +18,7 @@ import org.jumprobotics.swervedrive.SwerveModule;
 import org.jumprobotics.swervedrive.YepSwerveModuleState;
 import org.jumprobotics.util.TunableNumber;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
@@ -54,6 +56,8 @@ import org.jumprobotics.util.RobotOdometry;
  * robot's rotation.
  */
 public class Drivetrain extends SubsystemBase {
+
+  public int drivingMode = 0;
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Field2d field2d = new Field2d();
@@ -108,6 +112,8 @@ public class Drivetrain extends SubsystemBase {
   private static final boolean TESTING = false;
   private static final boolean DEBUGGING = true;
 
+  private final Field2d m_fieldSim = new Field2d();
+
   private final SwerveDrivePoseEstimator poseEstimator;
   private Pose2d wheelOdomoetryDrift = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
   private Timer timer;
@@ -128,11 +134,12 @@ public class Drivetrain extends SubsystemBase {
           new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
           // Back right
           new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0)
-  );  
+  );
+  private Pose2d currentPose2d = new Pose2d(0,0, new Rotation2d(0));  
 
   /** Constructs a new DrivetrainSubsystem object. */
   public Drivetrain(
-      RobotContainer robotContainer,
+      RobotContainer robotContainer, 
       GyroIO gyroIO,
       SwerveModule flModule,
       SwerveModule frModule,
@@ -167,6 +174,10 @@ public class Drivetrain extends SubsystemBase {
     tabMain.addBoolean("X-Stance On?", this::isXstance);
     tabMain.addBoolean("Field-Relative Enabled?", () -> this.isFieldRelative);
 
+    ShuffleboardTab homo = Shuffleboard.getTab("homosexual subsystem");
+
+     homo.addDouble("x value", () -> currentPose2d.getX());
+
     if (DEBUGGING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
       tab.add(SUBSYSTEM_NAME, this);
@@ -191,7 +202,7 @@ public class Drivetrain extends SubsystemBase {
       tab.add("Disable XStance", new InstantCommand(this::disableXstance));
     }
 
-    vision = robotContainer.getVision();
+    
   }
 
   /**
@@ -396,6 +407,7 @@ public class Drivetrain extends SubsystemBase {
     // update and log gyro inputs
     gyroIO.updateInputs(gyroInputs);
     Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);
+
 
     // update and log the swerve module inputs
     for (SwerveModule swerveModule : swerveModules) {

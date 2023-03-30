@@ -12,13 +12,6 @@ import java.util.Optional;
 
 import javax.swing.DebugGraphics;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.RobotPoseEstimator;
-import org.photonvision.RobotPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
@@ -30,6 +23,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -38,50 +32,73 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Vision extends SubsystemBase {
+public class LimelightVision extends SubsystemBase {
 
   public boolean DEBUGGING = true;
 
-  //define all cameras here!
-  private PhotonCamera limelightCamera = new PhotonCamera("OV5647");
+  public NetworkTable table;
+  NetworkTableEntry tx;
+  NetworkTableEntry ty;
+  NetworkTableEntry ta;
+  NetworkTableEntry tv;
+  NetworkTableEntry pipeline;
+
+  double x = 0;
+  double y = 0;
+  double area = 0;
 
   /** Creates a new Vision. */
-  public Vision() throws IOException{
+  public LimelightVision() throws IOException{
 
-     //add all your cameras here!
-     var camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
-     camList.add(new Pair<PhotonCamera, Transform3d>(limelightCamera, Constants.LIMELIGHT_POSITION));
-     limelightCamera.setPipelineIndex(0);  
+    table = NetworkTableInstance.getDefault().getTable("limelight");
+    tx = table.getEntry("tx");
+    ty = table.getEntry("ty");
+    ta = table.getEntry("ta");
+    tv = table.getEntry("tv");
+    pipeline = table.getEntry("pipeline");
 
+     //add all your cameras here! 
+    
      if(DEBUGGING) {
       ShuffleboardTab Vision = Shuffleboard.getTab("vision");
-      Vision.addBoolean("Has targets", () -> limelightCamera.getLatestResult().hasTargets());
+      Vision.addBoolean("Has targets", () -> {if(tv.getInteger(0) == 1) { return true;} else {return false;}});
+      Vision.addDouble("target x", () -> tx.getDouble(0));
+      Vision.addDouble("target y", () -> ty.getDouble(0));
+      Vision.addDouble("target area", () -> ta.getDouble(0));
      }
-
   }
 
   @Override
   public void periodic() {
+    //read values periodically
+    x = tx.getDouble(0.0);
+    y = ty.getDouble(0.0);
+    area = ta.getDouble(0.0);
+  }
 
+  public double getTargetX() {
+    return x;
+  }
+
+  public double getTargetY() {
+    return y;
   }
 
   public boolean fudicalsExist() {
-    PhotonPipelineResult result = limelightCamera.getLatestResult();
-    return result.hasTargets();
-  }
-
-  public PhotonTrackedTarget getBestTarget() {
-    return limelightCamera.getLatestResult().getBestTarget();
+    if(tv.getInteger(0) == 1) {
+       return true;
+    } else {
+      return false;
+    }
   }
 
   /*
    * (may need to be changed/set properly)
    * Pipeline IDs:
-   * 0 - reference
-   * 1 - reflective tape
-   * 2 - apriltags
+   * 0 - reflective tape
+   * 1 - apriltags
    */
   public void setPipelineIndex(int i) {
-    limelightCamera.setPipelineIndex(i);
+    pipeline.setInteger(i);
   }
 }
