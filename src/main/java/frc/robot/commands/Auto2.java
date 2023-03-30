@@ -20,7 +20,7 @@ import frc.robot.commands.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import frc.robot.RobotContainer;
 
@@ -36,7 +36,7 @@ public class Auto2 extends SequentialCommandGroup{
     
     public Auto2(Drivetrain drivetrain, RobotContainer container){
 
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Test_path_1", 4, 3);
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("red no arm", 4, 3);
 
         HashMap<String, Command> eventMap = new HashMap<>();
         
@@ -44,11 +44,21 @@ public class Auto2 extends SequentialCommandGroup{
         SwerveDriveKinematics kinematics = Constants.KINEMATICS; 
         Consumer<SwerveModuleState[]> joeph = drivetrain.joe;
 
+
+        //eventMap.put("init");
+        //eventMap.put("spitout", new InstantCommand(() -> container.coneIntake(-1)));
+        /*eventMap.put("final", new InstantCommand(() -> {
+            container.coneIntake(0);
+            new AutoBalance(drivetrain);
+            
+
+        }));*/
+/*
         eventMap.put("start1", new PrintCommand("Passed marker 1"));
         eventMap.put("place1", new PrintCommand("Passed marker 2"));
         eventMap.put("pick1", new InstantCommand(() ->  container.coneIntake(1.0)));
         eventMap.put("pick2", new PrintCommand("Passed marker 4"));
-        eventMap.put("place2", new InstantCommand(() ->  container.coneIntake(0.0)));        
+        eventMap.put("place2", new InstantCommand(() ->  container.coneIntake(0.0)));     */   
         // eventMap.put("marker5", new PrintCommand("Passed marker 5"));
 
 

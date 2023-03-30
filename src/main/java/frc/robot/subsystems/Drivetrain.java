@@ -45,6 +45,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.primaryController;
 
 import org.jumprobotics.util.RobotOdometry;
 
@@ -106,7 +107,7 @@ public class Drivetrain extends SubsystemBase {
 
   private static final String SUBSYSTEM_NAME = "Drivetrain";
   private static final boolean TESTING = false;
-  private static final boolean DEBUGGING = true;
+  private static final boolean DEBUGGING = false;
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private Pose2d wheelOdomoetryDrift = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
@@ -116,7 +117,7 @@ public class Drivetrain extends SubsystemBase {
   private DriveMode driveMode = DriveMode.NORMAL;
   private double characterizationVoltage = 0.0;
 
-  private Vision vision;
+  //private Vision vision;
   private RobotContainer robotContainer;
 
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
@@ -166,6 +167,7 @@ public class Drivetrain extends SubsystemBase {
     tabMain.addNumber("Gyroscope Angle", () -> getRotation().getDegrees());
     tabMain.addBoolean("X-Stance On?", this::isXstance);
     tabMain.addBoolean("Field-Relative Enabled?", () -> this.isFieldRelative);
+    tabMain.addNumber("Speed Cap", ()->primaryController.getSpeedModifier());
 
     if (DEBUGGING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
@@ -191,7 +193,7 @@ public class Drivetrain extends SubsystemBase {
       tab.add("Disable XStance", new InstantCommand(this::disableXstance));
     }
 
-    vision = robotContainer.getVision();
+    //vision = robotContainer.getVision();
   }
 
   /**
@@ -349,7 +351,7 @@ public class Drivetrain extends SubsystemBase {
 
         for (SwerveModule swerveModule : swerveModules) {
           swerveModule.setDesiredState(
-              swerveModuleStates[swerveModule.getModuleNumber()], true, false);
+              swerveModuleStates[swerveModule.getModuleNumber()], false, false);
         }
         break;
 

@@ -31,30 +31,34 @@ public class RobotContainer {
     private static final Joystick j = new Joystick(0);
 
     public static JoystickButton resetGyroButton(){
-      return new JoystickButton(j,4);
+      return new JoystickButton(j,6);
     }
 
     public static JoystickButton xStanceButton(){
-      return new JoystickButton(j, 2);
+      return new JoystickButton(j, 4);
     }
 
     public static Joystick getJoystick(){
       return j;
     }
 
-    private static  JoystickButton intakeCubeButton(){
-      return new JoystickButton(j, 6);
+    public static  JoystickButton intakeCubeButton(){
+      return new JoystickButton(j, 3);
     }
 
-    private static JoystickButton intakeConeButton(){
-      return new JoystickButton(j, 5);
+    public static JoystickButton intakeConeButton(){
+      return new JoystickButton(j, 2);
     }
 
-    private static JoystickButton spitOutButton(){
+    public static JoystickButton spitOutButton(){
       return new JoystickButton(j, 1);
     }
 
-    private static JoystickButton testButton(){
+    public static double getSpeedModifier(){
+      return 0.5/(j.getRawAxis(2)+1);
+    }
+
+    public static JoystickButton testButton(){
       return new JoystickButton(j, 3);
     }
 
@@ -94,11 +98,11 @@ public class RobotContainer {
   private Intake intake = new Intake();
   private End end = new End();
   private Arm arm = new Arm();
-  private Vision vision;
+  //private Vision vision;
 
-  public Vision getVision() {
-    return vision;
-  }
+  //public Vision getVision() {
+  //  return vision;
+  //}
 
   public Drivetrain getDrivetrain(){
     return m_drivetrain;
@@ -117,9 +121,9 @@ public class RobotContainer {
     buildRobot();
 
     // double forward = 0.0;
-    DoubleSupplier forwardsupp = () -> 0.6*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+    DoubleSupplier forwardsupp = () -> primaryController.getSpeedModifier()*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
      
-    DoubleSupplier strafesupp = () -> 0.6*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+    DoubleSupplier strafesupp = () -> primaryController.getSpeedModifier()*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
     
     DoubleSupplier rotatesupp = () -> 0.5*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
     
@@ -166,11 +170,10 @@ public class RobotContainer {
     primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(1)));
     primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> cubeIntake(0.0)));
    
-    primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(0.5)));
+    primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(1)));
     primaryController.spitOutButton().whileFalse(new InstantCommand(() -> spitout(0.0)));
 
-
-    primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
+    //primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
 
     secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
     secondaryController.returnHome().whileTrue(new FollowArmPath(arm, armPaths.get("home")));
@@ -179,9 +182,11 @@ public class RobotContainer {
 
   }
 
+  
+
   public void coneIntake(double speed){
     intake.setSpeed(speed);
-    end.setConeSpeed(speed);
+    //end.setConeSpeed(speed);
   }
 
   public void cubeIntake(double speed){
@@ -191,14 +196,17 @@ public class RobotContainer {
 
   public void spitout(double speed){
     intake.setSpeed(-speed);
-    end.setConeSpeed(-speed);
+    end.setCubeSpeed(-speed);
+    //end.setConeSpeed(-speed);
   }
+
+  
   
 
   public Command getAutonomousCommand() {
     // return Commands.print("No autonomous command configured");
-    Auto1 auto = new Auto1(m_drivetrain, this);
-    return auto;
+    //Auto2 auto = new Auto2(m_drivetrain, this);
+    return new InstantCommand();//auto;
   }
 
   private static double deadband(double value, double deadband) {
@@ -264,7 +272,7 @@ public class RobotContainer {
 
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.025);
+    value = deadband(value, 0.02);
 
     // Square the axis
     value = Math.copySign(value * value, value);
