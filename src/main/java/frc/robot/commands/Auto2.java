@@ -58,12 +58,9 @@ public class Auto2 extends SequentialCommandGroup{
         eventMap.put("place1", new PrintCommand("Passed marker 2"));
         //eventMap.put("pick1", new InstantCommand(() ->  container.coneIntake(1.0)));
         eventMap.put("pick2", new PrintCommand("Passed marker 4"));
-<<<<<<< HEAD
         //eventMap.put("place2", new InstantCommand(() ->  container.coneIntake(0.0))); 
         eventMap.put("pick2", new InstantCommand(() -> container.getVision().table.getEntry("ledMode").setInteger(2)));       
-=======
         eventMap.put("place2", new InstantCommand(() ->  container.coneIntake(0.0)));     */   
->>>>>>> main
         // eventMap.put("marker5", new PrintCommand("Passed marker 5"));
 
 

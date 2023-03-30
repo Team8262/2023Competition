@@ -204,11 +204,7 @@ public class Drivetrain extends SubsystemBase {
       tab.add("Disable XStance", new InstantCommand(this::disableXstance));
     }
 
-<<<<<<< HEAD
     
-=======
-    //vision = robotContainer.getVision();
->>>>>>> main
   }
 
   /**

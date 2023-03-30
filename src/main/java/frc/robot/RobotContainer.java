@@ -46,17 +46,10 @@ public class RobotContainer {
     public static  JoystickButton intakeCubeButton(){
       return new JoystickButton(j, 3);
     }
-<<<<<<< HEAD
-/*
-    private static JoystickButton intakeConeButton(){
-      return new JoystickButton(j, 5);
-    }*/
-=======
 
     public static JoystickButton intakeConeButton(){
       return new JoystickButton(j, 2);
     }
->>>>>>> main
 
     public static JoystickButton spitOutButton(){
       return new JoystickButton(j, 1);
@@ -106,29 +99,17 @@ public class RobotContainer {
   }
 
   private Drivetrain m_drivetrain;
-<<<<<<< HEAD
   private LimelightVision vision;
 
-  //public static Joystick primaryJoystick = new Joystick(0);
-  //private Intake intake = new Intake();
-  //private End end = new End();
-  //private Arm arm = new Arm();
-  //private Vision vision;
-
-  public LimelightVision getVision() {
-    return vision;
-  }
-=======
   //public static Joystick primaryJoystick = new Joystick(0);
   private Intake intake = new Intake();
   private End end = new End();
   private Arm arm = new Arm();
   //private Vision vision;
 
-  //public Vision getVision() {
-  //  return vision;
-  //}
->>>>>>> main
+  public LimelightVision getVision() {
+    return vision;
+  }
 
 
   public Drivetrain getDrivetrain(){
@@ -206,17 +187,12 @@ public class RobotContainer {
     primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(1)));
     primaryController.spitOutButton().whileFalse(new InstantCommand(() -> spitout(0.0)));
 
-<<<<<<< HEAD
     primaryController.switchMap().whileTrue(new InstantCommand(() -> setDrivingMode(1)));
     primaryController.switchMap().whileFalse(new InstantCommand(() -> setDrivingMode(0)));
 
 
-    primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
-/* 
-=======
     //primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
-
->>>>>>> main
+/* 
     secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
     secondaryController.returnHome().whileTrue(new FollowArmPath(arm, armPaths.get("home")));
     secondaryController.scoreLow().whileTrue(new FollowArmPath(arm, armPaths.get("low")));
@@ -224,33 +200,22 @@ public class RobotContainer {
 */
   }
 
-<<<<<<< HEAD
   public void setDrivingMode(int i) {
     m_drivetrain.drivingMode = i;
   }
   public void coneIntake(double speed){
-    //intake.setSpeed(speed);
-=======
-  
-
-  public void coneIntake(double speed){
     intake.setSpeed(speed);
->>>>>>> main
-    //end.setConeSpeed(speed);
+    end.setConeSpeed(speed);
   }
 
   public void cubeIntake(double speed){
-    //intake.setSpeed(speed);
-    //end.setCubeSpeed(speed);
+    intake.setSpeed(speed);
+    end.setCubeSpeed(speed);
   }
 
   public void spitout(double speed){
-<<<<<<< HEAD
-    //intake.setSpeed(-speed);
-=======
     intake.setSpeed(-speed);
     end.setCubeSpeed(-speed);
->>>>>>> main
     //end.setConeSpeed(-speed);
   }
 
