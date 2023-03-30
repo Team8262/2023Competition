@@ -22,7 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
    private double maxVelocity;
  
    private static final String SUBSYSTEM_NAME = "Swerve";
-   private static final boolean DEBUGGING = true;
+   private static final boolean DEBUGGING = true ;
  
    /**
     * Create a new swerve module.
@@ -63,7 +63,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
        YepSwerveModuleState desiredState, boolean isOpenLoop, boolean forceAngle) {
  
     //Figure out state optimization later
-     //desiredState = CTREModuleState.optimize(desiredState, getState().angle);
+     desiredState = CTREModuleState.optimize(desiredState, getState().angle);
  
      if (isOpenLoop) {
        double percentOutput = desiredState.speedMetersPerSecond / maxVelocity;

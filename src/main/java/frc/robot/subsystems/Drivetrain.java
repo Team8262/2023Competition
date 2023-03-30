@@ -337,12 +337,14 @@ public class Drivetrain extends SubsystemBase {
           chassisSpeeds = new ChassisSpeeds(xVelocity, yVelocity, rotationalVelocity);
         }
 
+        /* 
+
         Logger.getInstance()
             .recordOutput("Drivetrain/chassisSpeedVx", chassisSpeeds.vxMetersPerSecond);
         Logger.getInstance()
             .recordOutput("Drivetrain/chassisSpeedVy", chassisSpeeds.vyMetersPerSecond);
         Logger.getInstance()
-            .recordOutput("Drivetrain/chassisSpeedVo", chassisSpeeds.omegaRadiansPerSecond);
+            .recordOutput("Drivetrain/chassisSpeedVo", chassisSpeeds.omegaRadiansPerSecond);*/
 
         YepSwerveModuleState[] swerveModuleStates =
             YES.toSwerveModuleStates(chassisSpeeds, centerGravity);
@@ -435,6 +437,8 @@ public class Drivetrain extends SubsystemBase {
     // update the brake mode based on the robot's velocity and state (enabled/disabled)
     updateBrakeMode();
 
+    /* 
+
     // update tunables
     if (autoDriveKp.hasChanged() || autoDriveKi.hasChanged() || autoDriveKd.hasChanged()) {
       autoXController.setPID(autoDriveKp.get(), autoDriveKi.get(), autoDriveKd.get());
@@ -449,7 +453,7 @@ public class Drivetrain extends SubsystemBase {
     Logger.getInstance().recordOutput("Odometry/Robot", poseEstimatorPose);
     Logger.getInstance().recordOutput("3DField", new Pose3d(poseEstimatorPose));
     Logger.getInstance().recordOutput("SwerveModuleStates", states);
-    Logger.getInstance().recordOutput(SUBSYSTEM_NAME + "/gyroOffset", this.gyroOffset);
+    Logger.getInstance().recordOutput(SUBSYSTEM_NAME + "/gyroOffset", this.gyroOffset);*/
 
   }
 

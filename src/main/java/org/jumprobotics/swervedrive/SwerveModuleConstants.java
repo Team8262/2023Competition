@@ -70,7 +70,7 @@ public final class SwerveModuleConstants {
   /* Drive Motor PID Values */
   public static final double DRIVE_KP = 0.10;
   public static final double DRIVE_KI = 0.0;
-  public static final double DRIVE_KD = 0.0;
+  public static final double DRIVE_KD = 1.0;
   public static final double DRIVE_KF = 0.0;
 
   // FIXME: characterize the drivetrain and update these constants

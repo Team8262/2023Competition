@@ -55,7 +55,7 @@ public class RobotContainer {
     }
 
     public static double getSpeedModifier(){
-      return 0.5/(j.getRawAxis(2)+1);
+      return 0.8/(j.getRawAxis(2)+1);
     }
 
     public static JoystickButton testButton(){
@@ -113,8 +113,8 @@ public class RobotContainer {
   
   public RobotContainer() {
 
-    armPaths.put("high", new double[][]{{20,-1},{44,35}});
-    armPaths.put("low", new double[][]{{10,-2},{0,0}});
+    armPaths.put("high", new double[][]{{20,-1},{15,30}});
+    armPaths.put("low", new double[][]{{10,-2},{27,35}});
     armPaths.put("home", new double[][]{{10,-2},{0,0}});
 
 
@@ -125,7 +125,7 @@ public class RobotContainer {
      
     DoubleSupplier strafesupp = () -> primaryController.getSpeedModifier()*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
     
-    DoubleSupplier rotatesupp = () -> 0.5*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
+    DoubleSupplier rotatesupp = () -> 0.3*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
     
     m_drivetrain.setDefaultCommand(new DefaultDriveCommand(
             m_drivetrain, 
@@ -175,9 +175,9 @@ public class RobotContainer {
 
     //primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
 
-    secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
-    secondaryController.returnHome().whileTrue(new FollowArmPath(arm, armPaths.get("home")));
-    secondaryController.scoreLow().whileTrue(new FollowArmPath(arm, armPaths.get("low")));
+    //secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
+    //secondaryController.returnHome().whileTrue(new FollowArmPath(arm, armPaths.get("home")));
+    //secondaryController.scoreLow().whileTrue(new FollowArmPath(arm, armPaths.get("low")));
     //secondaryController.runNewAuto().onTrue(new GoToAuto(1, m_drivetrain, m_drivetrain.getPose()));
 
   }
