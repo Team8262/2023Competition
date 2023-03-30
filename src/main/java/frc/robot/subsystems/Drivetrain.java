@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.primaryController;
 
 import org.jumprobotics.util.RobotOdometry;
 
@@ -110,7 +111,7 @@ public class Drivetrain extends SubsystemBase {
 
   private static final String SUBSYSTEM_NAME = "Drivetrain";
   private static final boolean TESTING = false;
-  private static final boolean DEBUGGING = true;
+  private static final boolean DEBUGGING = false;
 
   private final Field2d m_fieldSim = new Field2d();
 
@@ -122,7 +123,7 @@ public class Drivetrain extends SubsystemBase {
   private DriveMode driveMode = DriveMode.NORMAL;
   private double characterizationVoltage = 0.0;
 
-  private Vision vision;
+  //private Vision vision;
   private RobotContainer robotContainer;
 
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
@@ -173,6 +174,7 @@ public class Drivetrain extends SubsystemBase {
     tabMain.addNumber("Gyroscope Angle", () -> getRotation().getDegrees());
     tabMain.addBoolean("X-Stance On?", this::isXstance);
     tabMain.addBoolean("Field-Relative Enabled?", () -> this.isFieldRelative);
+    tabMain.addNumber("Speed Cap", ()->primaryController.getSpeedModifier());
 
     ShuffleboardTab homo = Shuffleboard.getTab("homosexual subsystem");
 
@@ -202,7 +204,11 @@ public class Drivetrain extends SubsystemBase {
       tab.add("Disable XStance", new InstantCommand(this::disableXstance));
     }
 
+<<<<<<< HEAD
     
+=======
+    //vision = robotContainer.getVision();
+>>>>>>> main
   }
 
   /**
@@ -360,7 +366,7 @@ public class Drivetrain extends SubsystemBase {
 
         for (SwerveModule swerveModule : swerveModules) {
           swerveModule.setDesiredState(
-              swerveModuleStates[swerveModule.getModuleNumber()], true, false);
+              swerveModuleStates[swerveModule.getModuleNumber()], false, false);
         }
         break;
 

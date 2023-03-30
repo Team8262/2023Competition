@@ -32,11 +32,11 @@ import java.util.List;
 import java.util.function.Consumer;
 
 
-public class Auto2 extends SequentialCommandGroup{
+public class Auto_mov_roobr extends SequentialCommandGroup{
     
-    public Auto2(Drivetrain drivetrain, RobotContainer container){
+    public Auto_mov_roobr (Drivetrain drivetrain, RobotContainer container){
 
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("red no arm", 4, 3);
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("mov roobr", 4, 3);
 
         HashMap<String, Command> eventMap = new HashMap<>();
         
@@ -46,24 +46,18 @@ public class Auto2 extends SequentialCommandGroup{
 
 
         //eventMap.put("init");
-        //eventMap.put("spitout", new InstantCommand(() -> container.coneIntake(-1)));
-        /*eventMap.put("final", new InstantCommand(() -> {
-            container.coneIntake(0);
+        eventMap.put("final", new InstantCommand(() -> {
+            //container.coneIntake(0);
             new AutoBalance(drivetrain);
             
 
-        }));*/
+        }));
 /*
         eventMap.put("start1", new PrintCommand("Passed marker 1"));
         eventMap.put("place1", new PrintCommand("Passed marker 2"));
-        //eventMap.put("pick1", new InstantCommand(() ->  container.coneIntake(1.0)));
+        eventMap.put("pick1", new InstantCommand(() ->  container.coneIntake(1.0)));
         eventMap.put("pick2", new PrintCommand("Passed marker 4"));
-<<<<<<< HEAD
-        //eventMap.put("place2", new InstantCommand(() ->  container.coneIntake(0.0))); 
-        eventMap.put("pick2", new InstantCommand(() -> container.getVision().table.getEntry("ledMode").setInteger(2)));       
-=======
         eventMap.put("place2", new InstantCommand(() ->  container.coneIntake(0.0)));     */   
->>>>>>> main
         // eventMap.put("marker5", new PrintCommand("Passed marker 5"));
 
 
