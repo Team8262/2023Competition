@@ -24,7 +24,7 @@ public class Constants {
  
     //Drivetrain Constants
     public static double driveSpeedCap = 0.8; //Percent of max speed
-    public static final double rotationSpeedCap = 0.6; 
+    public static final double rotationSpeedCap = 0.4; 
 
     // FIXME: check dims on final robot
     
@@ -81,8 +81,8 @@ public class Constants {
     public static final double MAX_ANGULAR_SPEED = 0.1; //Radians per execution loop
 
     //Used to convert from final arm angle to motor angle... so 
-    public static final double BASE_LINK_GEAR_RATIO = 5*4*4*30/15;
-    public static final double UPPER_LINK_GEAR_RATIO = 5*4*4*42/22;
+    public static final double BASE_LINK_GEAR_RATIO = 4*4*5*30/12;
+    public static final double UPPER_LINK_GEAR_RATIO = 3*4*4*30/15;
 
     public static final double BASE_LINK_VELOCITY_P_CONTROLLER = 7.0;
     public static final double BASE_LINK_VELOCITY_I_CONTROLLER = 0.0;

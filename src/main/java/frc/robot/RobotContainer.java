@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -121,11 +122,11 @@ public class RobotContainer {
     buildRobot();
 
     // double forward = 0.0;
-    DoubleSupplier forwardsupp = () -> primaryController.getSpeedModifier()*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+    DoubleSupplier forwardsupp = () -> primaryController.getSpeedModifier()*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.forwardAxis)) * MAX_VELOCITY_METERS_PER_SECOND;
      
-    DoubleSupplier strafesupp = () -> primaryController.getSpeedModifier()*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND * driveSpeedCap;
+    DoubleSupplier strafesupp = () -> primaryController.getSpeedModifier()*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND;
     
-    DoubleSupplier rotatesupp = () -> 0.3*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
+    DoubleSupplier rotatesupp = () -> modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * rotationSpeedCap;
     
     m_drivetrain.setDefaultCommand(new DefaultDriveCommand(
             m_drivetrain, 
@@ -165,12 +166,12 @@ public class RobotContainer {
     primaryController.xStanceButton().onFalse(Commands.runOnce(m_drivetrain::disableXstance, m_drivetrain));
   
    
-    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(1)));
+    primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(0.6)));
     primaryController.intakeConeButton().whileFalse(new InstantCommand(() -> coneIntake(0.0)));
-    primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(1)));
-    primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> cubeIntake(0.0)));
+    primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(0.6)));
+    primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> cubeIntake(0.0))); 
    
-    primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(1)));
+    primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(0.6)));
     primaryController.spitOutButton().whileFalse(new InstantCommand(() -> spitout(0.0)));
 
     //primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
@@ -205,8 +206,8 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // return Commands.print("No autonomous command configured");
-    //Auto2 auto = new Auto2(m_drivetrain, this);
-    return new InstantCommand();//auto;
+    MobilityAuto auto = new MobilityAuto(m_drivetrain, this);
+    return new InstantCommand();//auto.getauto();
   }
 
   private static double deadband(double value, double deadband) {

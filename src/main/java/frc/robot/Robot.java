@@ -45,6 +45,8 @@ public class Robot extends LoggedRobot {
 
     logger.start();
 
+    /* 
+
     CommandScheduler.getInstance()
     .onCommandInitialize(
         command -> Logger.getInstance().recordOutput("Command initialized", command.getName()));
@@ -53,10 +55,10 @@ public class Robot extends LoggedRobot {
         command -> Logger.getInstance().recordOutput("Command interrupted", command.getName()));
     CommandScheduler.getInstance()
     .onCommandFinish(
-        command -> Logger.getInstance().recordOutput("Command finished", command.getName()));
+        command -> Logger.getInstance().recordOutput("Command finished", command.getName()));*/
 
     m_robotContainer = new RobotContainer();
-
+ 
   }
 
   @Override

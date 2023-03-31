@@ -10,9 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.*;
 import static frc.robot.Constants.*;
 
 import frc.robot.Constants;
@@ -31,13 +29,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
+public class MobilityAuto extends SequentialCommandGroup{
 
-public class Auto2 extends SequentialCommandGroup{
+    private Command fullAuto;
     
-    public Auto2(Drivetrain drivetrain, RobotContainer container){
+    public MobilityAuto(Drivetrain drivetrain, RobotContainer container){
         
-        addRequirements(drivetrain);
-
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("red no arm", 2, 3);
 
         HashMap<String, Command> eventMap = new HashMap<>();
@@ -47,14 +44,13 @@ public class Auto2 extends SequentialCommandGroup{
         Consumer<SwerveModuleState[]> joeph = drivetrain.joe;
 
 
-        //eventMap.put("init");
+        eventMap.put("init", new InstantCommand(() -> System.out.println("Yeps")));
         //eventMap.put("spitout", new InstantCommand(() -> container.coneIntake(-1)));
         /*eventMap.put("final", new InstantCommand(() -> {
             container.coneIntake(0);
-            new AutoBalance(drivetrain);
-            
-
         }));*/
+        eventMap.put("spitout", new PrintCommand("spit"));
+        eventMap.put("final", new PrintCommand("MM"));
 /*
         eventMap.put("start1", new PrintCommand("Passed marker 1"));
         eventMap.put("place1", new PrintCommand("Passed marker 2"));
@@ -86,12 +82,15 @@ public class Auto2 extends SequentialCommandGroup{
 
       
       
-        Command fullAuto = autoBuilderS.fullAuto(pathGroup);
+        fullAuto = autoBuilderS.fullAuto(pathGroup);
         addCommands(fullAuto);
-        // public Commmand getauto(){
-        //     return fullAuto;
-        // }
 
 
+
+    }
+
+
+    public Command getauto(){
+        return fullAuto;
     }
 }

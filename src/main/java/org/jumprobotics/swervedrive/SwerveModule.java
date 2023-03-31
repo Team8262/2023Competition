@@ -63,7 +63,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
        YepSwerveModuleState desiredState, boolean isOpenLoop, boolean forceAngle) {
  
     //Figure out state optimization later
-     desiredState = CTREModuleState.optimize(desiredState, getState().angle);
+     //desiredState = CTREModuleState.optimize(desiredState, getState().angle);
  
      if (isOpenLoop) {
        double percentOutput = desiredState.speedMetersPerSecond / maxVelocity;

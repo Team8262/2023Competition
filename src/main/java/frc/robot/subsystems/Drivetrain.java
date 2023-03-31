@@ -59,6 +59,8 @@ public class Drivetrain extends SubsystemBase {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Field2d field2d = new Field2d();
 
+
+  
   private final TunableNumber autoDriveKp =
       new TunableNumber("AutoDrive/DriveKp", AUTO_DRIVE_P_CONTROLLER);
   private final TunableNumber autoDriveKi =
@@ -164,11 +166,13 @@ public class Drivetrain extends SubsystemBase {
     this.poseEstimator = RobotOdometry.getInstance().getPoseEstimator();
 
     ShuffleboardTab tabMain = Shuffleboard.getTab("MAIN");
+
+    /* 
     tabMain.addNumber("Gyroscope Angle", () -> getRotation().getDegrees());
     tabMain.addBoolean("X-Stance On?", this::isXstance);
     tabMain.addBoolean("Field-Relative Enabled?", () -> this.isFieldRelative);
     tabMain.addNumber("Speed Cap", ()->primaryController.getSpeedModifier());
-
+        */
     if (DEBUGGING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
       tab.add(SUBSYSTEM_NAME, this);
@@ -353,7 +357,7 @@ public class Drivetrain extends SubsystemBase {
 
         for (SwerveModule swerveModule : swerveModules) {
           swerveModule.setDesiredState(
-              swerveModuleStates[swerveModule.getModuleNumber()], false, false);
+              swerveModuleStates[swerveModule.getModuleNumber()], true, false);
         }
         break;
 
@@ -399,7 +403,7 @@ public class Drivetrain extends SubsystemBase {
 
     // update and log gyro inputs
     gyroIO.updateInputs(gyroInputs);
-    Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);
+    //Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);
 
     // update and log the swerve module inputs
     for (SwerveModule swerveModule : swerveModules) {
