@@ -80,12 +80,12 @@ public class RobotContainer {
       return new JoystickButton(j, 5);
     }
 
-    public static JoystickButton scoreLow() {
-      return new JoystickButton(j, 3);
-    }
-
     public static JoystickButton returnHome(){
       return new JoystickButton(j, 2);
+    }
+
+    public static JoystickButton scoreMid(){
+      return new JoystickButton(j,3);
     }
 
     //public static JoystickButton 
@@ -115,11 +115,16 @@ public class RobotContainer {
   
   public RobotContainer() {
 
-    armPaths.put("high", new double[][]{{20,-1},{44,35}});
-    armPaths.put("low", new double[][]{{10,-2},{0,0}});
+    //Arm vertical - 86ish
+    armPaths.put("high", new double[][]{{-15,-1},{-20.57,121.6}});
+    armPaths.put("mid", new double[][]{{-15,-2},{-12.64,132}});
     armPaths.put("home", new double[][]{{10,-2},{0,0}});
 
-    
+    //Mid base = -12.642898559570312
+    //mid arm = 132.9984893798828
+
+    //Upper base = -20.571340560913086
+    //Upper arm = 121.6666259765625g
 
     buildRobot();
 
@@ -140,7 +145,7 @@ public class RobotContainer {
     DoubleSupplier baseSupp = () -> modifyAxis(getSecondaryJoystick().getRawAxis(0))*MAX_ANGULAR_SPEED;
     DoubleSupplier armSupp = () -> modifyAxis(getSecondaryJoystick().getRawAxis(1))*MAX_ANGULAR_SPEED;
 
-    //arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
+    arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
      
 
     configureBindings();
@@ -178,12 +183,12 @@ public class RobotContainer {
 
 
     //primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
-/* 
+
     secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
     secondaryController.returnHome().whileTrue(new FollowArmPath(arm, armPaths.get("home")));
-    secondaryController.scoreLow().whileTrue(new FollowArmPath(arm, armPaths.get("low")));
+    secondaryController.scoreMid().whileTrue(new FollowArmPath(arm, armPaths.get("mid")));
     //secondaryController.runNewAuto().onTrue(new GoToAuto(1, m_drivetrain, m_drivetrain.getPose()));
-*/
+
   }
 
   public void setDrivingMode(int i) {
