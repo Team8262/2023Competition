@@ -89,15 +89,15 @@ public class Constants {
     public static final double BASE_LINK_VELOCITY_D_CONTROLLER = 0.5;
     public static final double BASE_LINK_VELOCITY_F_CONTROLLER = 0.0;
 
-    public static final double BASE_LINK_MAX_VELOCITY = 0.0; //RPM
-    public static final double BASE_LINK_MAX_ACCELERATION = 0.0;
+    public static final double BASE_LINK_MAX_VELOCITY = 80.0; //RPM
+    public static final double BASE_LINK_MAX_ACCELERATION = 50.0;
 
     public static final double UPPER_LINK_VELOCITY_P_CONTROLLER = 8.0;
     public static final double UPPER_LINK_VELOCITY_I_CONTROLLER = 0.0;
     public static final double UPPER_LINK_VELOCITY_D_CONTROLLER = 0.2;
     public static final double UPPER_LINK_VELOCITY_F_CONTROLLER = 0.0;
 
-    public static final double UPPER_LINK_MAX_VELOCITY = 50.0; //RPM
+    public static final double UPPER_LINK_MAX_VELOCITY = 60.0; //RPM
     public static final double UPPER_LINK_MAX_ACCELERATION = 50.0;
 
     //End Constants

@@ -56,7 +56,7 @@ public class RobotContainer {
     }
 
     public static double getSpeedModifier(){
-      return 0.8/(j.getRawAxis(2)+1);
+      return 1/(j.getRawAxis(2)+1);
     }
 
     public static JoystickButton testButton(){
@@ -88,6 +88,10 @@ public class RobotContainer {
       return new JoystickButton(j,3);
     }
 
+    public static JoystickButton directHome(){
+      return new JoystickButton(j, 4);
+    }
+
     //public static JoystickButton 
     /*
     public static JoystickButton runNewAuto() {
@@ -103,7 +107,7 @@ public class RobotContainer {
   //public static Joystick primaryJoystick = new Joystick(0);
   private Intake intake = new Intake();
   private End end = new End();
-  private Arm arm = new Arm();
+  //private Arm arm = new Arm();
   //private Vision vision;
 
   public Drivetrain getDrivetrain(){
@@ -116,9 +120,10 @@ public class RobotContainer {
   public RobotContainer() {
 
     //Arm vertical - 86ish
-    armPaths.put("high", new double[][]{{-15,-1},{-20.57,121.6}});
-    armPaths.put("mid", new double[][]{{-15,-2},{-12.64,132}});
-    armPaths.put("home", new double[][]{{10,-2},{0,0}});
+    armPaths.put("high", new double[][]{{-15,20},{-20.57,30},{-20.57,60},{-20.57,90},{-20.57,121.6}});
+    armPaths.put("mid", new double[][]{{-15,20},{-12.64,30},{-12.64,60},{-12.65,90},{-12.64,120},{-12.64,132}});
+    armPaths.put("home", new double[][]{{-15,15}, {-5,0},{0,0}});
+    armPaths.put("directhome", new double[][]{{0,0}});
 
     //Mid base = -12.642898559570312
     //mid arm = 132.9984893798828
@@ -133,7 +138,7 @@ public class RobotContainer {
      
     DoubleSupplier strafesupp = () -> primaryController.getSpeedModifier()*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.strafeAxis)) * MAX_VELOCITY_METERS_PER_SECOND;
     
-    DoubleSupplier rotatesupp = () -> 0.3*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+    DoubleSupplier rotatesupp = () -> 0.5*modifyAxis(getPrimaryJoystick().getRawAxis(Constants.rotationAxis)) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
 
 
     m_drivetrain.setDefaultCommand(new DefaultDriveCommand(
@@ -145,7 +150,7 @@ public class RobotContainer {
     DoubleSupplier baseSupp = () -> modifyAxis(getSecondaryJoystick().getRawAxis(0))*MAX_ANGULAR_SPEED;
     DoubleSupplier armSupp = () -> modifyAxis(getSecondaryJoystick().getRawAxis(1))*MAX_ANGULAR_SPEED;
 
-    arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
+    //arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
      
 
     configureBindings();
@@ -183,10 +188,14 @@ public class RobotContainer {
 
 
     //primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
-
+    
+    /* 
     secondaryController.scoreHigh().whileTrue(new FollowArmPath(arm, armPaths.get("high")));
     secondaryController.returnHome().whileTrue(new FollowArmPath(arm, armPaths.get("home")));
     secondaryController.scoreMid().whileTrue(new FollowArmPath(arm, armPaths.get("mid")));
+    secondaryController.directHome().whileTrue(new FollowArmPath(arm, armPaths.get("directhome")));*/
+
+    
     //secondaryController.runNewAuto().onTrue(new GoToAuto(1, m_drivetrain, m_drivetrain.getPose()));
 
   }
