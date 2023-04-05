@@ -8,8 +8,10 @@ import org.littletonrobotics.junction.Logger;
 
 import static frc.robot.Constants.*;
 
+import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
@@ -86,10 +88,17 @@ public class Arm extends SubsystemBase {
 
     //baseEncoder = base1.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
     //armEncoder = arm.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
-    baseEncoder = base2.getEncoder();
-    armEncoder = arm.getEncoder();
+    baseEncoder = base2.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature,8192);
+    //armEncoder = arm.getEncoder();
+    armEncoder = arm.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature,8192);
     baseEncoder.setPosition(0); //These are fake numbers... replace them with init values in rotations
     armEncoder.setPosition(0);
+
+
+    //This feels right
+    baseController.setFeedbackDevice(baseEncoder);
+    armController.setFeedbackDevice(armEncoder);
+
 
     //armModel.addLookupTable("ArmLookupTable.json");
 
