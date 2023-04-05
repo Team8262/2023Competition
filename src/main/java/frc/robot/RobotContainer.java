@@ -43,12 +43,8 @@ public class RobotContainer {
       return j;
     }
 
-    public static  JoystickButton intakeCubeButton(){
+    public static  JoystickButton intakeButton(){
       return new JoystickButton(j, 3);
-    }
-
-    public static JoystickButton intakeConeButton(){
-      return new JoystickButton(j, 2);
     }
 
     public static JoystickButton spitOutButton(){
@@ -177,8 +173,8 @@ public class RobotContainer {
    
     //primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(1)));
     //primaryController.intakeConeButton().whileFalse(new InstantCommand(() -> coneIntake(0.0)));
-    primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> cubeIntake(-1)));
-    primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> cubeIntake(0.0)));
+    primaryController.intakeButton().whileTrue(new InstantCommand(() -> intake(-1)));
+    primaryController.intakeButton().whileFalse(new InstantCommand(() -> intake(0.0)));
    
     primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(-1)));
     primaryController.spitOutButton().whileFalse(new InstantCommand(() -> spitout(0.0)));
@@ -203,19 +199,14 @@ public class RobotContainer {
   public void setDrivingMode(int i) {
     //m_drivetrain.drivingMode = i;
   }
-  public void coneIntake(double speed){
+  public void intake(double speed){
     intake.setSpeed(speed);
-    end.setConeSpeed(speed);
-  }
-
-  public void cubeIntake(double speed){
-    intake.setSpeed(speed);
-    end.setCubeSpeed(speed);
+    end.setSpeed(speed);
   }
 
   public void spitout(double speed){
     intake.setSpeed(-speed);
-    end.setCubeSpeed(-speed);
+    end.setSpeed(-speed);
     //end.setConeSpeed(-speed);
   }
 

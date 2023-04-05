@@ -103,8 +103,7 @@ public class Constants {
     public static final double UPPER_LINK_MAX_ACCELERATION = 50.0;
 
     //End Constants
-    public static final int END_BOTTOM = 21;
-    public static final int END_TOP = 22;
+    public static final int END_MOTOR = 21; //Make sure this is right
     public static final double MAX_END_CURRENT = 40; //Amps
 
     

@@ -6,8 +6,6 @@ import frc.robot.Constants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import static frc.robot.Constants.*;
-
 public class Intake extends SubsystemBase{
     private CANSparkMax intakeMotor;
     private CANSparkMax sideMotor;
