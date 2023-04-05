@@ -24,6 +24,7 @@ public class Constants {
  
     //Drivetrain Constants
     public static double driveSpeedCap = 0.8; //Percent of max speed
+
     public static final double rotationSpeedCap = 0.4; 
 
     // FIXME: check dims on final robot
@@ -69,6 +70,7 @@ public class Constants {
 
     //Intake Constants
     public static final int  intakeMotor = 29;
+    public static int sideIntakeMotor = 30; //This is a fake number;
 
     //Arm Subsystem
     public static final double BASE_LINK_LENGTH = 0.8128; //meters

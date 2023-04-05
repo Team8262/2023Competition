@@ -10,11 +10,13 @@ import static frc.robot.Constants.*;
 
 public class Intake extends SubsystemBase{
     private CANSparkMax intakeMotor;
+    private CANSparkMax sideMotor;
 
     int motorID = Constants.intakeMotor;
     
     public Intake(){
         intakeMotor = new CANSparkMax(motorID, MotorType.kBrushless);
+        sideMotor = new CANSparkMax(Constants.sideIntakeMotor, MotorType.kBrushless);
     }
 
     @Override

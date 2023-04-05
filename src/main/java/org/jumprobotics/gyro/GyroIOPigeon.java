@@ -19,5 +19,6 @@ public class GyroIOPigeon implements GyroIO {
     inputs.connected = gyro.getLastError().equals(ErrorCode.OK);
     inputs.positionDeg = gyro.getYaw(); // degrees
     inputs.velocityDegPerSec = xyzDps[2]; // degrees per second
+    inputs.pitchPosition=gyro.getPitch();
   }
 }

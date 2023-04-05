@@ -12,7 +12,7 @@ public class FollowArmPath extends CommandBase {
   private Arm arm;
   private double[][] path;
   private int step;
-  private final double positionTolerance = 0.1; //This is in radians i think
+  private final double positionTolerance = 0.03; //This is in radians i think
   public FollowArmPath(Arm arm, double[][] path) {
     addRequirements(arm);
     this.arm = arm;

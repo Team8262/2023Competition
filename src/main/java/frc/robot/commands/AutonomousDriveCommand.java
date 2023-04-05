@@ -28,7 +28,6 @@ public class AutonomousDriveCommand extends CommandBase {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
         this.x = x;
         this.y = y;
-        this.speed = speed;
         this.seconds = seconds;
         
         addRequirements(drivetrainSubsystem);

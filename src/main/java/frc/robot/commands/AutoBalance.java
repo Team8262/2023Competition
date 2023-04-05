@@ -24,14 +24,14 @@ public class AutoBalance extends PIDCommand {
 
     super(
         // The controller that the command will use
-        new PIDController(3, 0, 0.2),
+        new PIDController(4, 0, 0.2),
         // This should return the measurement
         () -> dt.getGyroIOInputs().connected ? dt.getGyroIOInputs().pitchPosition : 0,
         // This should return the setpoint (can also be a constant)
         () -> 0,
         // This uses the output
         output -> {
-          dt.drive(0.1*output, 0, 0);
+          dt.drive(0.05*output, 0, 0);
         });
         
     addRequirements(dt);
