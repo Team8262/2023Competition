@@ -47,7 +47,7 @@ public class ManualArmControl extends CommandBase {
       upperTarget=0;
     }
 
-    m_Arm.setAngles(lowerTarget, upperTarget);
+    //m_Arm.setAngles(lowerTarget, upperTarget);
   }
 
 

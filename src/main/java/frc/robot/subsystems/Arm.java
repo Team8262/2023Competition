@@ -33,7 +33,7 @@ import java.lang.Math;
 public class Arm extends SubsystemBase {
   public CANSparkMax base1, base2, arm, arm2;
  /// private SparkMaxPIDController baseController, armController;
-  private RelativeEncoder baseEncoder, armEncoder;
+  private RelativeEncoder baseEncoder, armEncoder, base2Encoder;
 
   private static final String SUBSYSTEM_NAME = "Arm";
   
@@ -70,9 +70,12 @@ public class Arm extends SubsystemBase {
 
     base2.setInverted(false);
 
-    arm2.follow(arm, true); 
+    arm2.setInverted(true);
+    base1.setInverted(true);
 
-    base1.follow(base2, true);
+    //arm2.follow(arm, true); 
+
+    //base1.follow(base2, true);
 
    // baseController = base2.getPIDController();
    // armController = arm.getPIDController();
@@ -110,8 +113,10 @@ public class Arm extends SubsystemBase {
     //armEncoder = arm.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
     baseEncoder = base2.getEncoder();
     armEncoder = arm.getEncoder();
+    base2Encoder = base1.getEncoder();
     baseEncoder.setPosition(0); //These are fake numbers... replace them with init values in rotations
     armEncoder.setPosition(0);
+    base2Encoder.setPosition(0);
 
     //armModel.addLookupTable("ArmLookupTable.json");
 
@@ -121,10 +126,13 @@ public class Arm extends SubsystemBase {
       tab.addNumber("Arm Raw", () -> armEncoder.getPosition());
       tab.addNumber("Base Angle", () -> baseEncoder.getPosition() * 2 * Math.PI / BASE_LINK_GEAR_RATIO);
       tab.addNumber("Arm Angle", () -> armEncoder.getPosition() * 2 * Math.PI / UPPER_LINK_GEAR_RATIO);
+      tab.addNumber("Arm Real", () -> getRealAngle()[1]);
+      tab.addNumber("Base Real", () -> getRealAngle()[0]);
+    
     }
   
-    base2.set(0);
-    arm.set(0);
+    //base2.set(0);
+    //arm.set(0);
 
 
   }
@@ -133,6 +141,7 @@ public class Arm extends SubsystemBase {
   /*
    * return the current position as radians
    */
+  /* 
   public double[] getCurrentPositions(){
     double[] angles = {baseEncoder.getPosition()*2*Math.PI/BASE_LINK_GEAR_RATIO, armEncoder.getPosition() * 2 * Math.PI/UPPER_LINK_GEAR_RATIO};
     return angles;
@@ -143,6 +152,7 @@ public class Arm extends SubsystemBase {
     double[] angles = {baseEncoder.getPosition(), armEncoder.getPosition()};
     return angles;
   }
+  */
 
   /*
   public void setPosition(Translation2d pos){
@@ -172,12 +182,14 @@ public class Arm extends SubsystemBase {
     return realAngles;
   }
 
-  //In radians
+  /* 
   public void setAngles(double lower, double upper){
     // order matters here
     //armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getUpperFF());
    // baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getBaseFF());
   }
+
+  
 
   //In rotations
   public void setsAnglesRaw(double lower, double upper){
@@ -185,14 +197,23 @@ public class Arm extends SubsystemBase {
     //baseController.setReference(lower, ControlType.kPosition,0,getBaseFF());
     //System.out.println("Goal: " + lower + "    , Actual: " + baseEncoder.getPosition());
   }
+  */
 
-  public void gayAnglesRaw(double lower, double upper) {
-    double lowerGoal = Math.sqrt((8 * (lower - getRealAngle()[0])));
-    double upperGoal = Math.sqrt((8 * (upper - getRealAngle()[1])));
+
+  public void gayAnglesRaw(double lower, double upper, double speedAdjustment) {
+    double preLower = (2 * (lower - getRealAngle()[0]));
+    double preUpper = (1 * (upper - getRealAngle()[1]));
+
+    double lowerGoal = speedAdjustment * Math.copySign(Math.sqrt(Math.abs(preLower)),preLower);
+    double upperGoal = speedAdjustment * Math.copySign(Math.sqrt(Math.abs(preUpper)), preUpper);
+    
+    //System.out.println("Lowergoal: " + lowerGoal);
+   // System.out.println("Higher24 goal: " + upperGoal);
     base2.set(lowerGoal);
-    //base1.set(lowerGoal);
+    base1.set(lowerGoal);
     arm.set(upperGoal);
-    //arm2.set(upperGoal);
+    arm2.set(upperGoal);
+    //System.out.println("BASE SPEED" + baseEncoder.getVelocity() +  "Base Second SPEED" + base2Encoder.getVelocity() + " Current draw " + base1.getOutputCurrent() + " Second Current " + base2.getOutputCurrent());
   }
 
   public void diee() {
@@ -205,6 +226,20 @@ public class Arm extends SubsystemBase {
     arm2.set(-.1);
   }
 
+  public void coast() {
+    arm.setIdleMode(IdleMode.kCoast);
+    arm2.setIdleMode(IdleMode.kCoast);
+    base1.setIdleMode(IdleMode.kCoast);
+    base2.setIdleMode(IdleMode.kCoast);
+  }
+
+  
+  public void brake() {
+    arm.setIdleMode(IdleMode.kBrake);
+    arm2.setIdleMode(IdleMode.kBrake);
+    base1.setIdleMode(IdleMode.kBrake);
+    base2.setIdleMode(IdleMode.kBrake);
+  }
   //Super basic, probably wsrong
   /* 
   public boolean stowed(){
@@ -213,6 +248,7 @@ public class Arm extends SubsystemBase {
 
 
   //second
+  /* 
   private double getBaseFF(){
     double angle = baseEncoder.getPosition()*BASE_LINK_GEAR_RATIO;
     //double torque = (Math.cos(base_angle*2*Math.PI)*BASE_CENTER_OF_MASS*BASE_MASS+(Math.cos(upper_angle*2*Math.PI)*UPPER_CENTER_OF_MASS+Math.cos(base_angle*2*Math.PI)*BASE_LENGTH)*UPPER_MASS);
@@ -229,10 +265,13 @@ public class Arm extends SubsystemBase {
     //TODO movement feedforward 
     return Math.sin(angle)*4;//torque*UPPER_VOLTAGE_COMPENSATION;
   }
+  */
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   //System.out.println(base1.getEncoder().getPosition());
   }
+
+
 }

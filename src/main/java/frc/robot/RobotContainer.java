@@ -77,7 +77,7 @@ public class RobotContainer {
     }
 
     public static JoystickButton returnHome(){
-      return new JoystickButton(j,11);
+      return new JoystickButton(j,12);
     }
 
     public static JoystickButton scoreMid(){
@@ -118,7 +118,7 @@ public class RobotContainer {
   //public static Joystick primaryJoystick = new Joystick(0);
   private Intake intake = new Intake();
   private End end = new End();
-  private Arm arm = new Arm();
+  public Arm arm = new Arm();
   //private Vision vision;
 
   public Drivetrain getDrivetrain(){
@@ -136,16 +136,18 @@ public class RobotContainer {
     //was just spamming unumbers
     //wesley you are being carried by new software
     double[] home = new double[]{0,0}; // stow position for the cubbbbes
-    double[] homeMid = new double[]{-.2,0};//,-1}; //midway out of the stow position
+    double[] homeMid = new double[]{-.3,0};//,-1}; //midway out of the stow position
+    double[] homeMid2 = new double[]{-.15, 0};
     //double[] homeOut = homeMid; //new double[]{-5,-5}; // out of the stowed position free to move
 
     double[] coneHome = new double[]{0,0}; //stow position for the arm in cone mode you fucking idiot
     armPaths.put("high", new double[][]{homeMid, {-.226, -.581}});
+    //armPaths.put("high", new double[][]{homeMid, {-.4, 0}});
     armPaths.put("mid", new double[][]{homeMid, {-.156,-.72}});
     armPaths.put("coneHigh", new double[][]{coneHome, {-.137,-.709}});
     armPaths.put("coneMid", new double [][]{coneHome, {-.2105,-.568}});
-    armPaths.put("coneTrayando", new double[][]{homeMid, {0.0639,-.89}});
-    armPaths.put("home", new double[][]{homeMid,home});
+    armPaths.put("coneTrayando", new double[][]{homeMid, {-0.1736594,-0.6354}});
+    armPaths.put("home", new double[][]{homeMid,homeMid2,home});
     armPaths.put("coneHome", new double[][]{coneHome});
 
     armPaths.put("directhome", new double[][]{home});
@@ -209,14 +211,14 @@ public class RobotContainer {
     primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
     
     
-    secondaryController.scoreHigh().whileTrue(new gayArmPath(arm, armPaths.get("high")));
-    secondaryController.returnHome().whileTrue(new gayArmPath(arm, armPaths.get("home")));
-    secondaryController.scoreMid().whileTrue(new gayArmPath(arm, armPaths.get("mid")));
-    secondaryController.directHome().whileTrue(new gayArmPath(arm, armPaths.get("directhome")));
-    secondaryController.coneHigh().whileTrue(new gayArmPath(arm, armPaths.get("coneHigh")));
-    secondaryController.coneMid().whileTrue(new gayArmPath(arm, armPaths.get("coneMid")));
-    secondaryController.coneTrayando().whileTrue(new gayArmPath(arm, armPaths.get("coneTrayando")));
-    secondaryController.coneHome().whileTrue(new gayArmPath(arm, armPaths.get("coneHome")));
+    secondaryController.scoreHigh().whileTrue(new gayArmPath(arm, armPaths.get("high"), 1));
+    secondaryController.returnHome().whileTrue(new gayArmPath(arm, armPaths.get("home"), 0.5));
+    secondaryController.scoreMid().whileTrue(new gayArmPath(arm, armPaths.get("mid"), 1));
+    secondaryController.directHome().whileTrue(new gayArmPath(arm, armPaths.get("directhome"), 1));
+    secondaryController.coneHigh().whileTrue(new gayArmPath(arm, armPaths.get("coneHigh"), 1));
+    secondaryController.coneMid().whileTrue(new gayArmPath(arm, armPaths.get("coneMid"), 1));
+    secondaryController.coneTrayando().whileTrue(new gayArmPath(arm, armPaths.get("coneTrayando"), 1));
+    secondaryController.coneHome().whileTrue(new gayArmPath(arm, armPaths.get("coneHome"), 0.5));
 
 
 

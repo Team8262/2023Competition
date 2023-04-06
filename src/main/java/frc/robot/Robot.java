@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer.primaryController;
+import frc.robot.subsystems.Arm;
 
 
 
@@ -57,6 +58,8 @@ public class Robot extends LoggedRobot {
 
     m_robotContainer = new RobotContainer();
 
+    m_robotContainer.arm.brake();
+
   }
 
   @Override
@@ -67,7 +70,10 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.arm.coast();
+
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -95,6 +101,7 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.arm.brake();
   }
 
   @Override

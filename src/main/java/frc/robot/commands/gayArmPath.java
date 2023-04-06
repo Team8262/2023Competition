@@ -12,11 +12,13 @@ public class gayArmPath extends CommandBase {
   private Arm arm;
   private double[][] path;
   private int step;
-  private final double positionTolerance = 0.03; //This is in radians i think
-  public gayArmPath(Arm arm, double[][] path) {
+  private final double positionTolerance = 0.06; //This is in radians i think
+  private double speed;
+  public gayArmPath(Arm arm, double[][] path, double speed) {
     addRequirements(arm);
     this.arm = arm;
     this.path = path;
+    this.speed = speed;
   }
 
   // Called when the command is initially scheduled.
@@ -31,7 +33,7 @@ public class gayArmPath extends CommandBase {
     //arm.gayAnglesRaw(0, -.2);
     //arm.spin();
 
-   arm.gayAnglesRaw(path[step][0], path[step][1]);
+   arm.gayAnglesRaw(path[step][0], path[step][1], speed);
     if(atPoint(path[step][0], path[step][1]) && step != path.length - 1){
       step++;
       System.out.println(step);
@@ -47,7 +49,7 @@ public class gayArmPath extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arm.diee();
+   // arm.diee();
     System.out.println("Did it");
   }
 
