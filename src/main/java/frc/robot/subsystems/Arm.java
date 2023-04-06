@@ -8,6 +8,8 @@ import org.littletonrobotics.junction.Logger;
 
 import static frc.robot.Constants.*;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -18,6 +20,7 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -85,15 +88,15 @@ public class Arm extends SubsystemBase {
     armController.setSmartMotionMaxAccel(UPPER_LINK_MAX_ACCELERATION, 0);
 
     armController.setOutputRange(-0.5, 0.5);
-
-    //baseEncoder = base1.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
-    //armEncoder = arm.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
-    baseEncoder = base2.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature,8192);
+    DutyCycleEncoder baseAbsoluteEncoder = new DutyCycleEncoder(9);
+    DutyCycleEncoder armAbsoluteEncoder = new DutyCycleEncoder(0);
+    baseEncoder = base1.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
+    armEncoder = arm.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
     //armEncoder = arm.getEncoder();
-    armEncoder = arm.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature,8192);
-    baseEncoder.setPosition(0); //These are fake numbers... replace them with init values in rotations
-    armEncoder.setPosition(0);
-
+    //baseEncoder.setPosition(0); //These are fake numbers... replace them with init values in rotations
+    //armEncoder.setPosition(0); this dat new codeeee
+    baseEncoder.setPosition(baseAbsoluteEncoder.getAbsolutePosition() / 2);
+    armEncoder.setPosition(armAbsoluteEncoder.getAbsolutePosition() / 2);
 
     //This feels right
     baseController.setFeedbackDevice(baseEncoder);

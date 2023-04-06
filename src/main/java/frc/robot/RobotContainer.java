@@ -114,18 +114,25 @@ public class RobotContainer {
   private HashMap<String, double[][]> armPaths = new HashMap<String, double[][]>();
   
   public RobotContainer() {
+    //cones are stowed dfferentl than cubes
+    //for cubes the arm is stuck in the intake so we need 3 points
+    //for cones the arm should be able to mvoe directly to the good position
+    //im using variable because the monkey who wrote this ebfore me
+    //was just spamming unumbers
+    //wesley you are being carried by new software
+    double[] home = new double[]{0,0}; // stow position for the cubbbbes
+    double[] homeMid = new double[]{1,1}; //midway out of the stow position
+    double[] homeOut = new double[]{2,2}; // out of the stowed position free to move
 
-    //Arm vertical - 86ish
-    armPaths.put("high", new double[][]{{-15,20},{-20.57,30},{-20.57,60},{-20.57,90},{-20.57,121.6}});
-    armPaths.put("mid", new double[][]{{-15,20},{-12.64,30},{-12.64,60},{-12.65,90},{-12.64,120},{-12.64,132}});
-    armPaths.put("home", new double[][]{{-15,15}, {-5,0},{0,0}});
-    armPaths.put("directhome", new double[][]{{0,0}});
-
-    //Mid base = -12.642898559570312
-    //mid arm = 132.9984893798828
-
-    //Upper base = -20.571340560913086
-    //Upper arm = 121.6666259765625g
+    double[] coneHome = new double[]{5,5}; //stow position for the arm in cone mode you fucking idiot
+    armPaths.put("high", new double[][]{home,homeMid,homeOut, {0,0}});
+    armPaths.put("mid", new double[][]{home,homeMid,homeOut, {0,0}});
+    armPaths.put("coneHigh", new double[][]{coneHome, {0,0}});
+    armPaths.put("coneMid", new double [][]{coneHome, {0,0}});
+    armPaths.put("coneTrayando", new double[][]{coneHome, {0,0}});
+    armPaths.put("home", new double[][]{homeOut,homeMid,home});
+    armPaths.put("coneHome", new double[][]{coneHome});
+    armPaths.put("directhome", new double[][]{home});
 
     buildRobot();
 

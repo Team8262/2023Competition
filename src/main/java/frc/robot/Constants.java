@@ -69,8 +69,8 @@ public class Constants {
     public static final double AUTO_TURN_D_CONTROLLER = 0.0;
 
     //Intake Constants
-    public static final int  intakeMotor = 62;
-    public static int sideIntakeMotor = 22; //you are gay if you are reading this
+    public static final int intakeMotor = 62;
+    public static final int sideIntakeMotor = 22;
 
     //Arm Subsystem
     public static final double BASE_LINK_LENGTH = 0.8128; //meters
