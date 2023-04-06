@@ -32,7 +32,8 @@ public class RobotContainer {
     private static final Joystick j = new Joystick(0);
 
     public static JoystickButton resetGyroButton(){
-      return new JoystickButton(j,6);
+      // return new JoystickButton(j,6);
+      return new JoystickButton(j,3);
     }
 
     public static JoystickButton xStanceButton(){
@@ -43,8 +44,9 @@ public class RobotContainer {
       return j;
     }
 
-    public static  JoystickButton intakeButton(){
-      return new JoystickButton(j, 3);
+    public static  JoystickButton intakeCubeButton(){
+      // return new JoystickButton(j, 3);
+      return new JoystickButton(j, 6);
     }
 
     public static JoystickButton spitOutButton(){
@@ -180,8 +182,8 @@ public class RobotContainer {
    
     //primaryController.intakeConeButton().whileTrue(new InstantCommand(() -> coneIntake(1)));
     //primaryController.intakeConeButton().whileFalse(new InstantCommand(() -> coneIntake(0.0)));
-    primaryController.intakeButton().whileTrue(new InstantCommand(() -> intake(-1)));
-    primaryController.intakeButton().whileFalse(new InstantCommand(() -> intake(0.0)));
+    primaryController.intakeCubeButton().whileTrue(new InstantCommand(() -> intake(-1)));
+    primaryController.intakeCubeButton().whileFalse(new InstantCommand(() -> intake(0.0)));
    
     primaryController.spitOutButton().whileTrue(new InstantCommand(() -> spitout(-1)));
     primaryController.spitOutButton().whileFalse(new InstantCommand(() -> spitout(0.0)));
@@ -222,8 +224,11 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // return Commands.print("No autonomous command configured");
-    //Auto2 auto = new Auto2(m_drivetrain, this);
-    return new InstantCommand();//auto;
+    // return new InstantCommand();
+    // Auto2 auto = new Auto2(m_drivetrain, this);
+    Auto1 auto = new Auto1(m_drivetrain, this);
+    return auto;
+  
   }
 
   private static double deadband(double value, double deadband) {

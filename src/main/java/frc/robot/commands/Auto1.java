@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
@@ -16,13 +17,15 @@ import frc.robot.subsystems.*;
 import static frc.robot.Constants.*;
 
 import frc.robot.Constants;
-import frc.robot.commands.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import frc.robot.RobotContainer;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
+
 
 
 
@@ -36,20 +39,19 @@ public class Auto1 extends SequentialCommandGroup{
     
     public Auto1(Drivetrain drivetrain, RobotContainer container){
 
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Test_path_1", 4, 3);
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(
+            "Test_path_1", 
+            new PathConstraints(2, 2),
+            new PathConstraints(1.5, 2)
+           );
 
         HashMap<String, Command> eventMap = new HashMap<>();
         
         Consumer<Pose2d> thing = drivetrain::resetPose;
         SwerveDriveKinematics kinematics = Constants.KINEMATICS; 
         Consumer<SwerveModuleState[]> joeph = drivetrain.joe;
-/* 
-        eventMap.put("start1", new PrintCommand("Passed marker 1"));
-        eventMap.put("place1", new PrintCommand("Passed marker 2"));
-        eventMap.put("pick1", new InstantCommand(() ->  container.coneIntake(1.0)));
-        eventMap.put("pick2", new PrintCommand("Passed marker 4"));
-        eventMap.put("place2", new InstantCommand(() ->  container.coneIntake(0.0)));        */
-        // eventMap.put("marker5", new PrintCommand("Passed marker 5"));
+
+        eventMap.put("break", Commands.runOnce(drivetrain::enableXstance, drivetrain));
 
 
         SwerveAutoBuilder autoBuilderC = new SwerveAutoBuilder(
@@ -75,10 +77,9 @@ public class Auto1 extends SequentialCommandGroup{
       
       
         Command fullAuto = autoBuilderS.fullAuto(pathGroup);
+        // Command fullAuto = autoBuilderC.fullAuto(pathGroup);
         addCommands(fullAuto);
-        // public Commmand getauto(){
-        //     return fullAuto;
-        // }
+
 
 
     }

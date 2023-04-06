@@ -26,7 +26,6 @@ public class Constants {
     public static double driveSpeedCap = 0.8; //Percent of max speed
 
     public static final double rotationSpeedCap = 0.4; 
-
     // FIXME: check dims on final robot
     
     //The left-to-right distance between the drivetrain wheels
@@ -131,8 +130,8 @@ public class Constants {
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 8; // FIXME Set front left module drive motor ID
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 10; // FIXME Set front left module steer motor ID
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 9; // FIXME Set front left steer encoder ID
-    // public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 88.5;//Math.toRadians(88.5); //ID 0
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 336.4-180;//Math.toRadians(88.5); //ID 0
+    // public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 0;//Math.toRadians(88.5); //ID 0
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 157;//Math.toRadians(88.5); //ID 0
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 11; // FIXME Set back right drive motor ID
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 13; // FIXME Set back right steer motor ID
