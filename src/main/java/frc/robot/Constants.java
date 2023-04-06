@@ -69,8 +69,8 @@ public class Constants {
     public static final double AUTO_TURN_D_CONTROLLER = 0.0;
 
     //Intake Constants
-    public static final int  intakeMotor = 29;
-    public static int sideIntakeMotor = 30; //This is a fake number;
+    public static final int  intakeMotor = 62;
+    public static int sideIntakeMotor = 22; //you are gay if you are reading this
 
     //Arm Subsystem
     public static final double BASE_LINK_LENGTH = 0.8128; //meters
@@ -103,7 +103,7 @@ public class Constants {
     public static final double UPPER_LINK_MAX_ACCELERATION = 50.0;
 
     //End Constants
-    public static final int END_MOTOR = 21; //Make sure this is right
+    public static final int END_MOTOR = 30; //Make sure this is right
     public static final double MAX_END_CURRENT = 40; //Amps
 
     
