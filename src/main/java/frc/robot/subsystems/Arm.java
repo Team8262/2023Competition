@@ -8,6 +8,15 @@ import org.littletonrobotics.junction.Logger;
 
 import static frc.robot.Constants.*;
 
+<<<<<<< Updated upstream
+=======
+import java.nio.DoubleBuffer;
+import java.lang.Math;
+
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import com.revrobotics.SparkMaxRelativeEncoder;
+import com.revrobotics.AlternateEncoderType;
+>>>>>>> Stashed changes
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -38,11 +47,32 @@ public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
   public Arm() {
 
+<<<<<<< Updated upstream
     base1 = new CANSparkMax(44, MotorType.kBrushless);
     base2 = new CANSparkMax(33, MotorType.kBrushless);
     arm = new CANSparkMax(23, MotorType.kBrushless);
     arm2 = new CANSparkMax(35, MotorType.kBrushless);
 
+=======
+    base1 = new CANSparkMax(33, MotorType.kBrushless);
+    base2 = new CANSparkMax(23, MotorType.kBrushless);
+    arm = new CANSparkMax(21, MotorType.kBrushless);
+    arm2 = new CANSparkMax(29, MotorType.kBrushless);
+
+    //ANTI TOMMY SYSTEM
+
+    int stallLimit = 6;
+    int freeLimit = 10;
+
+    arm.setSmartCurrentLimit(stallLimit, freeLimit);
+    arm2.setSmartCurrentLimit(stallLimit, freeLimit);
+    arm.setIdleMode(IdleMode.kBrake);
+    arm2.setIdleMode(IdleMode.kBrake);
+    base1.setSmartCurrentLimit(stallLimit, freeLimit);
+    base2.setSmartCurrentLimit(stallLimit, freeLimit);
+    base1.setIdleMode(IdleMode.kBrake);
+    base2.setIdleMode(IdleMode.kBrake);
+>>>>>>> Stashed changes
     base_angle = 0.0;
     upper_angle = 0.0;
 
@@ -158,6 +188,28 @@ public class Arm extends SubsystemBase {
     //System.out.println("Goal: " + lower + "    , Actual: " + baseEncoder.getPosition());
   }
 
+<<<<<<< Updated upstream
+=======
+  public void gayAnglesRaw(double lower, double upper) {
+    double lowerGoal = BASE_LINK_GEAR_RATIO * (lower - getRealAngle()[0]);
+    double upperGoal = UPPER_LINK_GEAR_RATIO * (upper - getRealAngle()[1]);
+    base2.set(lowerGoal);
+    base1.set(lowerGoal);
+    arm.set(upperGoal);
+    arm2.set(upperGoal);
+  }
+
+  public void diee() {
+    base2.set(0);
+    arm.set(0);
+  }
+
+  public void spin() {
+    arm.set(-.1);
+    arm2.set(-.1);
+  }
+
+>>>>>>> Stashed changes
   //Super basic, probably wsrong
   /* 
   public boolean stowed(){

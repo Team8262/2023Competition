@@ -80,7 +80,34 @@ public class RobotContainer {
     }
 
     public static JoystickButton returnHome(){
+<<<<<<< Updated upstream
       return new JoystickButton(j, 2);
+=======
+      return new JoystickButton(j,1);
+    }
+
+    public static JoystickButton scoreMid(){
+      return new JoystickButton(j,3);
+    }
+
+    public static JoystickButton directHome(){
+      return new JoystickButton(j, 4);
+    }
+    public static JoystickButton coneHigh(){
+      return new JoystickButton(j, 5);
+    }
+    public static JoystickButton coneMid(){
+      return new JoystickButton(j, 6);
+    }
+    public static JoystickButton coneTrayando(){
+      return new JoystickButton(j, 7);
+    }
+    public static JoystickButton coneHome(){
+      return new JoystickButton(j, 8);
+    }
+    public static JoystickButton zerooo(){
+      return new JoystickButton(j, 10);
+>>>>>>> Stashed changes
     }
 
     //public static JoystickButton 
@@ -112,10 +139,31 @@ public class RobotContainer {
   private HashMap<String, double[][]> armPaths = new HashMap<String, double[][]>();
   
   public RobotContainer() {
+<<<<<<< Updated upstream
 
     armPaths.put("high", new double[][]{{20,-1},{15,30}});
     armPaths.put("low", new double[][]{{10,-2},{27,35}});
     armPaths.put("home", new double[][]{{10,-2},{0,0}});
+=======
+    //cones are stowed dfferentl than cubes
+    //for cubes the arm is stuck in the intake so we need 3 points
+    //for cones the arm should be able to mvoe directly to the good position
+    //im using variable because the monkey who wrote this ebfore me
+    //was just spamming unumbers
+    //wesley you are being carried by new software
+    double[] home = new double[]{0,0}; // stow position for the cubbbbes
+    double[] homeMid = new double[]{-.2,0};//,-1}; //midway out of the stow position
+    //double[] homeOut = homeMid; //new double[]{-5,-5}; // out of the stowed position free to move
+
+    double[] coneHome = new double[]{0,0}; //stow position for the arm in cone mode you fucking idiot
+    armPaths.put("high", new double[][]{homeMid, {-.226, -.581}});
+    armPaths.put("mid", new double[][]{homeMid, {-.156,-.72}});
+    armPaths.put("coneHigh", new double[][]{coneHome, {-.137,-.709}});
+    armPaths.put("coneMid", new double [][]{coneHome, {-.2105,-.568}});
+    armPaths.put("coneTrayando", new double[][]{homeMid, {0.0639,-.89}});
+    armPaths.put("home", new double[][]{homeMid,home});
+    armPaths.put("coneHome", new double[][]{coneHome});
+>>>>>>> Stashed changes
 
 
     buildRobot();
