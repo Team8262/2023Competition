@@ -28,9 +28,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import java.lang.Math;
+
 public class Arm extends SubsystemBase {
   public CANSparkMax base1, base2, arm, arm2;
-  private SparkMaxPIDController baseController, armController;
+ /// private SparkMaxPIDController baseController, armController;
   private RelativeEncoder baseEncoder, armEncoder;
 
   private static final String SUBSYSTEM_NAME = "Arm";
@@ -53,7 +55,7 @@ public class Arm extends SubsystemBase {
     //ANTI TOMMY SYSTEM
 
     int stallLimit = 20;
-    int freeLimit = 30;
+    int freeLimit = 40;
 
     arm.setSmartCurrentLimit(stallLimit, freeLimit);
     arm2.setSmartCurrentLimit(stallLimit, freeLimit);
@@ -72,8 +74,8 @@ public class Arm extends SubsystemBase {
 
     base1.follow(base2, true);
 
-    baseController = base2.getPIDController();
-    armController = arm.getPIDController();
+   // baseController = base2.getPIDController();
+   // armController = arm.getPIDController();
 
     //TODO set real limits---these are arbitrary
     base2.setSoftLimit(SoftLimitDirection.kForward, (float) (2*BASE_LINK_GEAR_RATIO));
@@ -86,23 +88,23 @@ public class Arm extends SubsystemBase {
     base2.enableSoftLimit(SoftLimitDirection.kForward, false);
     base2.enableSoftLimit(SoftLimitDirection.kReverse, false);
 
-    baseController.setP(BASE_LINK_VELOCITY_P_CONTROLLER);
-    baseController.setI(BASE_LINK_VELOCITY_I_CONTROLLER);
-    baseController.setD(BASE_LINK_VELOCITY_D_CONTROLLER);
-    baseController.setFF(BASE_LINK_VELOCITY_F_CONTROLLER);
-    baseController.setSmartMotionMaxVelocity(BASE_LINK_MAX_VELOCITY, 0);
-    baseController.setSmartMotionMaxAccel(BASE_LINK_MAX_ACCELERATION, 0);
+   // baseController.setP(BASE_LINK_VELOCITY_P_CONTROLLER);
+   // baseController.setI(BASE_LINK_VELOCITY_I_CONTROLLER);
+   // baseController.setD(BASE_LINK_VELOCITY_D_CONTROLLER);
+   // baseController.setFF(BASE_LINK_VELOCITY_F_CONTROLLER);
+   // baseController.setSmartMotionMaxVelocity(BASE_LINK_MAX_VELOCITY, 0);
+   // baseController.setSmartMotionMaxAccel(BASE_LINK_MAX_ACCELERATION, 0);
 
-    baseController.setOutputRange(-0.5, 0.5);
+    //baseController.setOutputRange(-0.5, 0.5);
 
-    armController.setP(UPPER_LINK_VELOCITY_P_CONTROLLER);
-    armController.setI(UPPER_LINK_VELOCITY_I_CONTROLLER);
-    armController.setD(UPPER_LINK_VELOCITY_D_CONTROLLER);
-    armController.setFF(UPPER_LINK_VELOCITY_F_CONTROLLER);
-    armController.setSmartMotionMaxVelocity(UPPER_LINK_MAX_VELOCITY, 0);
-    armController.setSmartMotionMaxAccel(UPPER_LINK_MAX_ACCELERATION, 0);
+    //armController.setP(UPPER_LINK_VELOCITY_P_CONTROLLER);
+    //armController.setI(UPPER_LINK_VELOCITY_I_CONTROLLER);
+   // armController.setD(UPPER_LINK_VELOCITY_D_CONTROLLER);
+   // armController.setFF(UPPER_LINK_VELOCITY_F_CONTROLLER);
+   // armController.setSmartMotionMaxVelocity(UPPER_LINK_MAX_VELOCITY, 0);
+   // armController.setSmartMotionMaxAccel(UPPER_LINK_MAX_ACCELERATION, 0);
 
-    armController.setOutputRange(-0.5, 0.5);
+   // armController.setOutputRange(-0.5, 0.5);
 
     //baseEncoder = base1.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
     //armEncoder = arm.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
@@ -173,24 +175,24 @@ public class Arm extends SubsystemBase {
   //In radians
   public void setAngles(double lower, double upper){
     // order matters here
-    armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getUpperFF());
-    baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getBaseFF());
+    //armController.setReference(upper*UPPER_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getUpperFF());
+   // baseController.setReference(lower*BASE_LINK_GEAR_RATIO/(2*Math.PI), ControlType.kPosition,0,getBaseFF());
   }
 
   //In rotations
   public void setsAnglesRaw(double lower, double upper){
-    armController.setReference(upper, ControlType.kPosition,0,getUpperFF());
-    baseController.setReference(lower, ControlType.kPosition,0,getBaseFF());
+   // armController.setReference(upper, ControlType.kPosition,0,getUpperFF());
+    //baseController.setReference(lower, ControlType.kPosition,0,getBaseFF());
     //System.out.println("Goal: " + lower + "    , Actual: " + baseEncoder.getPosition());
   }
 
   public void gayAnglesRaw(double lower, double upper) {
-    double lowerGoal = (4 * (lower - getRealAngle()[0]));
-    double upperGoal = (4 * (upper - getRealAngle()[1]));
+    double lowerGoal = Math.sqrt((8 * (lower - getRealAngle()[0])));
+    double upperGoal = Math.sqrt((8 * (upper - getRealAngle()[1])));
     base2.set(lowerGoal);
-    base1.set(lowerGoal);
+    //base1.set(lowerGoal);
     arm.set(upperGoal);
-    arm2.set(upperGoal);
+    //arm2.set(upperGoal);
   }
 
   public void diee() {
