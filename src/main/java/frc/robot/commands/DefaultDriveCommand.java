@@ -26,7 +26,10 @@ public class DefaultDriveCommand extends CommandBase {
   private final PIDController forwardPidController;
   private final PIDController horizontalPidController;
   private final PIDController rotationPidController;
-  private double position = 1;
+  private double ReflectiveTapeYposition = 2;
+  private double ReflectiveTapeXposition = 0;
+  private double HumanPlayerYpositiion = 2;
+  private double HumanPlayerXposiiton = 0;
   private double yError = 0;
   private double xError = 0;
   private int drivingMode = 0;
@@ -45,8 +48,8 @@ public class DefaultDriveCommand extends CommandBase {
     this.vision = vision;
     addRequirements(drivetrainSubsystem);
 
-    forwardPidController = new PIDController(1, 0, 0);
-    horizontalPidController = new PIDController(/*-3*/0, 0, 0);
+    forwardPidController = new PIDController(0, 0, 0);
+    horizontalPidController = new PIDController(/*-3*/1, 0, 0);
     rotationPidController = new PIDController(/*-0.5*/0, 0, 0);
         
     if(DEBUGGING) {
@@ -61,23 +64,32 @@ public class DefaultDriveCommand extends CommandBase {
 
   @Override
   public void execute() {
+
+    yError = (Constants.POLE_HEIGHT - Constants.CAMERA_HEIGHT) / Math.tan(Math.toRadians(20 + vision.getTargetY()));
+    xError = yError * Math.cos(Math.toRadians(vision.getTargetX())+10);
+    System.out.println("xerror: "+ xError);
+
     if(m_drivetrainSubsystem.drivingMode == 0) {
-      System.out.println("jkjjjjj");
       m_drivetrainSubsystem.drive(m_translationXSupplier.getAsDouble(),
                                   m_translationYSupplier.getAsDouble(),
                                   m_rotationSupplier.getAsDouble());
     } if(m_drivetrainSubsystem.drivingMode == 1) {  
-      //System.out.println("hiiiii");
-      yError = (Constants.POLE_HEIGHT - Constants.CAMERA_HEIGHT) / Math.tan(Math.toRadians(24.5 + vision.getTargetY()));
-      xError = yError * Math.tan(Math.toRadians(vision.getTargetX()));
+      System.out.println("hiiiii");
+      yError = (Constants.POLE_HEIGHT - Constants.CAMERA_HEIGHT) / Math.tan(Math.toRadians(20 + vision.getTargetY()));
+      xError = yError * Math.cos(Math.toRadians(vision.getTargetX())+10);
 
-
-      System.out.println(xError);
-      //System.out.println(   vision.getTargetY() + 24.5);
       m_drivetrainSubsystem.drive( //forward is disabled to test horizontal movement
-            forwardPidController.calculate(yError, position),
+            forwardPidController.calculate(yError, ReflectiveTapeXposition),
             horizontalPidController.calculate(xError, 0),
             rotationPidController.calculate(m_drivetrainSubsystem.getPose().getRotation().getDegrees(), 0));
+    } if(m_drivetrainSubsystem.drivingMode == 2) {
+
+      m_drivetrainSubsystem.drive(
+        forwardPidController.calculate(yError, HumanPlayerYpositiion),
+        horizontalPidController.calculate(xError, HumanPlayerXposiiton),
+        rotationPidController.calculate(m_drivetrainSubsystem.getPose().getRotation().getDegrees(), 0)
+      );
+
     }
   }
 
@@ -90,6 +102,7 @@ public class DefaultDriveCommand extends CommandBase {
    * -1: nothing
    * 0: driving
    * 1: aligining with reflective tape
+   * 2: aligning with human player station
    */
 
   public void setMode(int i) {

@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
-  public CANSparkMax base1, base2, arm;
+  public CANSparkMax base1, base2, arm, arm2;
   private SparkMaxPIDController baseController, armController;
   private RelativeEncoder baseEncoder, armEncoder;
 
@@ -41,6 +41,12 @@ public class Arm extends SubsystemBase {
     base1 = new CANSparkMax(33, MotorType.kBrushless);
     base2 = new CANSparkMax(23, MotorType.kBrushless);
     arm = new CANSparkMax(44, MotorType.kBrushless);
+    arm2 = new CANSparkMax(100, MotorType.kBrushless);
+
+    int stallLimit = 5;
+    int freeLimit = 5;
+
+    base1.setSmartCurrentLimit(BACK_LEFT_MODULE_STEER_ENCODER, BACK_LEFT_MODULE_DRIVE_MOTOR)
 
     base_angle = 0.0;
     upper_angle = 0.0;

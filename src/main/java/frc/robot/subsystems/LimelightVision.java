@@ -55,7 +55,7 @@ public class LimelightVision extends SubsystemBase {
     ty = table.getEntry("ty");
     ta = table.getEntry("ta");
     tv = table.getEntry("tv");
-    pipeline = table.getEntry("pipeline");
+    pipeline = table.getEntry("pi peline");
 
      //add all your cameras here! 
     
@@ -74,6 +74,8 @@ public class LimelightVision extends SubsystemBase {
     x = tx.getDouble(0.0);
     y = ty.getDouble(0.0);
     area = ta.getDouble(0.0);
+
+    System.out.println(x);
   }
 
   public double getTargetX() {
