@@ -9,12 +9,14 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import static frc.robot.Constants.*;
 
 public class Intake extends SubsystemBase{
-    private CANSparkMax intakeMotor;
+    private CANSparkMax intakeMotor, sideMotor;
 
     int motorID = Constants.intakeMotor;
+
     
     public Intake(){
         intakeMotor = new CANSparkMax(motorID, MotorType.kBrushless);
+        sideMotor = new CANSparkMax(Constants.sideMotor, MotorType.kBrushless);
     }
 
     @Override
@@ -22,5 +24,6 @@ public class Intake extends SubsystemBase{
 
     public void setSpeed(double speed){
         intakeMotor.set(speed);
+        sideMotor.set(speed);
     }
 }

@@ -52,8 +52,8 @@ public class Arm extends SubsystemBase {
 
     //ANTI TOMMY SYSTEM
 
-    int stallLimit = 6;
-    int freeLimit = 10;
+    int stallLimit = 20;
+    int freeLimit = 30;
 
     arm.setSmartCurrentLimit(stallLimit, freeLimit);
     arm2.setSmartCurrentLimit(stallLimit, freeLimit);
@@ -185,8 +185,8 @@ public class Arm extends SubsystemBase {
   }
 
   public void gayAnglesRaw(double lower, double upper) {
-    double lowerGoal = BASE_LINK_GEAR_RATIO * (lower - getRealAngle()[0]);
-    double upperGoal = UPPER_LINK_GEAR_RATIO * (upper - getRealAngle()[1]);
+    double lowerGoal = (4 * (lower - getRealAngle()[0]));
+    double upperGoal = (4 * (upper - getRealAngle()[1]));
     base2.set(lowerGoal);
     base1.set(lowerGoal);
     arm.set(upperGoal);

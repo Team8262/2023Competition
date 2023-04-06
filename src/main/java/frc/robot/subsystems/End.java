@@ -14,21 +14,14 @@ import static frc.robot.Constants.*;
 
 public class End extends SubsystemBase {
 
-  private CANSparkMax bottomMotor, topMotor;
+  private CANSparkMax endMotor;
 
   /** Creates a new End. */
   public End() {
-    bottomMotor = new CANSparkMax(END_BOTTOM, MotorType.kBrushless);
-    topMotor = new CANSparkMax(END_TOP, MotorType.kBrushless);
+    endMotor = new CANSparkMax(END, MotorType.kBrushless);
   }
 
-  public CANSparkMax getBottom() {
-    return bottomMotor;
-  }
 
-  public CANSparkMax getTop() {
-    return topMotor;
-  }
 
   @Override
   public void periodic() {
@@ -37,17 +30,7 @@ public class End extends SubsystemBase {
 
 
   public void setSpeed(double speed) {
-    bottomMotor.set(speed);
-    topMotor.set(-1*speed);
-  }
+    endMotor.set(speed);
+    }
 
-  public void setConeSpeed(double speed) {
-    bottomMotor.set(speed);
-    topMotor.set(-1*speed);
-  }
-
-  public void setCubeSpeed(double speed){
-    bottomMotor.set(speed);
-    topMotor.set(speed);
-  }
 }
