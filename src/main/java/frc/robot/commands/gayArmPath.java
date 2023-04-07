@@ -6,19 +6,26 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
+import edu.wpi.first.wpilibj.Joystick;
+import frc.robot.RobotContainer;
 
 public class gayArmPath extends CommandBase {
   /** Creates a new FollowArmPat. */
   private Arm arm;
-  private double[][] path;
+  private int path;
   private int step;
+  private Joystick stik = new Joystick(1);
+  double isCone = stik.getRawAxis(3);
+  boolean coneBool = isCone < 0;
+  double[][] pathh;
   private final double positionTolerance = 0.06; //This is in radians i think
   private double speed;
-  public gayArmPath(Arm arm, double[][] path, double speed) {
+  public gayArmPath(Arm arm, int path, double speed) {
     addRequirements(arm);
     this.arm = arm;
-    this.path = path;
+    this.path = coneBool ? path*2 : path;
     this.speed = speed;
+    pathh = RobotContainer.armPaths.get(path);
   }
 
   // Called when the command is initially scheduled.
@@ -33,8 +40,8 @@ public class gayArmPath extends CommandBase {
     //arm.gayAnglesRaw(0, -.2);
     //arm.spin();
 
-   arm.gayAnglesRaw(path[step][0], path[step][1], speed);
-    if(atPoint(path[step][0], path[step][1]) && step != path.length - 1){
+   arm.gayAnglesRaw(pathh[step][0], pathh[step][1], speed);
+    if(atPoint(pathh[step][0], pathh[step][1]) && step != pathh.length - 1){
       step++;
       System.out.println(step);
    }

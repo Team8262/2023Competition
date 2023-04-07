@@ -34,24 +34,20 @@ import java.util.function.Consumer;
 
 public class Auto_mov_roobr extends SequentialCommandGroup{
     
+    public Command autothing;
+
     public Auto_mov_roobr (Drivetrain drivetrain, RobotContainer container){
 
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("mov roobr", 4, 3);
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("mov roobr", 2, 1);
 
         HashMap<String, Command> eventMap = new HashMap<>();
         
-        Consumer<Pose2d> thing = drivetrain::resetPose;
-        SwerveDriveKinematics kinematics = Constants.KINEMATICS; 
+        // Consumer<Pose2d> thing = drivetrain::resetPose;
+        // SwerveDriveKinematics kinematics = Constants.KINEMATICS; 
         Consumer<SwerveModuleState[]> joeph = drivetrain.joe;
 
 
-        //eventMap.put("init");
-        eventMap.put("final", new InstantCommand(() -> {
-            //container.coneIntake(0);
-            new AutoBalance(drivetrain);
-            
-
-        }));
+        eventMap.put("final", new InstantCommand(() ->  drivetrain.enableXstance()));
 /*
         eventMap.put("start1", new PrintCommand("Passed marker 1"));
         eventMap.put("place1", new PrintCommand("Passed marker 2"));
@@ -63,7 +59,7 @@ public class Auto_mov_roobr extends SequentialCommandGroup{
 
         SwerveAutoBuilder autoBuilderC = new SwerveAutoBuilder(
             drivetrain::getPose,
-            thing,
+            drivetrain::resetPose,
             new PIDConstants(AUTO_DRIVE_P_CONTROLLER,AUTO_DRIVE_I_CONTROLLER, AUTO_DRIVE_D_CONTROLLER),
             new PIDConstants(AUTO_TURN_P_CONTROLLER, AUTO_TURN_I_CONTROLLER, AUTO_TURN_D_CONTROLLER),
             drivetrain::getStates, 
@@ -72,23 +68,30 @@ public class Auto_mov_roobr extends SequentialCommandGroup{
 
         SwerveAutoBuilder autoBuilderS = new SwerveAutoBuilder(
             drivetrain::getPose,
-            thing,
-            kinematics,
+            drivetrain::resetPose,
+            Constants.KINEMATICS,
             new PIDConstants(AUTO_DRIVE_P_CONTROLLER,AUTO_DRIVE_I_CONTROLLER, AUTO_DRIVE_D_CONTROLLER),
             new PIDConstants(AUTO_TURN_P_CONTROLLER, AUTO_TURN_I_CONTROLLER, AUTO_TURN_D_CONTROLLER),
             joeph, 
             eventMap, 
             drivetrain);
         
+        this.autothing = autoBuilderS.fullAuto(pathGroup);
+      
+      
+        // Command fullAuto = autoBuilderS.fullAuto(pathGroup);
+        // addCommands(fullAuto);
 
-      
-      
-        Command fullAuto = autoBuilderS.fullAuto(pathGroup);
-        addCommands(fullAuto);
         // public Commmand getauto(){
         //     return fullAuto;
         // }
 
 
     }
+
+    public Command getauto(){
+        return autothing;
+    }
+
+
 }

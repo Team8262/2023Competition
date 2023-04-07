@@ -201,11 +201,20 @@ public class Arm extends SubsystemBase {
 
 
   public void gayAnglesRaw(double lower, double upper, double speedAdjustment) {
-    double preLower = (2 * (lower - getRealAngle()[0]));
-    double preUpper = (1 * (upper - getRealAngle()[1]));
 
-    double lowerGoal = speedAdjustment * Math.copySign(Math.sqrt(Math.abs(preLower)),preLower);
-    double upperGoal = speedAdjustment * Math.copySign(Math.sqrt(Math.abs(preUpper)), preUpper);
+    //double upperDiff = Math.abs(upper - getRealAngle()[1]);
+    double lowerGoal = (3.0 * (lower - getRealAngle()[0]));
+    double upperGoal = (25 * (upper - getRealAngle()[1]));
+
+   // double lowerGoal = 4*speedAdjustment * Math.copySign((Math.abs(preLower)),preLower);
+    //double upperGoal = 4*speedAdjustment * Math.copySign((Math.abs(preUpper)),preUpper);
+
+
+    /* 
+    if(upperDiff < 0.08 && upperDiff > 0.02 && getRealAngle()[0] > -0.03){
+      System.out.println("Min speed");
+      upperGoal = 0.2;
+    }*/
     
     //System.out.println("Lowergoal: " + lowerGoal);
    // System.out.println("Higher24 goal: " + upperGoal);

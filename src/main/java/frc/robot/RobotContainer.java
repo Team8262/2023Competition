@@ -73,31 +73,19 @@ public class RobotContainer {
     }
 
     public static JoystickButton scoreHigh(){
-      return new JoystickButton(j, 2);
+      return new JoystickButton(j, 3);
     }
 
     public static JoystickButton returnHome(){
-      return new JoystickButton(j,12);
+      return new JoystickButton(j,4);
     }
 
     public static JoystickButton scoreMid(){
-      return new JoystickButton(j,3);
+      return new JoystickButton(j,5);
     }
 
-    public static JoystickButton directHome(){
-      return new JoystickButton(j, 4);
-    }
-    public static JoystickButton coneHigh(){
-      return new JoystickButton(j, 5);
-    }
-    public static JoystickButton coneMid(){
-      return new JoystickButton(j, 6);
-    }
     public static JoystickButton coneTrayando(){
-      return new JoystickButton(j, 7);
-    }
-    public static JoystickButton coneHome(){
-      return new JoystickButton(j, 8);
+      return new JoystickButton(j, 6);
     }
     public static JoystickButton zerooo(){
       return new JoystickButton(j, 10);
@@ -126,7 +114,7 @@ public class RobotContainer {
   }
 
   //Currently using raw (rotations)
-  private HashMap<String, double[][]> armPaths = new HashMap<String, double[][]>();
+  public static HashMap<Integer, double[][]> armPaths = new HashMap<Integer, double[][]>();
   
   public RobotContainer() {
     //cones are stowed dfferentl than cubes
@@ -136,21 +124,23 @@ public class RobotContainer {
     //was just spamming unumbers
     //wesley you are being carried by new software
     double[] home = new double[]{0,0}; // stow position for the cubbbbes
-    double[] homeMid = new double[]{-.3,0};//,-1}; //midway out of the stow position
+    double[] homeMid = new double[]{-.2,0};//,-1}; //midway out of the stow position
     double[] homeMid2 = new double[]{-.15, 0};
     //double[] homeOut = homeMid; //new double[]{-5,-5}; // out of the stowed position free to move
 
     double[] coneHome = new double[]{0,0}; //stow position for the arm in cone mode you fucking idiot
-    armPaths.put("high", new double[][]{homeMid, {-.226, -.581}});
+    armPaths.put(1, new double[][]{homeMid, {-.226, -.581}}); // high cube
     //armPaths.put("high", new double[][]{homeMid, {-.4, 0}});
-    armPaths.put("mid", new double[][]{homeMid, {-.156,-.72}});
-    armPaths.put("coneHigh", new double[][]{coneHome, {-.137,-.709}});
-    armPaths.put("coneMid", new double [][]{coneHome, {-.2105,-.568}});
-    armPaths.put("coneTrayando", new double[][]{homeMid, {-0.1736594,-0.6354}});
-    armPaths.put("home", new double[][]{homeMid,homeMid2,home});
-    armPaths.put("coneHome", new double[][]{coneHome});
+    armPaths.put(3, new double[][]{homeMid, {-.156,-.72}}); // mid cube
+    armPaths.put(2, new double[][]{coneHome, {-.137,-.709}}); // high cone
+    armPaths.put(6, new double [][]{coneHome, {-.2105,-.568}});// cone mid
+    armPaths.put(7, new double[][]{homeMid, {-0.1736594,-0.6354}}); //trsyyy
+    armPaths.put(14, new double[][]{homeMid, {-0.1736594,-0.6354}}); //trsyyy alternate
+    //armPaths.put(5, new double[][]{{-.3, 0}, homeMid,homeMid2, {-.1, 0}, {-.05, 0},home}); // homee
+    armPaths.put(5, new double[][]{{-0.3,0},{-0.2,0}, {-0.1,0}, {-0.1,0},{-0.05,0},{0,0.02}}); //Temporary for testing
+    armPaths.put(10, new double[][]{coneHome}); // conehomee
 
-    armPaths.put("directhome", new double[][]{home});
+    armPaths.put(9, new double[][]{home}); // direct home
 
     buildRobot();
 
@@ -211,15 +201,10 @@ public class RobotContainer {
     primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
     
     
-    secondaryController.scoreHigh().whileTrue(new gayArmPath(arm, armPaths.get("high"), 1));
-    secondaryController.returnHome().whileTrue(new gayArmPath(arm, armPaths.get("home"), 0.5));
-    secondaryController.scoreMid().whileTrue(new gayArmPath(arm, armPaths.get("mid"), 1));
-    secondaryController.directHome().whileTrue(new gayArmPath(arm, armPaths.get("directhome"), 1));
-    secondaryController.coneHigh().whileTrue(new gayArmPath(arm, armPaths.get("coneHigh"), 1));
-    secondaryController.coneMid().whileTrue(new gayArmPath(arm, armPaths.get("coneMid"), 1));
-    secondaryController.coneTrayando().whileTrue(new gayArmPath(arm, armPaths.get("coneTrayando"), 1));
-    secondaryController.coneHome().whileTrue(new gayArmPath(arm, armPaths.get("coneHome"), 0.5));
-
+    secondaryController.scoreHigh().whileTrue(new gayArmPath(arm, 1, 1));
+    secondaryController.returnHome().whileTrue(new gayArmPath(arm, 5, 0.5));
+    secondaryController.scoreMid().whileTrue(new gayArmPath(arm, 3, 1));
+    secondaryController.coneTrayando().whileTrue(new gayArmPath(arm, 7, 1));
 
 
     
@@ -249,8 +234,8 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // return Commands.print("No autonomous command configured");
-    //Auto2 auto = new Auto2(m_drivetrain, this);
-    return new InstantCommand();//auto;
+    Auto_mov_roobr auto = new Auto_mov_roobr(m_drivetrain, this);
+    return auto.getauto();//auto;
   }
 
   private static double deadband(double value, double deadband) {
