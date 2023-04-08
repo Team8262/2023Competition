@@ -32,7 +32,7 @@ public class BadAuto extends SequentialCommandGroup {
                 new ParallelCommandGroup(new HoldArm(rc.arm, -0.2, -0.581, 3), new InstantCommand(() -> rc.end.setSpeed(-0.7))),
                 new InstantCommand(() -> rc.end.setSpeed(0)),
                 new gayArmPath(rc.arm, 5, .5),
-                new AutonomousDriveCommand(rc.getDrivetrain(), -0.7, 0, 0, 4.2) //Positive y goes right
+                new AutonomousDriveCommand(rc.getDrivetrain(), -0.6, 0, 0, 4.2) //Positive y goes right
                 );
   }
 }
