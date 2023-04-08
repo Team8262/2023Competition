@@ -34,7 +34,6 @@ import java.util.function.Consumer;
 
 public class Auto_mov_roobr extends SequentialCommandGroup{
     
-    public Command autothing;
 
     public Auto_mov_roobr (Drivetrain drivetrain, RobotContainer container){
 
@@ -76,11 +75,10 @@ public class Auto_mov_roobr extends SequentialCommandGroup{
             eventMap, 
             drivetrain);
         
-        this.autothing = autoBuilderS.fullAuto(pathGroup);
       
       
-        // Command fullAuto = autoBuilderS.fullAuto(pathGroup);
-        // addCommands(fullAuto);
+        Command fullAuto = autoBuilderS.fullAuto(pathGroup);
+        addCommands(fullAuto);
 
         // public Commmand getauto(){
         //     return fullAuto;
@@ -89,9 +87,7 @@ public class Auto_mov_roobr extends SequentialCommandGroup{
 
     }
 
-    public Command getauto(){
-        return autothing;
-    }
+    
 
 
 }

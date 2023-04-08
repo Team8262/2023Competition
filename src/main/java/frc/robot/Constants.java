@@ -45,10 +45,10 @@ public class Constants {
      * <p>This is a measure of how fast the robot should be able to drive in a straight line.
      */
     public static final double MAX_VELOCITY_METERS_PER_SECOND =
-    6380.0
+    (6380.0
         / 60.0
         / SwerveModuleConstants.DRIVE_GEAR_RATIO
-        * SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
+        * SwerveModuleConstants.WHEEL_CIRCUMFERENCE)+1;
 
     public static final double MAX_COAST_VELOCITY_METERS_PER_SECOND = 0.05;
 
@@ -132,7 +132,7 @@ public class Constants {
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 10; // FIXME Set front left module steer motor ID
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 9; // FIXME Set front left steer encoder ID
     // public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 88.5;//Math.toRadians(88.5); //ID 0
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 157.5;//Math.toRadians(88.5); //ID 0
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 156.6;//Math.toRadians(88.5); //ID 0
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 5; // FIXME Set back right drive motor ID
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 7; // FIXME Set back right steer motor ID

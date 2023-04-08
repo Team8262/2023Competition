@@ -12,6 +12,7 @@ import static frc.robot.Constants.*;
 
 import org.jumprobotics.gyro.GyroIO;
 import org.jumprobotics.gyro.GyroIONavX;
+import org.jumprobotics.gyro.GyroIOPigeon;
 import org.jumprobotics.swervedrive.SwerveModule;
 import org.jumprobotics.swervedrive.SwerveModuleInterface;
 
@@ -19,7 +20,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -91,6 +94,14 @@ public class RobotContainer {
       return new JoystickButton(j, 10);
     }
 
+    public static JoystickButton intake(){
+      return new JoystickButton(j, 1);
+    }
+
+    public static JoystickButton spitout(){
+      return new JoystickButton(j, 2);
+    }
+
     //public static JoystickButton 
     /*
     public static JoystickButton runNewAuto() {
@@ -101,15 +112,15 @@ public class RobotContainer {
 
   }
 
-  private Drivetrain m_drivetrain;
+  private static Drivetrain m_drivetrain;
 
   //public static Joystick primaryJoystick = new Joystick(0);
   private Intake intake = new Intake();
-  private End end = new End();
+  public End end = new End();
   public Arm arm = new Arm();
   //private Vision vision;
 
-  public Drivetrain getDrivetrain(){
+  public static Drivetrain getDrivetrain(){
     return m_drivetrain;
   }
 
@@ -128,17 +139,19 @@ public class RobotContainer {
     double[] homeMid2 = new double[]{-.15, 0};
     //double[] homeOut = homeMid; //new double[]{-5,-5}; // out of the stowed position free to move
 
-    double[] coneHome = new double[]{0,0}; //stow position for the arm in cone mode you fucking idiot
-    armPaths.put(1, new double[][]{homeMid, {-.226, -.581}}); // high cube
+    double[] coneHome = new double[]{0.05,-.91}; //stow position for the arm in cone mode you fucking idiot
+    //armPaths.put(1, new double[][]{homeMid, {-.226, -.581}}); // high cube
+    armPaths.put(1, new double[][]{homeMid, {-.200, -.581}}); // high cube
     //armPaths.put("high", new double[][]{homeMid, {-.4, 0}});
     armPaths.put(3, new double[][]{homeMid, {-.156,-.72}}); // mid cube
-    armPaths.put(2, new double[][]{coneHome, {-.137,-.709}}); // high cone
-    armPaths.put(6, new double [][]{coneHome, {-.2105,-.568}});// cone mid
-    armPaths.put(7, new double[][]{homeMid, {-0.1736594,-0.6354}}); //trsyyy
-    armPaths.put(14, new double[][]{homeMid, {-0.1736594,-0.6354}}); //trsyyy alternate
+    armPaths.put(2, new double[][]{{-.137,-.709}}); // high cone
+    armPaths.put(6, new double [][]{{-.2105,-.568}});// cone mid
+    armPaths.put(7, new double[][]{homeMid, {-0.1687487,-.619605}}); //trsyyy
+    armPaths.put(14, new double[][]{homeMid, {-0.1687487,-.619605}}); //trsyyy alternate
     //armPaths.put(5, new double[][]{{-.3, 0}, homeMid,homeMid2, {-.1, 0}, {-.05, 0},home}); // homee
-    armPaths.put(5, new double[][]{{-0.3,0},{-0.2,0}, {-0.1,0}, {-0.1,0},{-0.05,0},{0,0.02}}); //Temporary for testing
+    armPaths.put(5, new double[][]{{-0.25,0},{-0.2,0}, {-0.1,0}, {-0.1,0},{-0.05,0},{0,0.02}}); //Temporary for testing
     armPaths.put(10, new double[][]{coneHome}); // conehomee
+    armPaths.put(11, new double[][]{{-.5,-.5}});
 
     armPaths.put(9, new double[][]{home}); // direct home
 
@@ -163,6 +176,7 @@ public class RobotContainer {
 
     //arm.setDefaultCommand(new ManualArmControl(arm, baseSupp, armSupp));
      
+
 
     configureBindings();
 
@@ -201,10 +215,21 @@ public class RobotContainer {
     primaryController.testButton().whileTrue(new AutoBalance(m_drivetrain));
     
     
-    secondaryController.scoreHigh().whileTrue(new gayArmPath(arm, 1, 1));
-    secondaryController.returnHome().whileTrue(new gayArmPath(arm, 5, 0.5));
-    secondaryController.scoreMid().whileTrue(new gayArmPath(arm, 3, 1));
+    secondaryController.scoreHigh().whileTrue(new gayArmPath(arm, 1, 2.5));
+    secondaryController.returnHome().whileTrue(new gayArmPath(arm, 5, 1));
+    secondaryController.scoreMid().whileTrue(new gayArmPath(arm, 3, 2.5));
+
+    //Cones
+    //secondaryController.scoreHigh().whileTrue(new gayArmPath(arm, 2, 2.5));
+    //secondaryController.returnHome().whileTrue(new gayArmPath(arm, 10, 1));
+    //secondaryController.scoreMid().whileTrue(new gayArmPath(arm, 6, 2.5));
+    
+
     secondaryController.coneTrayando().whileTrue(new gayArmPath(arm, 7, 1));
+    secondaryController.spitout().whileTrue(new InstantCommand(() -> end.setSpeed(-1)));
+    secondaryController.spitout().whileFalse(new InstantCommand(() -> end.setSpeed(0.0)));
+    secondaryController.intake().whileTrue(new InstantCommand(() -> end.setSpeed(0.4)));
+    secondaryController.intake().whileFalse(new InstantCommand(() -> end.setSpeed(0)));
 
 
     
@@ -230,12 +255,28 @@ public class RobotContainer {
     Joystick stik = new Joystick(1);
     return stik.getRawButton(12);
   }
+
+  public Command onylArmAuto(){
+
+    new InstantCommand(() -> new gayArmPath(arm, 1, 1)); 
+    new WaitCommand(1.5);
+    new InstantCommand(() -> spitout(1));
+    new WaitCommand(1.5);
+    new InstantCommand(() -> new gayArmPath(arm, 5, 0.5));
+    new InstantCommand(() -> spitout(0));
+
+    return new PrintCommand("works");
+  }
   
 
   public Command getAutonomousCommand() {
     // return Commands.print("No autonomous command configured");
-    Auto_mov_roobr auto = new Auto_mov_roobr(m_drivetrain, this);
-    return auto.getauto();//auto;
+
+    // return onylArmAuto();
+    // return new Auto_mov_roobr(m_drivetrain, this);
+    return new BadAuto(this);
+    
+    //return new gayAuto(m_drivetrain, this);
   }
 
   private static double deadband(double value, double deadband) {
@@ -251,7 +292,8 @@ public class RobotContainer {
   }
 
   private void buildRobot(){
-    GyroIO gyro = new GyroIONavX();
+    //GyroIO gyro = new GyroIONavX();
+    GyroIO gyro = new GyroIOPigeon(17);
     SwerveModule flModule =
     new SwerveModule(
         new SwerveModuleInterface(

@@ -11,6 +11,7 @@ import static frc.robot.Constants.*;
 import java.nio.DoubleBuffer;
 import java.lang.Math;
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.wpilibj.Joystick;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import com.revrobotics.SparkMaxRelativeEncoder;
@@ -42,6 +43,12 @@ public class Arm extends SubsystemBase {
   //angles
   private double base_angle;
   private double upper_angle;
+
+  public double[]lastPoint = new double[]{0,0};
+  public boolean commandsEnabled = false;
+
+  public boolean auto = false;
+  private Joystick stik = new Joystick(1);
 
    
   /** Creates a new Arm. */
@@ -206,8 +213,8 @@ public class Arm extends SubsystemBase {
     double lowerGoal = (3.0 * (lower - getRealAngle()[0]));
     double upperGoal = (25 * (upper - getRealAngle()[1]));
 
-   // double lowerGoal = 4*speedAdjustment * Math.copySign((Math.abs(preLower)),preLower);
-    //double upperGoal = 4*speedAdjustment * Math.copySign((Math.abs(preUpper)),preUpper);
+    //double lowerGoal =  Math.copySign((Math.abs(preLower)),preLower);
+    //double upperGoal = Math.copySign((Math.abs(preUpper)),preUpper);
 
 
     /* 
@@ -280,7 +287,29 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   //System.out.println(base1.getEncoder().getPosition());
-  }
+    if(!commandsEnabled) {
+    double diffA = Math.abs(lastPoint[0]-getRealAngle()[0]) * 25;
+      if (diffA > .03) {
+        arm.set(diffA);
+      }
+      else {
+        arm.set(0);
+      }
+    double diffB = Math.abs(lastPoint[1]-getRealAngle()[1]) * 25;
+      if(diffB > .03) {
+        base2.set(diffB); 
+      }
+      else {
+        base2.set(0);
+      }
+    }
+
+    if (stik.getRawButtonReleased(3) || stik.getRawButtonReleased(4) || stik.getRawButtonReleased(5) || stik.getRawButtonReleased(6)) {
+      commandsEnabled = false;
+      lastPoint = getRealAngle();
+    }
+    
+  } 
 
 
 }

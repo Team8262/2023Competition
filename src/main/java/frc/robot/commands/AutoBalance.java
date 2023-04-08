@@ -26,19 +26,21 @@ public class AutoBalance extends PIDCommand {
         // The controller that the command will use
         new PIDController(3, 0, 0.2),
         // This should return the measurement
-        () -> dt.getGyroIOInputs().connected ? dt.getGyroIOInputs().quartX-0.2 : 0,
+        () -> dt.getGyroIOInputs().connected ? dt.getGyroIOInputs().pitchPosition : 0,
         // This should return the setpoint (can also be a constant)
         () -> 0,
         // This uses the output
         output -> {
-          dt.drive(-0.1*output, 0, 0);
+          dt.drive(-0.01*output,0, 0);
         });
+
         
     addRequirements(dt);
     this.dt = dt;
+    dt.zeroGyroscope();
 
     //This might do something
-    //getController().setTolerance(1);
+    getController().setTolerance(1);
 
     // Configure additional PID options by calling `getController` here.
     
@@ -54,6 +56,7 @@ public class AutoBalance extends PIDCommand {
   public void end(boolean interrupted) {
     super.end(interrupted);
     dt.drive(0, 0, 0);
+    dt.enableXstance();
     System.out.println("done");
   }
 }

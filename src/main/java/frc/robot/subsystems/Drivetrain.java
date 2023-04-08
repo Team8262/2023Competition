@@ -156,6 +156,8 @@ public class Drivetrain extends SubsystemBase {
 
     this.gyroOffset = 0;
 
+    setGyroOffset(0);
+
     this.chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
     this.timer = new Timer();
@@ -276,10 +278,13 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pos){
+    // zeroGyroscope();  
     poseEstimator.resetPosition(
         this.getRotation(),
         swerveModulePositions,
         pos);
+    estimatedPoseWithoutGyro = pos;
+    
   }
 
   /**
@@ -287,7 +292,7 @@ public class Drivetrain extends SubsystemBase {
    * invoked when the rotation of the robot is known (e.g., at the start of an autonomous path). The
    * origin of the field to the lower left corner (i.e., the corner of the field to the driver's
    * right). Zero degrees is away from the driver and increases in the CCW direction.
-   *
+   *  
    * @param state the specified PathPlanner state to which is set the odometry
    */
   public void resetOdometry(PathPlannerState state) {
