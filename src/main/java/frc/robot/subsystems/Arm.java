@@ -242,6 +242,11 @@ public class Arm extends SubsystemBase {
     arm2.set(-.1);
   }
 
+  public void infiniteSpin(){
+    base1.set(-1);
+    base2.set(-1);
+  }
+
   public void coast() {
     arm.setIdleMode(IdleMode.kCoast);
     arm2.setIdleMode(IdleMode.kCoast);
